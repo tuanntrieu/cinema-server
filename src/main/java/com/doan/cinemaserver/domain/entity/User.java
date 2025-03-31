@@ -32,4 +32,6 @@ public class User extends DateAuditing {
     @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_USER_ROLE"), referencedColumnName = "role_id")
     private Role role;
 
+    @OneToOne(mappedBy = "user")
+    private Customer customer;
 }
