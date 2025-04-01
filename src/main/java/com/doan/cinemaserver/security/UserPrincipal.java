@@ -34,7 +34,7 @@ public class UserPrincipal implements UserDetails {
     }
     public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getRole().getRole()));
+        authorities.add(new SimpleGrantedAuthority(String.valueOf(user.getRole().getCode())));
         return new UserPrincipal(user.getId(), user.getEmail(), user.getPassword(), authorities);
     }
 

@@ -16,23 +16,24 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Customer extends DateAuditing {
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "customer_id")
     private Long id;
 
-    @Column(name = "full_name")
+    @Column(name = "full_name",columnDefinition = "NVARCHAR(255)")
     private String fullName;
 
-    @Column(name = "phone_number",nullable = false)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     @JoinColumn(name = "user_id",foreignKey = @ForeignKey(name="FK_CUSTOMER_USER"),nullable = false)
     private User user;
 

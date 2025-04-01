@@ -1,4 +1,4 @@
-package com.doan.cinemaserver.domain.dto.mail;
+package com.doan.cinemaserver.domain.dto.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

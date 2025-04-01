@@ -3,8 +3,7 @@ package com.doan.cinemaserver.controller;
 import com.doan.cinemaserver.common.RestApiV1;
 import com.doan.cinemaserver.common.VsResponseUtil;
 import com.doan.cinemaserver.constant.UrlConstant;
-import com.doan.cinemaserver.domain.dto.auth.LoginRequestDto;
-import com.doan.cinemaserver.domain.dto.auth.TokenRefreshRequestDto;
+import com.doan.cinemaserver.domain.dto.auth.*;
 import com.doan.cinemaserver.domain.entity.User;
 import com.doan.cinemaserver.repository.UserRepository;
 import com.doan.cinemaserver.service.AuthService;
@@ -20,6 +19,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -53,6 +53,35 @@ public class AuthController {
     @Operation(summary = "API Refresh Token")
     public ResponseEntity<?>refreshToken(@Valid @RequestBody TokenRefreshRequestDto requestDto) {
         return VsResponseUtil.success(authService.refreshToken(requestDto));
+    }
+
+    @PostMapping(UrlConstant.Auth.REGISTER)
+    @Operation(summary = "API Register")
+    public ResponseEntity<?>register(@Valid @RequestBody RegisterRequestDto requestDto) {
+        return VsResponseUtil.success(authService.register(requestDto));
+    }
+    @PatchMapping(UrlConstant.Auth.CHANGE_PASSWORD)
+    @Operation(summary = "API Change Password")
+    public ResponseEntity<?>changePassword(@Valid @RequestBody ChangePasswordRequestDto requestDto) {
+            return VsResponseUtil.success(authService.changePassword(requestDto));
+    }
+
+    @PostMapping(UrlConstant.Auth.SEND_OTP)
+    @Operation(summary = "API Send Otp")
+    public ResponseEntity<?>sendOtp(@Valid @RequestBody SendOtpRequestDto requestDto) {
+        return VsResponseUtil.success(authService.sendOtp(requestDto));
+    }
+
+    @PostMapping(UrlConstant.Auth.VERIFY_OTP)
+    @Operation(summary = "API Verify Otp")
+    public ResponseEntity<?>verifyOtp(@Valid @RequestBody VerifyOtpRequestDto requestDto) {
+        return VsResponseUtil.success(authService.verifyOtp(requestDto));
+    }
+
+    @PatchMapping(UrlConstant.Auth.FORGET_PASSWORD)
+    @Operation(summary = "API Forget Password")
+    public ResponseEntity<?>forgetPassword(@Valid @RequestBody ForgetPasswordDto requestDto) {
+        return VsResponseUtil.success(authService.forgetPassword(requestDto));
     }
 
 

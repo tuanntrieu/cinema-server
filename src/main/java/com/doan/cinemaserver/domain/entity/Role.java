@@ -1,5 +1,6 @@
 package com.doan.cinemaserver.domain.entity;
 
+import com.doan.cinemaserver.constant.RoleConstant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,11 @@ public class Role {
     private Long id;
 
     @Column(nullable = false)
-    private String role;
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "code", nullable = false)
+    private RoleConstant code;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "role")
     @JsonIgnore

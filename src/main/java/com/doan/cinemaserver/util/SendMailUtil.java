@@ -1,6 +1,6 @@
 package com.doan.cinemaserver.util;
 
-import com.doan.cinemaserver.domain.dto.mail.DataMailDto;
+import com.doan.cinemaserver.domain.dto.common.DataMailDto;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;
@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
@@ -32,6 +33,7 @@ public class SendMailUtil {
      * @param template Tên file html trong folder resources/template
      *                 Example: Index.html
      */
+    @Async
     public void sendEmailWithHTML(DataMailDto mail, String template) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,

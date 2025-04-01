@@ -1,6 +1,5 @@
 package com.doan.cinemaserver.domain.entity;
 
-import com.doan.cinemaserver.domain.entity.common.DateAuditing;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,10 +12,10 @@ import org.hibernate.annotations.UuidGenerator;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User extends DateAuditing {
+public class User  {
     @Id
     @UuidGenerator
-    @Column(name = "user_id", columnDefinition = "CHAR(32)")
+    @Column(name = "user_id", columnDefinition = "NVARCHAR(64)")
     private String id;
 
     private String password;
@@ -29,6 +28,7 @@ public class User extends DateAuditing {
     private String refreshToken;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_USER_ROLE"), referencedColumnName = "role_id")
     private Role role;
 
