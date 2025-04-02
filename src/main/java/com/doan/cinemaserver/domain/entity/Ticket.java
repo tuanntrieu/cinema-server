@@ -48,5 +48,11 @@ public class Ticket extends DateAuditing {
 
     private String status;
 
+    private String currentCinemaName;
+
+    private String addressCinema;
+
+    private String cinemaId;
+
 }
 
