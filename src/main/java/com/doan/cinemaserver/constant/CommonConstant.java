@@ -24,4 +24,5 @@ public class CommonConstant {
 
     public static final String REGEX_EMAIL ="^[a-zA-Z0-9_!#$%&amp;'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
     public static final String REGEXP_PASSWORD = "^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$";
+    public static final String REGEXP_PHONE_NUMBER = "^(?:\\+84|0)(?:1[2689]|9[0-9]|3[2-9]|5[6-9]|7[0-9])(?:\\d{7}|\\d{8})$";
 }

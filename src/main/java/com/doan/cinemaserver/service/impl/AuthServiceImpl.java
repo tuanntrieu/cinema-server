@@ -246,7 +246,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public CommonResponseDto forgetPassword(ForgetPasswordDto forgetPasswordDto) {
         User user= userRepository.findByEmail(forgetPasswordDto.getEmail()).orElseThrow(
-                ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,new String[]{forgetPasswordDto.getEmail()})
+                    ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,new String[]{forgetPasswordDto.getEmail()})
         );
 
         if(!forgetPasswordDto.getPassword().equals(forgetPasswordDto.getConfirmPassword())){

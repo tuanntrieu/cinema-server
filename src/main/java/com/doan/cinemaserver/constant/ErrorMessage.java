@@ -21,6 +21,7 @@ public class ErrorMessage {
 
     public static class User{
         public static final String ERR_NOT_FOUND_USERNAME = "exception.user.not.found.username";
+        public static final String ERR_NOT_FOUND_ID = "exception.user.not.found.id";
     }
     public static class Auth{
         public static final String ERR_INCORRECT_USERNAME_PASSWORD ="exception.auth.incorrect.username-password";
@@ -31,7 +32,10 @@ public class ErrorMessage {
         public static final String ERR_INCORRECT_OTP="exception.auth.incorrect.otp";
     }
     public static class Role{
-        public static final String ERR_NOT_FOUND_ROLE = "exception.role.not.found.role";
+        public static final String ERR_NOT_FOUND_ROLE = "exception.role.not.found.code";
+    }
+    public static class Cinema{
+        public static final String ERR_NOT_FOUND_CINEMA = "exception.cinema.not.found.id";
     }
 
 }

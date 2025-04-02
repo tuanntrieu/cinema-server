@@ -23,8 +23,7 @@ public class User  {
     private String email;
 
     @JsonIgnore
-    @Column(name = "refresh_token")
-    @Lob
+    @Column(name = "refresh_token", columnDefinition = "LONGTEXT")
     private String refreshToken;
 
     @ManyToOne

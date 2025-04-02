@@ -16,4 +16,16 @@ public class UrlConstant {
         private Auth() {
         }
     }
+    public static class Customer{
+        public static final String PRE_FIX = "/customer";
+        public static final String UPDATE_CUSTOMER = PRE_FIX + "/update-customer";
+
+        private Customer() {}
+    }
+    public static class Cinema{
+        public static final String PRE_FIX = "/cinema";
+        public static final String UPDATE_CINEMA = PRE_FIX + "/update-cinema"+"/{id}";
+        public static final String CREATE_CINEMA = PRE_FIX + "/create-cinema";
+        private Cinema() {}
+    }
 }

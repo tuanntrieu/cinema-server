@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="cinemas")
-public class Cinema  extends DateAuditing {
+public class Cinema  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,16 +27,14 @@ public class Cinema  extends DateAuditing {
     @Column(name="cinema_name")
     private String cinemaName;
 
-    @OneToOne
-    @JoinColumn(name="address_id",foreignKey = @ForeignKey(name="FK_CINEMA_ADDRESS"),nullable = false)
-    private Address address;
+    private String province;
+    private String district;
+    private String ward;
+    private String detailAddress;
 
     @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Room> rooms =new ArrayList<>();
 
-
     private String hotline;
-
-
 }

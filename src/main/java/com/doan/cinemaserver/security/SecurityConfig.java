@@ -39,6 +39,13 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/api/v1/auth/**",
     };
+    private String[] USER_LIST={
+            "/api/v1/customer/**"
+    };
+
+    private String[] ADMIN_LIST={
+            "/api/v1/cinema/**"
+    };
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -46,7 +53,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> corsConfiguration()))
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .requestMatchers("/api/v1/alo/**").hasRole("USER")
+                        .requestMatchers(USER_LIST).hasRole("USER")
+                        .requestMatchers(ADMIN_LIST).hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

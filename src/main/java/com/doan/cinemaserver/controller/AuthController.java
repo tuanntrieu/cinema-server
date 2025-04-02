@@ -85,10 +85,4 @@ public class AuthController {
     }
 
 
-    @GetMapping("/alo")
-    public ResponseEntity<?> getAlo() {
-        return VsResponseUtil.success(userRepository.findAll());
-    }
-
-
 }
