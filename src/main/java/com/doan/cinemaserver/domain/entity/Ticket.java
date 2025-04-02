@@ -44,5 +44,9 @@ public class Ticket extends DateAuditing {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    private String paymentMethod;
+
+    private String status;
+
 }
 
