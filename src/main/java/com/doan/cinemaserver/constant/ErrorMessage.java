@@ -38,4 +38,8 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND_CINEMA = "exception.cinema.not.found.id";
     }
 
+    public static class MovieType{
+        public static final String ERR_NOT_FOUND_MOVIE_TYPE = "exception.movie-type.not.found.id";
+    }
+
 }

@@ -44,7 +44,8 @@ public class SecurityConfig {
     };
 
     private String[] ADMIN_LIST={
-            "/api/v1/cinema/**"
+            "/api/v1/cinema/**",
+            "/api/v1/movie-type/**"
     };
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

@@ -3,6 +3,7 @@ package com.doan.cinemaserver.service.impl;
 import com.doan.cinemaserver.constant.ErrorMessage;
 import com.doan.cinemaserver.constant.SuccessMessage;
 import com.doan.cinemaserver.domain.dto.cinema.CinemaRequestDto;
+import com.doan.cinemaserver.domain.dto.cinema.CinemaResponseDto;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
 import com.doan.cinemaserver.domain.entity.Cinema;
 import com.doan.cinemaserver.exception.NotFoundException;
@@ -13,6 +14,8 @@ import com.doan.cinemaserver.util.MessageSourceUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +46,16 @@ public class CinemaServiceImpl implements CinemaService {
         cinemaRepository.save(cinemaUpdate);
 
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS,null));
+    }
+
+    @Override
+    public List<String> loadProvince() {
+        return cinemaRepository.loadProvince();
+    }
+
+    @Override
+    public List<CinemaResponseDto> loadCinemasByProvince(String province) {
+        return cinemaRepository.loadNameCinemaByProvince(province);
     }
 
 

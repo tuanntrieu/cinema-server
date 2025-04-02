@@ -26,6 +26,15 @@ public class UrlConstant {
         public static final String PRE_FIX = "/cinema";
         public static final String UPDATE_CINEMA = PRE_FIX + "/update-cinema"+"/{id}";
         public static final String CREATE_CINEMA = PRE_FIX + "/create-cinema";
+        public static final String LOAD_ALL_PROVINCE = PRE_FIX + "/province";
+        public static final String LOAD_CINEMA_BY_PROVINCE = PRE_FIX + "/load-by-province";
         private Cinema() {}
+    }
+    public static class MovieType{
+        public static final String PRE_FIX = "/movie-type";
+        public static final String CREATE_TYPE=PRE_FIX + "/create-type";
+        public static final String UPDATE_TYPE=PRE_FIX + "/update-type"+"/{id}";
+
+        private MovieType() {}
     }
 }

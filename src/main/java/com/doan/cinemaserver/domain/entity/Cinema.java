@@ -37,4 +37,5 @@ public class Cinema  {
     private List<Room> rooms =new ArrayList<>();
 
     private String hotline;
+
 }
