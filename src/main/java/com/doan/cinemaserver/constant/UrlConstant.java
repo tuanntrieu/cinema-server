@@ -1,5 +1,7 @@
 package com.doan.cinemaserver.constant;
 
+import com.doan.cinemaserver.domain.entity.Schedule;
+
 public class UrlConstant {
     public static class Auth {
         private static final String PRE_FIX = "/auth";
@@ -36,5 +38,14 @@ public class UrlConstant {
         public static final String UPDATE_TYPE=PRE_FIX + "/update-type"+"/{id}";
 
         private MovieType() {}
+    }
+    public static class Schedule{
+        public static final String PRE_FIX = "/schedule";
+        public static final String CREATE_SCHEDULE=PRE_FIX + "/create-schedule";
+        public static final String DELETE_SCHEDULE=PRE_FIX + "/delete-schedule"+"/{id}";
+        public static final String GET_SCHEDULES=PRE_FIX + "/schedules";
+
+
+        private Schedule() {}
     }
 }

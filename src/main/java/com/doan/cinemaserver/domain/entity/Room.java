@@ -32,6 +32,9 @@ public class Room {
     @Enumerated(EnumType.STRING)
     private RoomType roomType;
 
+    @OneToMany(mappedBy = "room")
+    @JsonIgnore
+    private List<Schedule> schedules = new ArrayList<>();
 
 
     @ManyToOne

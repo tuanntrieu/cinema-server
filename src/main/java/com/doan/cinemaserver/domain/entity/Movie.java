@@ -48,7 +48,7 @@ public class Movie extends DateAuditing {
     @Column(name="end_date")
     private Date endDate;
 
-    @ManyToMany(mappedBy = "movies")
+    @OneToMany(mappedBy = "movie")
     @JsonIgnore
     private List<Schedule> schedules =new ArrayList<>();
 
