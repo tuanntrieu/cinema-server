@@ -52,4 +52,7 @@ public class Movie extends DateAuditing {
     @JsonIgnore
     private List<Schedule> schedules =new ArrayList<>();
 
+    @OneToMany(mappedBy = "movie")
+    @JsonIgnore
+    private List<Ticket> tickets =new ArrayList<>();
 }

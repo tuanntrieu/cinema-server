@@ -20,32 +20,38 @@ public class UrlConstant {
     }
     public static class Customer{
         public static final String PRE_FIX = "/customer";
-        public static final String UPDATE_CUSTOMER = PRE_FIX + "/update-customer";
+        public static final String UPDATE_CUSTOMER = PRE_FIX + "/update";
 
         private Customer() {}
     }
     public static class Cinema{
         public static final String PRE_FIX = "/cinema";
-        public static final String UPDATE_CINEMA = PRE_FIX + "/update-cinema"+"/{id}";
-        public static final String CREATE_CINEMA = PRE_FIX + "/create-cinema";
+        public static final String UPDATE_CINEMA = PRE_FIX + "/update"+"/{id}";
+        public static final String CREATE_CINEMA = PRE_FIX + "/create";
         public static final String LOAD_ALL_PROVINCE = PRE_FIX + "/province";
         public static final String LOAD_CINEMA_BY_PROVINCE = PRE_FIX + "/load-by-province";
         private Cinema() {}
     }
     public static class MovieType{
         public static final String PRE_FIX = "/movie-type";
-        public static final String CREATE_TYPE=PRE_FIX + "/create-type";
-        public static final String UPDATE_TYPE=PRE_FIX + "/update-type"+"/{id}";
+        public static final String CREATE_TYPE=PRE_FIX + "/create";
+        public static final String UPDATE_TYPE=PRE_FIX + "/update"+"/{id}";
 
         private MovieType() {}
     }
     public static class Schedule{
         public static final String PRE_FIX = "/schedule";
-        public static final String CREATE_SCHEDULE=PRE_FIX + "/create-schedule";
-        public static final String DELETE_SCHEDULE=PRE_FIX + "/delete-schedule"+"/{id}";
+        public static final String CREATE_SCHEDULE=PRE_FIX + "/create";
+        public static final String DELETE_SCHEDULE=PRE_FIX + "/delete"+"/{id}";
         public static final String GET_SCHEDULES=PRE_FIX + "/schedules";
 
-
         private Schedule() {}
+    }
+    public static class Room{
+        public static final String PRE_FIX = "/room";
+        public static final String CREATE_ROOM=PRE_FIX + "/create";
+        private Room(){
+
+        }
     }
 }

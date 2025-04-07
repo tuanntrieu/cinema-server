@@ -28,12 +28,17 @@ public class Ticket extends DateAuditing {
 
     private String movieName;
 
-    @JsonIgnore
-    private String movieId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "movie_id")
+    private Movie movie;
+
+    @ManyToOne
+    @JoinColumn(name = "seat_id")
+    private Seat seat;
+
+    private String seatsName;
 
     private LocalDateTime scheduleTime;
-
-    private String seats;
 
     private Long currentPrice;
 

@@ -28,13 +28,22 @@ public class Seat {
     @Enumerated(EnumType.STRING)
     private SeatStatus seatStatus;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,
-            mappedBy = "seats")
-    @JsonIgnore
-    private List<SeatPrice> seatPrices = new ArrayList<>();
+    private Integer xCoordinate;
+
+    private Integer yCoordinate;
+
+    @Column(name="surcharge", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    private Long surcharge;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name="seat_type_id")
+    private SeatPrice seatType;
 
     @ManyToOne
     @JoinColumn(name="room_id",foreignKey = @ForeignKey(name = "FK_ROOM_SEAT"))
     private Room room;
+
+    @OneToMany(mappedBy = "seat")
+    List<Ticket> tickets = new ArrayList<>();
 
 }

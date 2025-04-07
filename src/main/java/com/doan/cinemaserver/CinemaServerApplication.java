@@ -68,7 +68,7 @@ public class CinemaServerApplication {
             }
             if (!seatPriceRepository.existsAllBySeatType(SeatType.COUPLE)) {
                 seatPriceRepository.save(SeatPrice.builder()
-                        .seatType(SeatType.STANDARD)
+                        .seatType(SeatType.COUPLE)
                         .weekdayPrice(1000000L)
                         .weekendPrice(1500000L)
                         .build());

@@ -50,8 +50,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         LocalDateTime startTime = requestDto.getScheduleTime();
         LocalDateTime endTime = startTime.plus(movie.getDuration() + 15, ChronoUnit.MINUTES);
-//
-        //kiem tra xem co khoang thoi gian nao giao voi khong thoi gian moi khong
+
+        //kiem tra xem co khoang thoi gian nao giao voi khoang thoi gian moi khong co thi khong thoa man
         for (Schedule schedule : room.getSchedules()) {
             LocalDateTime existingStart = schedule.getScheduleTime();
             LocalDateTime existingEnd = existingStart.plus(schedule.getMovie().getDuration() + 15, ChronoUnit.MINUTES);
@@ -121,7 +121,5 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         return scheduleResponseDtos;
     }
-
-
 
 }

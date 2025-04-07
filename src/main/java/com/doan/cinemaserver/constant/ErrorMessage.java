@@ -47,9 +47,15 @@ public class ErrorMessage {
     }
     public static class Movie{
         public static final String ERR_NOT_FOUND_MOVIE = "exception.movie.not.found.id";
+
     }
     public static class Room{
         public static final String ERR_NOT_FOUND_ROOM = "exception.room.not.found.id";
+        public static final String ERR_NOT_FOUND_ROOM_TYPE = "exception.room-type.not.found.id";
+    }
+    public static class Seat{
+        public static final String ERR_NOT_FOUND_SEAT = "exception.seat.not.found.id";
+        public static final String ERR_NOT_FOUND_SEAT_TYPE = "exception.seat-type.not.found.id";
     }
 
 }

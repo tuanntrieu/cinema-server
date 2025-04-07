@@ -1,6 +1,5 @@
 package com.doan.cinemaserver.domain.entity;
 
-import com.doan.cinemaserver.constant.RoomType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,13 +28,9 @@ public class Room {
     @Column(name="number_col")
     private int numberOfColumn;
 
-    @Enumerated(EnumType.STRING)
-    private RoomType roomType;
-
     @OneToMany(mappedBy = "room")
     @JsonIgnore
     private List<Schedule> schedules = new ArrayList<>();
-
 
     @ManyToOne
     @JoinColumn(name = "cinema_id", foreignKey = @ForeignKey(name = "FK_CINEMA_ROOM"), nullable = false)
@@ -45,6 +40,12 @@ public class Room {
     @OneToMany(mappedBy = "room")
     @JsonIgnore
     List<Seat> seats = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name="room_type_id")
+    @JsonIgnore
+    private RoomType roomType;
+
 
     @ManyToMany
     @JoinTable(
