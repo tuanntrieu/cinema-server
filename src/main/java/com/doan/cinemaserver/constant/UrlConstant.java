@@ -50,6 +50,9 @@ public class UrlConstant {
     public static class Room{
         public static final String PRE_FIX = "/room";
         public static final String CREATE_ROOM=PRE_FIX + "/create";
+        public static final String DELETE_ROOM=PRE_FIX + "/delete"+"/{id}";
+        public static final String UPDATE_ROOM_TYPE=PRE_FIX + "/update-room-type/{id}";
+        public static final String UPDATE_ROOM_SURCHARGE = PRE_FIX + "/update-room-surcharge/{id}";
         private Room(){
 
         }

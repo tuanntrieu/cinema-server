@@ -32,6 +32,8 @@ public class Ticket extends DateAuditing {
     @JoinColumn(name = "movie_id")
     private Movie movie;
 
+    private String roomName;
+
     @ManyToOne
     @JoinColumn(name = "seat_id")
     private Seat seat;

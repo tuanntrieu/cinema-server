@@ -1,11 +1,9 @@
 package com.doan.cinemaserver.service.impl;
 
-import com.doan.cinemaserver.constant.ErrorMessage;
-import com.doan.cinemaserver.constant.SeatStatus;
-import com.doan.cinemaserver.constant.SeatType;
-import com.doan.cinemaserver.constant.SuccessMessage;
+import com.doan.cinemaserver.constant.*;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
 import com.doan.cinemaserver.domain.dto.room.RoomRequestDto;
+import com.doan.cinemaserver.domain.dto.room.UpdateRoomSurchargeRequestDto;
 import com.doan.cinemaserver.domain.entity.*;
 import com.doan.cinemaserver.exception.NotFoundException;
 import com.doan.cinemaserver.mapper.RoomMapper;
@@ -13,7 +11,9 @@ import com.doan.cinemaserver.repository.*;
 import com.doan.cinemaserver.service.RoomService;
 import com.doan.cinemaserver.util.MessageSourceUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,9 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final MessageSourceUtil messageSourceUtil;
 
+
     @Override
+    @Transactional
     public CommonResponseDto createRoom(RoomRequestDto roomRequestDto) {
         Cinema cinema = cinemaRepository.findById(roomRequestDto.getCinemaId()).orElseThrow(
                 () -> new RuntimeException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM)
@@ -60,4 +62,45 @@ public class RoomServiceImpl implements RoomService {
         }
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.CREATE_SUCCESS,null));
     }
+
+
+    @Override
+    @Transactional
+    public CommonResponseDto updateRoomType(Long roomId, RoomTypeEnum roomTypeEnum) {
+        Room room = roomRepository.findById(roomId).orElseThrow(
+                ()-> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM,new String[]{String.valueOf(roomId)})
+        );
+        RoomType roomType = roomTypeRepository.findByRoomType(roomTypeEnum).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM_TYPE, new String[]{roomTypeEnum.toString()})
+        );
+        room.setRoomType(roomType);
+        roomRepository.save(room);
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS,null));
+    }
+
+    @Override
+    @Transactional
+    public CommonResponseDto updateRoomSurcharge(UpdateRoomSurchargeRequestDto requestDto) {
+        RoomType roomTypeTmp = roomTypeRepository.findByRoomType(requestDto.getRoomType()).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM_TYPE, new String[]{requestDto.getRoomType().toString()})
+        );
+        roomTypeTmp.setSurcharge(requestDto.getSurcharge());
+        roomTypeRepository.save(roomTypeTmp);
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS,null));
+    }
+
+    @Override
+    @Transactional
+    public CommonResponseDto deleteRoom(long roomId) {
+        Room room = roomRepository.findById(roomId).orElseThrow(
+                ()-> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM,new String[]{String.valueOf(roomId)})
+        );
+        room.getSeats().forEach(seat -> {
+            seatRepository.delete(seat);
+        });
+        roomRepository.delete(room);
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.DELETE_SUCCESS,null));
+    }
+
+
 }
