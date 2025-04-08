@@ -57,4 +57,13 @@ public class UrlConstant {
 
         }
     }
+
+    public static class Seat{
+        public static final String PRE_FIX = "/seat";
+        public static final String UPDATE_SEAT=PRE_FIX + "/update";
+        public static final String DELETE_SEAT=PRE_FIX + "/delete";
+        private Seat(){
+
+        }
+    }
 }

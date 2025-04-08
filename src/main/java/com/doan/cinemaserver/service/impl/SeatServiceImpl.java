@@ -4,6 +4,7 @@ import com.doan.cinemaserver.constant.ErrorMessage;
 import com.doan.cinemaserver.constant.SeatType;
 import com.doan.cinemaserver.constant.SuccessMessage;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
+import com.doan.cinemaserver.domain.dto.seat.UpdateSeatPriceRequestDto;
 import com.doan.cinemaserver.domain.entity.Seat;
 import com.doan.cinemaserver.domain.entity.SeatPrice;
 import com.doan.cinemaserver.exception.NotFoundException;
@@ -23,11 +24,11 @@ public class SeatServiceImpl implements SeatService {
     private final SeatRepository seatRepository;
 
     @Override
-    public CommonResponseDto updateSeatPrice(SeatType seatType, Long weekDayPrice,Long weekendPrice) {
-        SeatPrice seatPrice = seatPriceRepository.findBySeatType(seatType).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Seat.ERR_NOT_FOUND_SEAT_TYPE, new String[]{seatType.toString()})
+    public CommonResponseDto updateSeatPrice(UpdateSeatPriceRequestDto requestDto) {
+        SeatPrice seatPrice = seatPriceRepository.findBySeatType(requestDto.getSeatType()).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Seat.ERR_NOT_FOUND_SEAT_TYPE, new String[]{requestDto.getSeatType().toString()})
         );
-        seatPriceRepository.updateSeatPrice(seatType,weekDayPrice,weekendPrice);
+        seatPriceRepository.updateSeatPrice(requestDto.getSeatType().toString(), requestDto.getWeekDayPrice(), requestDto.getWeekendPrice());
 
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS,null));
     }

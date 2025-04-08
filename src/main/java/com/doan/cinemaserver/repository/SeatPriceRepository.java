@@ -18,5 +18,5 @@ public interface SeatPriceRepository extends JpaRepository<SeatPrice, Long> {
     @Transactional
     @Modifying
     @Query(value = "update seat_type_price set weekday_price = ?2, weekend_price = ?3 where seat_type = ?1 ",nativeQuery = true)
-    void updateSeatPrice(SeatType seatType, Long weekDayPrice,Long weekendPrice);
+    void updateSeatPrice(String seatType, Long weekDayPrice,Long weekendPrice);
 }
