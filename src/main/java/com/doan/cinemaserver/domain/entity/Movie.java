@@ -28,17 +28,18 @@ public class Movie extends DateAuditing {
 
     private int duration;
 
+    private String image;
+
     @Lob
     private String description;
 
+    private String language;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,
-    mappedBy = "movies")
+    @ManyToMany(mappedBy = "movies")
     @JsonIgnore
     private List<MovieType> types =new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,
-            mappedBy = "movies")
+    @ManyToMany(mappedBy = "movies")
     @JsonIgnore
     private List<Room> rooms =new ArrayList<>();
 

@@ -32,8 +32,7 @@ public class Cinema  {
     private String ward;
     private String detailAddress;
 
-    @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
+    @OneToMany(mappedBy = "cinema")
     private List<Room> rooms =new ArrayList<>();
 
     private String hotline;

@@ -8,7 +8,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ScheduleResponseDto {
+public class ScheduleForRoomResponseDto {
     private LocalTime startTime;
     private LocalTime endTime;
     private String movieName;

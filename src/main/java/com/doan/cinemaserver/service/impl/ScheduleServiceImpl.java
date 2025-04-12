@@ -1,18 +1,17 @@
 package com.doan.cinemaserver.service.impl;
 
 import com.doan.cinemaserver.constant.ErrorMessage;
+import com.doan.cinemaserver.constant.SeatStatus;
 import com.doan.cinemaserver.constant.SuccessMessage;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
-import com.doan.cinemaserver.domain.dto.schedule.ScheduleRequestDto;
-import com.doan.cinemaserver.domain.dto.schedule.ScheduleResponseDto;
-import com.doan.cinemaserver.domain.dto.schedule.ScheduleSearchRequestDto;
+import com.doan.cinemaserver.domain.dto.schedule.*;
 import com.doan.cinemaserver.domain.entity.*;
-
 import com.doan.cinemaserver.exception.DataIntegrityViolationException;
 import com.doan.cinemaserver.exception.NotFoundException;
 import com.doan.cinemaserver.repository.MovieRepository;
 import com.doan.cinemaserver.repository.RoomRepository;
 import com.doan.cinemaserver.repository.ScheduleRepository;
+import com.doan.cinemaserver.repository.SeatRepository;
 import com.doan.cinemaserver.service.ScheduleService;
 import com.doan.cinemaserver.util.MessageSourceUtil;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -25,9 +24,13 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 @Service
 @RequiredArgsConstructor
@@ -36,20 +39,25 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final MessageSourceUtil messageSourceUtil;
     private final MovieRepository movieRepository;
     private final RoomRepository roomRepository;
+    private final SeatRepository seatRepository;
 
     @Override
     public CommonResponseDto createSchedule(ScheduleRequestDto requestDto) {
 
         Room room = roomRepository.findById(requestDto.getRoomId()).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM)
+                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(requestDto.getRoomId())})
         );
 
         Movie movie = movieRepository.findById(requestDto.getMovieId()).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Movie.ERR_NOT_FOUND_MOVIE)
+                () -> new NotFoundException(ErrorMessage.Movie.ERR_NOT_FOUND_MOVIE, new String[]{String.valueOf(requestDto.getMovieId())})
         );
 
         LocalDateTime startTime = requestDto.getScheduleTime();
         LocalDateTime endTime = startTime.plus(movie.getDuration() + 15, ChronoUnit.MINUTES);
+
+        if (requestDto.getScheduleTime().toLocalDate().isBefore(movie.getReleaseDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) {
+            throw new DataIntegrityViolationException(ErrorMessage.Schedule.ERR_INTERVAL_CONFLICT);
+        }
 
         //kiem tra xem co khoang thoi gian nao giao voi khoang thoi gian moi khong co thi khong thoa man
         for (Schedule schedule : room.getSchedules()) {
@@ -60,11 +68,24 @@ public class ScheduleServiceImpl implements ScheduleService {
                 throw new DataIntegrityViolationException(ErrorMessage.Schedule.ERR_INTERVAL_CONFLICT);
             }
         }
-        scheduleRepository.save(Schedule.builder()
+        room.getMovies().add(movie);
+        roomRepository.save(room);
+
+        Map<Long, SeatStatus> seats = new HashMap<>();
+
+        room.getSeats().forEach(seat -> {
+            seats.put(seat.getId(), SeatStatus.AVAILABLE);
+        });
+
+        Schedule schedule = Schedule.builder()
                 .scheduleTime(startTime)
                 .room(room)
                 .movie(movie)
-                .build());
+                .seats(seats)
+                .build();
+        scheduleRepository.save(schedule);
+        room.getSchedules().add(schedule);
+        roomRepository.save(room);
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.CREATE_SUCCESS, null));
     }
 
@@ -86,7 +107,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleResponseDto> searchSchedule(ScheduleSearchRequestDto requestDto) {
+    public List<ScheduleForRoomResponseDto> searchSchedule(ScheduleSearchByRoomRequestDto requestDto) {
+
         List<Schedule> schedules = scheduleRepository.findAll(
                 new Specification<Schedule>() {
                     @Override
@@ -108,10 +130,10 @@ public class ScheduleServiceImpl implements ScheduleService {
                 }
         );
 
-        List<ScheduleResponseDto> scheduleResponseDtos = new ArrayList<>();
+        List<ScheduleForRoomResponseDto> scheduleForRoomResponse = new ArrayList<>();
         schedules.forEach(schedule -> {
-            scheduleResponseDtos.add(
-                    ScheduleResponseDto.builder()
+            scheduleForRoomResponse.add(
+                    ScheduleForRoomResponseDto.builder()
                             .movieName(schedule.getMovie().getName())
                             .startTime(schedule.getScheduleTime().toLocalTime())
                             .endTime(schedule.getScheduleTime().plus(schedule.getMovie().getDuration(), ChronoUnit.MINUTES).toLocalTime())
@@ -119,7 +141,70 @@ public class ScheduleServiceImpl implements ScheduleService {
             );
         });
 
-        return scheduleResponseDtos;
+        return scheduleForRoomResponse;
+    }
+
+    @Override
+    public List<ScheduleForCinemaResponseDto> getScheduleForCinema(ScheduleSearchByCinemaRequestDto requestDto) {
+
+        List<Schedule> schedules = scheduleRepository.getScheduleForCinema(requestDto.getCinemaId(), requestDto.getMovieId());
+
+        Map<RoomScheduleDto, List<TimeScheduleDto>> roomTimes = new HashMap<>();
+        Map<Long, Room> roomMap = new HashMap<>();
+        for (Schedule schedule : schedules) {
+            RoomScheduleDto roomScheduleDto = RoomScheduleDto.builder()
+                    .roomId(schedule.getRoom().getId())
+                    .date(schedule.getScheduleTime().toLocalDate())
+                    .build();
+            int count = seatRepository.countSeatByStatus(schedule.getRoom().getCinema().getId(), schedule.getId(), SeatStatus.AVAILABLE.toString());
+
+            TimeScheduleDto time = TimeScheduleDto.builder()
+                    .id(schedule.getId())
+                    .date(schedule.getScheduleTime().toLocalDate())
+                    .time(schedule.getScheduleTime().toLocalTime())
+                    .countSeatAvailable(count)
+                    .build();
+
+            if (roomTimes.containsKey(roomScheduleDto)) {
+                roomTimes.get(roomScheduleDto).add(time);
+            } else {
+                List<TimeScheduleDto> times = new ArrayList<>();
+                times.add(time);
+                roomMap.put(schedule.getRoom().getId(), schedule.getRoom());
+                roomTimes.put(roomScheduleDto, times);
+            }
+        }
+        List<RoomScheduleResponseDto> roomSchedules = new ArrayList<>();
+        for (Map.Entry<RoomScheduleDto, List<TimeScheduleDto>> entry : roomTimes.entrySet()) {
+            Room tmp = roomMap.get(entry.getKey().getRoomId());
+            roomSchedules.add(RoomScheduleResponseDto.builder()
+                    .roomId(tmp.getId())
+                    .times(entry.getValue())
+                    .date(entry.getKey().getDate())
+                    .name(tmp.getName() + " " + tmp.getRoomType().getRoomType().name())
+                    .build());
+        }
+        Map<LocalDate, List<RoomScheduleResponseDto>> scheduleTimes = new HashMap<>();
+        for (RoomScheduleResponseDto roomScheduleResponseDto : roomSchedules) {
+            LocalDate date = roomScheduleResponseDto.getDate();
+            if (scheduleTimes.containsKey(date)) {
+                scheduleTimes.get(date).add(roomScheduleResponseDto);
+            } else {
+                List<RoomScheduleResponseDto> rooms = new ArrayList<>();
+                rooms.add(roomScheduleResponseDto);
+                scheduleTimes.put(date, rooms);
+            }
+
+        }
+        List<ScheduleForCinemaResponseDto> response = new ArrayList<>();
+        for (Map.Entry<LocalDate, List<RoomScheduleResponseDto>> entry : scheduleTimes.entrySet()) {
+            response.add(ScheduleForCinemaResponseDto.builder()
+                    .date(entry.getKey())
+                    .roomSchedules(entry.getValue())
+                    .build());
+        }
+
+        return response;
     }
 
 }

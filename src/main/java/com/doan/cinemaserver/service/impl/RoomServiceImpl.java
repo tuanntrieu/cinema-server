@@ -31,7 +31,7 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     public CommonResponseDto createRoom(RoomRequestDto roomRequestDto) {
         Cinema cinema = cinemaRepository.findById(roomRequestDto.getCinemaId()).orElseThrow(
-                () -> new RuntimeException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM)
+                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM,new String[]{String.valueOf(roomRequestDto.getCinemaId())})
         );
         Room room = roomMapper.toRoom(roomRequestDto);
 
@@ -54,12 +54,13 @@ public class RoomServiceImpl implements RoomService {
                         .seatName(columnLetter + String.valueOf(i + 1) + String.valueOf(j + 1))
                         .xCoordinate(i + 1)
                         .yCoordinate(j + 1)
-                        .seatStatus(SeatStatus.AVAILABLE)
                         .surcharge(room.getRoomType().getSurcharge())
                         .seatType(seatPrice)
                         .build());
             }
         }
+        cinema.getRooms().add(room);
+        cinemaRepository.save(cinema);
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.CREATE_SUCCESS,null));
     }
 

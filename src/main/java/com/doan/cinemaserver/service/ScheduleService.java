@@ -1,10 +1,7 @@
 package com.doan.cinemaserver.service;
 
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
-import com.doan.cinemaserver.domain.dto.schedule.ScheduleRequestDto;
-import com.doan.cinemaserver.domain.dto.schedule.ScheduleResponseDto;
-import com.doan.cinemaserver.domain.dto.schedule.ScheduleSearchRequestDto;
-import com.doan.cinemaserver.domain.entity.Schedule;
+import com.doan.cinemaserver.domain.dto.schedule.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +10,7 @@ import java.util.List;
 public interface ScheduleService {
     public CommonResponseDto createSchedule(ScheduleRequestDto requestDto);
     public CommonResponseDto deleteSchedule(Long scheduleId);
-    public List<ScheduleResponseDto> searchSchedule(ScheduleSearchRequestDto requestDto);
+    public List<ScheduleForRoomResponseDto> searchSchedule(ScheduleSearchByRoomRequestDto requestDto);
+    public List<ScheduleForCinemaResponseDto> getScheduleForCinema(ScheduleSearchByCinemaRequestDto requestDto);
 
 }

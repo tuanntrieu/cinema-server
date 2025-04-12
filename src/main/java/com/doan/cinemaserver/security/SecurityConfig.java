@@ -47,7 +47,8 @@ public class SecurityConfig {
             "/api/v1/cinema/**",
             "/api/v1/movie-type/**",
             "/api/v1/schedule/**",
-            "/api/v1/rooms/**"
+            "/api/v1/room/**",
+            "/api/v1/movie/**"
     };
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

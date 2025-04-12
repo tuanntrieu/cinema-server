@@ -1,7 +1,6 @@
 package com.doan.cinemaserver.service.impl;
 
 import com.doan.cinemaserver.constant.ErrorMessage;
-import com.doan.cinemaserver.constant.SeatType;
 import com.doan.cinemaserver.constant.SuccessMessage;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
 import com.doan.cinemaserver.domain.dto.seat.UpdateSeatPriceRequestDto;

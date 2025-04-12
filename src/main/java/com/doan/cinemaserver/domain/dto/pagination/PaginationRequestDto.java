@@ -3,7 +3,6 @@ package com.doan.cinemaserver.domain.dto.pagination;
 import com.doan.cinemaserver.constant.CommonConstant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

@@ -29,12 +29,10 @@ public class Room {
     private int numberOfColumn;
 
     @OneToMany(mappedBy = "room")
-    @JsonIgnore
     private List<Schedule> schedules = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "cinema_id", foreignKey = @ForeignKey(name = "FK_CINEMA_ROOM"), nullable = false)
-    @JsonIgnore
     private Cinema cinema;
 
     @OneToMany(mappedBy = "room")

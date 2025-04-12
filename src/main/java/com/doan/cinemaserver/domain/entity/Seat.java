@@ -25,9 +25,6 @@ public class Seat {
     @Column(name = "seat_name")
     private String seatName;
 
-    @Enumerated(EnumType.STRING)
-    private SeatStatus seatStatus;
-
     private Integer xCoordinate;
 
     private Integer yCoordinate;

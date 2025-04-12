@@ -47,6 +47,8 @@ public class ErrorMessage {
     }
     public static class Movie{
         public static final String ERR_NOT_FOUND_MOVIE = "exception.movie.not.found.id";
+        public static final String ERR_INVALID_TIME ="exception.movie.invalid.time";
+        public static final String ERR_INVALID_DURATION ="exception.movie.invalid.duration";
 
     }
     public static class Room{
