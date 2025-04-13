@@ -25,7 +25,6 @@ public class Ticket extends DateAuditing {
 
     private String customerName;
 
-
     private String movieName;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -48,11 +47,11 @@ public class Ticket extends DateAuditing {
     @JsonIgnore
     List<TicketCombo> ticketCombo = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    private String paymentMethod;
+    private Boolean isPayment;
 
     private String status;
 

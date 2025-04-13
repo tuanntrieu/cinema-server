@@ -2,6 +2,7 @@ package com.doan.cinemaserver.service;
 
 import com.doan.cinemaserver.constant.RoomTypeEnum;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
+import com.doan.cinemaserver.domain.dto.room.RoomOrderResponseDto;
 import com.doan.cinemaserver.domain.dto.room.RoomRequestDto;
 import com.doan.cinemaserver.domain.dto.room.UpdateRoomSurchargeRequestDto;
 import org.springframework.stereotype.Service;
@@ -14,4 +15,6 @@ public interface RoomService {
 
     public CommonResponseDto updateRoomSurcharge(UpdateRoomSurchargeRequestDto requestDto);
     public CommonResponseDto deleteRoom(long roomId);
+
+    public RoomOrderResponseDto getRoomOrder(Long scheduleId);
 }

@@ -9,4 +9,6 @@ import org.springframework.stereotype.Service;
 public interface SeatService {
     public CommonResponseDto updateSeatPrice(UpdateSeatPriceRequestDto requestDto);
     public CommonResponseDto deleteSeat(Long seatId);
+    public CommonResponseDto validateSeats(Long scheduleId,Long[] seatId);
+
 }

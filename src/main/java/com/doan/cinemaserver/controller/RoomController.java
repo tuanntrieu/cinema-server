@@ -43,6 +43,13 @@ public class RoomController {
         return VsResponseUtil.success(roomService.deleteRoom(id));
     }
 
+    @Operation(summary = "API Get Room Order")
+    @GetMapping(UrlConstant.Room.GET_ROOM_ORDER)
+    public ResponseEntity<?> getRoomOrder(@PathVariable(name = "id") Long scheduleId) {
+        return VsResponseUtil.success(roomService.getRoomOrder(scheduleId));
+    }
+
+
 
 
 }

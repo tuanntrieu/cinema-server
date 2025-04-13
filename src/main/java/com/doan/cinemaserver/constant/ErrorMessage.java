@@ -58,6 +58,9 @@ public class ErrorMessage {
     public static class Seat{
         public static final String ERR_NOT_FOUND_SEAT = "exception.seat.not.found.id";
         public static final String ERR_NOT_FOUND_SEAT_TYPE = "exception.seat-type.not.found.id";
+        public static final String ERR_NOT_FOUND_COORDINATES = "exception.seat.not.found.coordinates";
+        public static final String ERR_NOT_EMPTY_SEAT_OUTSIDE ="exception.seat.not.empty.outside";
+        public static final String ERR_NOT_EMPTY_SEAT_MIDDLE ="exception.seat.not.empty.middle";
     }
 
 }

@@ -157,7 +157,8 @@ public class ScheduleServiceImpl implements ScheduleService {
                     .date(schedule.getScheduleTime().toLocalDate())
                     .build();
             int count = seatRepository.countSeatByStatus(schedule.getRoom().getCinema().getId(), schedule.getId(), SeatStatus.AVAILABLE.toString());
-
+            Long roomId = schedule.getRoom().getId();
+            
             TimeScheduleDto time = TimeScheduleDto.builder()
                     .id(schedule.getId())
                     .date(schedule.getScheduleTime().toLocalDate())
@@ -165,15 +166,10 @@ public class ScheduleServiceImpl implements ScheduleService {
                     .countSeatAvailable(count)
                     .build();
 
-            if (roomTimes.containsKey(roomScheduleDto)) {
-                roomTimes.get(roomScheduleDto).add(time);
-            } else {
-                List<TimeScheduleDto> times = new ArrayList<>();
-                times.add(time);
-                roomMap.put(schedule.getRoom().getId(), schedule.getRoom());
-                roomTimes.put(roomScheduleDto, times);
-            }
+            roomTimes.computeIfAbsent(roomScheduleDto, k -> new ArrayList<>()).add(time);
+            roomMap.putIfAbsent(roomId, schedule.getRoom());
         }
+
         List<RoomScheduleResponseDto> roomSchedules = new ArrayList<>();
         for (Map.Entry<RoomScheduleDto, List<TimeScheduleDto>> entry : roomTimes.entrySet()) {
             Room tmp = roomMap.get(entry.getKey().getRoomId());
@@ -181,9 +177,10 @@ public class ScheduleServiceImpl implements ScheduleService {
                     .roomId(tmp.getId())
                     .times(entry.getValue())
                     .date(entry.getKey().getDate())
-                    .name(tmp.getName() + " " + tmp.getRoomType().getRoomType().name())
+                    .name(tmp.getName() + "-" + tmp.getRoomType().getRoomType().getValue())
                     .build());
         }
+
         Map<LocalDate, List<RoomScheduleResponseDto>> scheduleTimes = new HashMap<>();
         for (RoomScheduleResponseDto roomScheduleResponseDto : roomSchedules) {
             LocalDate date = roomScheduleResponseDto.getDate();
@@ -196,6 +193,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             }
 
         }
+
         List<ScheduleForCinemaResponseDto> response = new ArrayList<>();
         for (Map.Entry<LocalDate, List<RoomScheduleResponseDto>> entry : scheduleTimes.entrySet()) {
             response.add(ScheduleForCinemaResponseDto.builder()
@@ -203,7 +201,6 @@ public class ScheduleServiceImpl implements ScheduleService {
                     .roomSchedules(entry.getValue())
                     .build());
         }
-
         return response;
     }
 

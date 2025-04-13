@@ -9,10 +9,7 @@ import com.doan.cinemaserver.service.SeatService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
 @RequiredArgsConstructor
@@ -29,6 +26,12 @@ public class SeatController {
     @DeleteMapping(UrlConstant.Seat.DELETE_SEAT)
     public ResponseEntity<?> deleteSeat(@PathVariable(name = "id") Long id) {
         return VsResponseUtil.success(seatService.deleteSeat(id));
+    }
+
+    @Operation(summary = "API Validate Seat")
+    @GetMapping(UrlConstant.Seat.VALIDATE_SEATS)
+    public ResponseEntity<?> validateSeats(@PathVariable Long id,@RequestParam Long [] seatId) {
+        return VsResponseUtil.success(seatService.validateSeats(id,seatId));
     }
 
 }

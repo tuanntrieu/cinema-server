@@ -29,9 +29,6 @@ public class Seat {
 
     private Integer yCoordinate;
 
-    @Column(name="surcharge", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
-    private Long surcharge;
-
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name="seat_type_id")
     private SeatPrice seatType;

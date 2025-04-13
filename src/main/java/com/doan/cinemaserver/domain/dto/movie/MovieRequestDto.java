@@ -34,6 +34,8 @@ public class MovieRequestDto {
     @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
     private String language;
 
+    private Boolean isSub;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

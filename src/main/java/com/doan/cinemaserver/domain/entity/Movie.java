@@ -35,6 +35,8 @@ public class Movie extends DateAuditing {
 
     private String language;
 
+    private Boolean isSub;
+
     @ManyToMany(mappedBy = "movies")
     @JsonIgnore
     private List<MovieType> types =new ArrayList<>();
