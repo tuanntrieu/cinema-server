@@ -23,6 +23,11 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND_USERNAME = "exception.user.not.found.username";
         public static final String ERR_NOT_FOUND_ID = "exception.user.not.found.id";
     }
+
+    public static class Customer{
+        public static final String ERR_NOT_FOUND_CUSTOMER = "exception.customer.not.found.id";
+    }
+
     public static class Auth{
         public static final String ERR_INCORRECT_USERNAME_PASSWORD ="exception.auth.incorrect.username-password";
         public static final String ERR_INVALID_REFRESH_TOKEN ="exception.auth.invalid.refresh_token";
@@ -61,6 +66,10 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND_COORDINATES = "exception.seat.not.found.coordinates";
         public static final String ERR_NOT_EMPTY_SEAT_OUTSIDE ="exception.seat.not.empty.outside";
         public static final String ERR_NOT_EMPTY_SEAT_MIDDLE ="exception.seat.not.empty.middle";
+        public static final String ERR_INVALID_SEAT_TYPE = "exception.seat.invalid.status";
+    }
+    public static class Combo{
+        public static final String ERR_NOT_FOUND_COMBO = "exception.combo.not.found.id";
     }
 
 }

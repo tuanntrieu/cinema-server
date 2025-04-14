@@ -85,5 +85,9 @@ public class UrlConstant {
         public static final String SEARCH_MOVIE_BY_DATE = PRE_FIX + "/search-by-date";
         public static final String SEARCH_MOVIE_COMING_SOON = PRE_FIX + "/search-coming-soon";
     }
+    public static class Ticket{
+        public static final String PRE_FIX ="/ticket";
+        public static final String CHECKOUT = PRE_FIX + "/checkout";
+    }
 
 }

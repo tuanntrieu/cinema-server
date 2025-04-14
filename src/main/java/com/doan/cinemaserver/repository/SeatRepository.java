@@ -34,12 +34,7 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     @Modifying
     @Transactional
     @Query(value = "update schedule_seat s set s.status = ?3 where s.schedule_id = ?1 and s.seat_id = ?2 ",nativeQuery = true)
-    void updateSeatStatus(Long scheduleId,Long seatId, SeatStatus seatStatus);
+    void updateSeatStatus(Long scheduleId,Long seatId, String seatStatus);
 
-    @Query("select min(s.yCoordinate) from Seat s where s.xCoordinate = ?2 and s.room.id =?1")
-    int getMinYCoordinate(Long roomId, int xCoordinate);
-
-    @Query("select max(s.yCoordinate) from Seat s where s.xCoordinate = ?2 and s.room.id =?1")
-    int getMaxYCoordinate(Long roomId, int xCoordinate);
 
 }

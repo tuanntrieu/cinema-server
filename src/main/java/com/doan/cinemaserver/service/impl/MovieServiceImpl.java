@@ -49,6 +49,7 @@ public class MovieServiceImpl implements MovieService {
     private final MessageSourceUtil messageSourceUtil;
     private final UploadFileUtil uploadFileUtil;
 
+
     @Override
     @Transactional
     public CommonResponseDto createMovie(MovieRequestDto movieRequestDto, MultipartFile image) {

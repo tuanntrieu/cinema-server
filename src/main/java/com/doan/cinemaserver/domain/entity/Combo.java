@@ -30,6 +30,8 @@ public class Combo {
     @Column(name = "quantity")
     private Map<String, Integer> comboDetail = new HashMap<>();
 
+    private Long price;
+
     @OneToMany(mappedBy = "combo")
     @JsonIgnore
     private List<TicketCombo> ticketCombo = new ArrayList<>();

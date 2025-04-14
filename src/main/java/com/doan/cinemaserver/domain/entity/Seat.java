@@ -37,7 +37,6 @@ public class Seat {
     @JoinColumn(name="room_id",foreignKey = @ForeignKey(name = "FK_ROOM_SEAT"))
     private Room room;
 
-    @OneToMany(mappedBy = "seat")
-    List<Ticket> tickets = new ArrayList<>();
+
 
 }

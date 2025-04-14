@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,23 +22,31 @@ public class Ticket extends DateAuditing {
     @Column(name = "ticket_id")
     private Long id;
 
+    private String cinemaName;
+
+    private String addressCinema;
+
+    @ManyToOne()
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
     private String customerName;
+
+    private String customerEmail;
 
     private String movieName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "movie_id")
     private Movie movie;
 
     private String roomName;
 
-    @ManyToOne
-    @JoinColumn(name = "seat_id")
-    private Seat seat;
-
     private String seatsName;
 
-    private LocalDateTime scheduleTime;
+    @ManyToOne
+    @JoinColumn(name="schedule_id")
+    private Schedule schedule;
 
     private Long currentPrice;
 
@@ -47,19 +54,6 @@ public class Ticket extends DateAuditing {
     @JsonIgnore
     List<TicketCombo> ticketCombo = new ArrayList<>();
 
-    @ManyToOne()
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-
-    private Boolean isPayment;
-
-    private String status;
-
-    private String currentCinemaName;
-
-    private String addressCinema;
-
-    private String cinemaId;
 
 }
 

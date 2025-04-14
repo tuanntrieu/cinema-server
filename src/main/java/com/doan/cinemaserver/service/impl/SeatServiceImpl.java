@@ -10,6 +10,7 @@ import com.doan.cinemaserver.domain.entity.Room;
 import com.doan.cinemaserver.domain.entity.Schedule;
 import com.doan.cinemaserver.domain.entity.Seat;
 import com.doan.cinemaserver.domain.entity.SeatPrice;
+import com.doan.cinemaserver.exception.InvalidException;
 import com.doan.cinemaserver.exception.NotFoundException;
 import com.doan.cinemaserver.repository.ScheduleRepository;
 import com.doan.cinemaserver.repository.SeatPriceRepository;
@@ -37,20 +38,21 @@ public class SeatServiceImpl implements SeatService {
         );
         seatPriceRepository.updateSeatPrice(requestDto.getSeatType().toString(), requestDto.getWeekDayPrice(), requestDto.getWeekendPrice());
 
-        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS,null));
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS, null));
     }
 
     @Override
     @Transactional
     public CommonResponseDto deleteSeat(Long seatId) {
         Seat seat = seatRepository.findById(seatId).orElseThrow(
-                ()-> new NotFoundException(ErrorMessage.Seat.ERR_NOT_FOUND_SEAT, new String[]{seatId.toString()})
+                () -> new NotFoundException(ErrorMessage.Seat.ERR_NOT_FOUND_SEAT, new String[]{seatId.toString()})
         );
         seatRepository.delete(seat);
 
-        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.DELETE_SUCCESS,null));
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.DELETE_SUCCESS, null));
 
     }
+
     @Override
     public CommonResponseDto validateSeats(Long scheduleId, Long[] seatId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
@@ -68,10 +70,13 @@ public class SeatServiceImpl implements SeatService {
         }
         for (int i = 0; i < seatId.length; i++) {
             int finalI = i;
-            Seat seat = seatRepository.findById(seatId[i]).orElseThrow(
+            Seat seatSelected = seatRepository.findById(seatId[i]).orElseThrow(
                     () -> new NotFoundException(ErrorMessage.Seat.ERR_NOT_FOUND_SEAT, new String[]{String.valueOf(seatId[finalI])})
             );
-            selectedSeats.add(seat);
+            if (!seatStatus.get(seatSelected.getId()).equals(SeatStatus.AVAILABLE)) {
+                throw new InvalidException(ErrorMessage.Seat.ERR_INVALID_SEAT_TYPE);
+            }
+            selectedSeats.add(seatSelected);
         }
 
         for (Seat seat : selectedSeats) {

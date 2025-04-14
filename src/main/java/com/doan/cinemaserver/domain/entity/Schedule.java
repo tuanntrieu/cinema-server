@@ -5,9 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Table(name = "schedule")
@@ -32,6 +30,9 @@ public class Schedule {
     @ManyToOne()
     @JoinColumn(name="room_id",foreignKey = @ForeignKey(name = "FK_SCHEDULE_ROOM"))
     private Room room;
+
+    @OneToMany(mappedBy = "schedule")
+    private List<Ticket> tickets = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "schedule_seat", joinColumns = @JoinColumn(name = "schedule_id"))

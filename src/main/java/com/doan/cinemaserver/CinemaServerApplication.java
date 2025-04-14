@@ -55,22 +55,22 @@ public class CinemaServerApplication {
             if (!seatPriceRepository.existsAllBySeatType(SeatType.STANDARD)) {
                 seatPriceRepository.save(SeatPrice.builder()
                         .seatType(SeatType.STANDARD)
-                        .weekdayPrice(400000L)
-                        .weekendPrice(600000L)
+                        .weekdayPrice(40000L)
+                        .weekendPrice(60000L)
                         .build());
             }
             if (!seatPriceRepository.existsAllBySeatType(SeatType.VIP)) {
                 seatPriceRepository.save(SeatPrice.builder()
                         .seatType(SeatType.VIP)
-                        .weekdayPrice(500000L)
-                        .weekendPrice(750000L)
+                        .weekdayPrice(50000L)
+                        .weekendPrice(75000L)
                         .build());
             }
             if (!seatPriceRepository.existsAllBySeatType(SeatType.COUPLE)) {
                 seatPriceRepository.save(SeatPrice.builder()
                         .seatType(SeatType.COUPLE)
-                        .weekdayPrice(1000000L)
-                        .weekendPrice(1500000L)
+                        .weekdayPrice(100000L)
+                        .weekendPrice(150000L)
                         .build());
             }
             if(!roomTypeRepository.existsByRoomType(RoomTypeEnum._2D)){
