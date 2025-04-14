@@ -108,6 +108,7 @@ public class TicketServiceImpl implements TicketService {
 
             ticketCombo.setTicket(ticket);
             ticketCombo.setCombo(combo);
+            ticketCombo.setCurrentPrice(combo.getPrice());
             ticketComboRepository.save(ticketCombo);
             ticket.getTicketCombo().add(ticketCombo);
         }

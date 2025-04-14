@@ -25,4 +25,6 @@ public class TicketCombo {
 
     @Column(name = "quantity", nullable = false)
     private int quantity;
+
+    private Long currentPrice;
 }
