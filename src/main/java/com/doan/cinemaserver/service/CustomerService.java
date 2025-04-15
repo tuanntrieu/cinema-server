@@ -7,4 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CustomerService {
     public CommonResponseDto updateCustomer(CustomerDto customerDto);
+    public CommonResponseDto updateCinemaPicked(String username, Long cinemaId) ;
+    public CommonResponseDto loadCinemaByCustomer(String username);
 }

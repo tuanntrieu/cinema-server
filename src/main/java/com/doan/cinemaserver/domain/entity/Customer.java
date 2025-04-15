@@ -37,7 +37,7 @@ public class Customer {
     @JoinColumn(name = "user_id",foreignKey = @ForeignKey(name="FK_CUSTOMER_USER"),nullable = false)
     private User user;
 
-    private String provincePicked;
+    private Long cinemaPicked;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
     @JsonIgnore

@@ -40,7 +40,7 @@ public class SecurityConfig {
             "/api/v1/auth/**",
     };
     private String[] USER_LIST={
-            "/api/v1/customer/**"
+
     };
 
     private String[] ADMIN_LIST={
@@ -51,7 +51,8 @@ public class SecurityConfig {
             "/api/v1/movie/**",
             "/api/v1/ticket/**",
             "/api/v1/combo/**",
-            "/api/v1/food/**"
+            "/api/v1/food/**",
+            "/api/v1/customer/**"
 
     };
     @Bean

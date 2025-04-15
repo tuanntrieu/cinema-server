@@ -16,6 +16,7 @@ public class CommonResponseDto {
 
     public CommonResponseDto(String message) {
         this.message = message;
+        this.data = null;
     }
 
     public CommonResponseDto(String message, Object data) {
