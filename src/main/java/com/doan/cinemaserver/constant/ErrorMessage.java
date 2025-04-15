@@ -71,5 +71,9 @@ public class ErrorMessage {
     public static class Combo{
         public static final String ERR_NOT_FOUND_COMBO = "exception.combo.not.found.id";
     }
+    public static class Food{
+        public static final String ERR_NOT_FOUND_FOOD = "exception.food.not.found.id";
+    }
+
 
 }

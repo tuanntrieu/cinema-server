@@ -24,16 +24,18 @@ public class Combo {
 
     private String name;
 
-    @ElementCollection
-    @CollectionTable(name = "combo_details", joinColumns = @JoinColumn(name = "combo_id"))
-    @MapKeyColumn(name = "product_name")
-    @Column(name = "quantity")
-    private Map<String, Integer> comboDetail = new HashMap<>();
+    private String image;
 
     private Long price;
+
+    private String description;
 
     @OneToMany(mappedBy = "combo")
     @JsonIgnore
     private List<TicketCombo> ticketCombo = new ArrayList<>();
+
+    @OneToMany(mappedBy = "combo",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<ComboDetail> comboDetail = new ArrayList<>();
 
 }

@@ -49,7 +49,10 @@ public class SecurityConfig {
             "/api/v1/schedule/**",
             "/api/v1/room/**",
             "/api/v1/movie/**",
-            "/api/v1/ticket/**"
+            "/api/v1/ticket/**",
+            "/api/v1/combo/**",
+            "/api/v1/food/**"
+
     };
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

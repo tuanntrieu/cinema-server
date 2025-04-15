@@ -48,7 +48,9 @@ public class Ticket extends DateAuditing {
     @JoinColumn(name="schedule_id")
     private Schedule schedule;
 
-    private Long currentPrice;
+    private Long priceSeat;
+
+    private Long priceCombo;
 
     @OneToMany(mappedBy = "ticket")
     @JsonIgnore
