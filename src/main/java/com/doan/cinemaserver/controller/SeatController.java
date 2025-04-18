@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class SeatController {
     private final SeatService seatService;
 
-    @Operation(summary = "API Update Seat Type")
+    @Operation(summary = "API Update Seat Price")
     @PatchMapping(UrlConstant.Seat.UPDATE_SEAT)
     public ResponseEntity<?> updateSeatPrice(@RequestBody UpdateSeatPriceRequestDto requestDto) {
         return VsResponseUtil.success(seatService.updateSeatPrice(requestDto));

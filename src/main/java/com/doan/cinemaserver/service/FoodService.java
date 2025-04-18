@@ -12,5 +12,5 @@ public interface FoodService {
     public CommonResponseDto createFood(String name);
     public CommonResponseDto deleteFood(Long foodId);
     public List<Food> findAllFood();
-    public PaginationResponseDto<Food> findFoodByPage();
+    public PaginationResponseDto<Food> findFoodByPage(String name);
 }

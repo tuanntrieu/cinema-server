@@ -31,8 +31,8 @@ public class FoodController {
     }
     @Operation(summary = "API Get Food By Page")
     @GetMapping(value = UrlConstant.Food.GET_FOOD_PAGE)
-    public ResponseEntity<?> getFoodByPage() {
-        return VsResponseUtil.success(foodService.findFoodByPage());
+    public ResponseEntity<?> getFoodByPage(@RequestParam(required = false) String name) {
+        return VsResponseUtil.success(foodService.findFoodByPage(name));
     }
 
     @Operation(summary = "API Delete Food")

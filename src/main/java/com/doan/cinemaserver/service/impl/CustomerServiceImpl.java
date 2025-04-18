@@ -32,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     public CommonResponseDto updateCustomer(CustomerDto customerDto) {
         User user = userRepository.findByEmail(customerDto.getEmail()).orElseThrow(
-                ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,new String[]{customerDto.getEmail()})
+                ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{customerDto.getEmail()})
         );
 
         Customer customer = customerMapper.toCustomer(customerDto);

@@ -41,6 +41,8 @@ public class UrlConstant {
         public static final String PRE_FIX = "/movie-type";
         public static final String CREATE_TYPE = PRE_FIX + "/create";
         public static final String UPDATE_TYPE = PRE_FIX + "/update" + "/{id}";
+        public static final String GET_MOVIE_TYPE = PRE_FIX + "/get-all";
+        public static final String GET_MOVIE_TYPE_PAGE = PRE_FIX + "/get-all-page";
 
         private MovieType() {
         }

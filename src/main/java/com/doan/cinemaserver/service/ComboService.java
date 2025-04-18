@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ComboService {
     public CommonResponseDto creatCombo(ComboRequestDto comboRequestDto, MultipartFile file);
 
-    public PaginationResponseDto<ComboResponseDto> getAllCombo();
+    public PaginationResponseDto<ComboResponseDto> getAllCombo(String name);
 
 
     public CommonResponseDto deleteCombo(Long id);

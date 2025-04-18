@@ -13,10 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestApiV1
@@ -41,8 +38,8 @@ public class ComboController {
 
     @Operation(summary = "API Get Combo")
     @PostMapping(UrlConstant.Combo.GET_COMBO)
-    public ResponseEntity<?> getCombo()  {
-        return VsResponseUtil.success(comboService.getAllCombo());
+    public ResponseEntity<?> getCombo(@RequestParam(required = false) String name)  {
+        return VsResponseUtil.success(comboService.getAllCombo(name));
     }
 
     @Operation(summary = "API Delete Combo")
