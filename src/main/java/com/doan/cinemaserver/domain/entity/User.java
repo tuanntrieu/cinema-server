@@ -12,7 +12,7 @@ import org.hibernate.annotations.UuidGenerator;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User  {
+public class User {
     @Id
     @UuidGenerator
     @Column(name = "user_id", columnDefinition = "NVARCHAR(64)")
@@ -21,6 +21,8 @@ public class User  {
     private String password;
 
     private String email;
+
+    private Boolean isVerify = Boolean.FALSE;
 
     @JsonIgnore
     @Column(name = "refresh_token", columnDefinition = "LONGTEXT")

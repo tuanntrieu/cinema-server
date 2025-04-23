@@ -13,6 +13,7 @@ public class UrlConstant {
         public static final String SEND_OTP = PRE_FIX + "/send-otp";
         public static final String VERIFY_OTP = PRE_FIX + "/verify-otp";
 
+
         private Auth() {
         }
     }

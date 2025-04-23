@@ -154,6 +154,7 @@ public class AuthServiceImpl implements AuthService {
         User user = User.builder()
                 .email(registerRequestDto.getEmail())
                 .password(passwordEncoder.encode(registerRequestDto.getPassword()))
+                .isVerify(Boolean.FALSE)
                 .role(role)
                 .build();
         userRepository.save(user);
@@ -243,6 +244,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public Boolean verifyOtp(VerifyOtpRequestDto verifyOtpRequestDto, HttpServletRequest request) {
         String token = getJwtFromRequest(request);
         if (token == null) {
@@ -252,6 +254,8 @@ public class AuthServiceImpl implements AuthService {
         if (!emailAuth.equals(verifyOtpRequestDto.getEmail())) {
             throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
         }
+
+
         String email = verifyOtpRequestDto.getEmail();
         String inputOtp = verifyOtpRequestDto.getOtp();
         Boolean isKeyExists = redisTemplate.hasKey(email);
@@ -259,6 +263,7 @@ public class AuthServiceImpl implements AuthService {
             String storedOtp = (String) redisTemplate.opsForValue().get(email);
             if (storedOtp != null && storedOtp.equals(inputOtp)) {
                 redisTemplate.delete(email);
+                userRepository.updateVerifyOtp(verifyOtpRequestDto.getEmail(),Boolean.TRUE);
                 return true;
             }
         }
@@ -266,6 +271,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public CommonResponseDto forgetPassword(ForgetPasswordDto forgetPasswordDto, HttpServletRequest request) {
         String token = getJwtFromRequest(request);
         if (token == null) {
@@ -278,11 +284,14 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(forgetPasswordDto.getEmail()).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{forgetPasswordDto.getEmail()})
         );
-
+        if(user.getIsVerify().equals(Boolean.FALSE)){
+            throw new InvalidException(ErrorMessage.Auth.ERR_INVALID_VERIFY_STATUS);
+        }
         if (!forgetPasswordDto.getPassword().equals(forgetPasswordDto.getConfirmPassword())) {
             throw new DataIntegrityViolationException(ErrorMessage.INVALID_REPEAT_PASSWORD);
         }
         user.setPassword(passwordEncoder.encode(forgetPasswordDto.getPassword()));
+        user.setIsVerify(Boolean.FALSE);
         userRepository.save(user);
 
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.CHANGE_PASSWORD_SUCCESS, null));

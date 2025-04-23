@@ -35,6 +35,7 @@ public class ErrorMessage {
         public static final String ERR_INCORRECT_PASSWORD ="exception.auth.incorrect.password";
         public static final String ERR_NOT_EXIST_EMAIL ="exception.auth.not.exist.email";
         public static final String ERR_INCORRECT_OTP="exception.auth.incorrect.otp";
+        public static final String ERR_INVALID_VERIFY_STATUS = "exception.auth.invalid.verify_status";
     }
     public static class Role{
         public static final String ERR_NOT_FOUND_ROLE = "exception.role.not.found.code";
