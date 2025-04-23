@@ -41,4 +41,10 @@ public class CinemaController {
         return VsResponseUtil.success(cinemaService.loadCinemasByProvince(province));
     }
 
+    @Operation(summary = "API Load All Cinema")
+    @GetMapping(UrlConstant.Cinema.LOAD_ALL_CINEMA)
+    public ResponseEntity<?> loadAllCinema(){
+        return VsResponseUtil.success(cinemaService.loadAllCinemas());
+    }
+
 }

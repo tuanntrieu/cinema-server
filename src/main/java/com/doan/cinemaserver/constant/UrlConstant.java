@@ -32,6 +32,7 @@ public class UrlConstant {
         public static final String CREATE_CINEMA = PRE_FIX + "/create";
         public static final String LOAD_ALL_PROVINCE = PRE_FIX + "/province";
         public static final String LOAD_CINEMA_BY_PROVINCE = PRE_FIX + "/load-by-province";
+        public static final String LOAD_ALL_CINEMA = PRE_FIX + "/load-all-cinema";
 
         private Cinema() {
         }

@@ -14,7 +14,10 @@ public interface CinemaRepository extends JpaRepository<Cinema, Long> {
     @Query(value ="select distinct province from cinemas",nativeQuery = true)
     List<String> loadProvince();
 
-    @Query(value = "select new com.doan.cinemaserver.domain.dto.cinema.CinemaResponseDto(c.id,c.cinemaName) from Cinema c where c.province =?1",nativeQuery = false)
+    @Query(value = "select new com.doan.cinemaserver.domain.dto.cinema.CinemaResponseDto(c.id,c.cinemaName,c.province) from Cinema c where c.province =?1",nativeQuery = false)
     List<CinemaResponseDto> loadNameCinemaByProvince(String province);
+
+    @Query("select new com.doan.cinemaserver.domain.dto.cinema.CinemaResponseDto(c.id,c.cinemaName,c.province) from Cinema c")
+    List<CinemaResponseDto> loadAllCinemas();
 
 }

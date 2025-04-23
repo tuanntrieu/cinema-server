@@ -20,7 +20,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CinemaServiceImpl implements CinemaService {
-    private final CinemaRepository repository;
     private final CinemaMapper mapper;
     private final MessageSourceUtil messageSourceUtil;
     private final CinemaRepository cinemaRepository;
@@ -56,6 +55,11 @@ public class CinemaServiceImpl implements CinemaService {
     @Override
     public List<CinemaResponseDto> loadCinemasByProvince(String province) {
         return cinemaRepository.loadNameCinemaByProvince(province);
+    }
+
+    @Override
+    public List<CinemaResponseDto> loadAllCinemas() {
+        return cinemaRepository.loadAllCinemas();
     }
 
 

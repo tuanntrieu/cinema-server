@@ -13,4 +13,5 @@ public interface CinemaService {
     public CommonResponseDto updateCinema(Long cinemaId,CinemaRequestDto cinemaRequestDto);
     public List<String> loadProvince();
     public List<CinemaResponseDto>loadCinemasByProvince(String province);
+    public List<CinemaResponseDto> loadAllCinemas();
 }

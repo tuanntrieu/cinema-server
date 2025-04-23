@@ -25,7 +25,6 @@ import com.doan.cinemaserver.util.SendMailUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,10 +38,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-
-import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -59,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
     private final SendMailUtil sendMailUtil;
-    private final RedisTemplate<String,Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
@@ -71,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
             String access_token = jwtTokenProvider.generateToken(userPrincipal, Boolean.FALSE);
             String refresh_token = jwtTokenProvider.generateToken(userPrincipal, Boolean.TRUE);
             User user = userRepository.findByEmail(loginRequestDto.getUsername()).orElseThrow(
-                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,new String[]{loginRequestDto.getUsername()})
+                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{loginRequestDto.getUsername()})
             );
             user.setRefreshToken(refresh_token);
             userRepository.save(user);
@@ -100,32 +98,32 @@ public class AuthServiceImpl implements AuthService {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             String access_token = bearerToken.substring(7);
             jwtTokenService.saveInvalidToken(access_token);
-            String username= jwtTokenProvider.extractSubjectFromJwt(access_token);
+            String username = jwtTokenProvider.extractSubjectFromJwt(access_token);
             User user = userRepository.findByEmail(username).orElseThrow(
-                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,new String[]{username})
+                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{username})
             );
             jwtTokenService.saveInvalidToken(user.getRefreshToken());
 
         }
         SecurityContextLogoutHandler logout = new SecurityContextLogoutHandler();
         logout.logout(request, response, authentication);
-        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.LOGOUT_SUCCESS,null));
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.LOGOUT_SUCCESS, null));
 
     }
 
     @Override
     public TokenRefreshResponseDto refreshToken(TokenRefreshRequestDto tokenRefreshRequestDto) {
-        String token=tokenRefreshRequestDto.getRefreshToken();
-        if(StringUtils.hasText(token)&& jwtTokenProvider.validateToken(token)&& !jwtTokenService.isInvalidToken(token)){
-            String username= jwtTokenProvider.extractSubjectFromJwt(token);
+        String token = tokenRefreshRequestDto.getRefreshToken();
+        if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token) && !jwtTokenService.isInvalidToken(token)) {
+            String username = jwtTokenProvider.extractSubjectFromJwt(token);
             UserPrincipal userPrincipal = (UserPrincipal) customUserDetailsService.loadUserByUsername(username);
 
-            String accessToken=jwtTokenProvider.generateToken(userPrincipal, Boolean.FALSE);
-            String refreshToken=jwtTokenProvider.generateToken(userPrincipal, Boolean.TRUE);
+            String accessToken = jwtTokenProvider.generateToken(userPrincipal, Boolean.FALSE);
+            String refreshToken = jwtTokenProvider.generateToken(userPrincipal, Boolean.TRUE);
 
             jwtTokenService.saveInvalidToken(token);
             User user = userRepository.findByEmail(username).orElseThrow(
-                    ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,new String[]{username})
+                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{username})
             );
             user.setRefreshToken(refreshToken);
             userRepository.save(user);
@@ -134,8 +132,7 @@ public class AuthServiceImpl implements AuthService {
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();
-        }
-        else {
+        } else {
             throw new InvalidException(ErrorMessage.Auth.ERR_INVALID_REFRESH_TOKEN);
         }
 
@@ -144,15 +141,15 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public CommonResponseDto register(RegisterRequestDto registerRequestDto) {
-        Boolean existEmail=userRepository.existsByEmail(registerRequestDto.getEmail());
-        if(existEmail){
+        Boolean existEmail = userRepository.existsByEmail(registerRequestDto.getEmail());
+        if (existEmail) {
             throw new DataIntegrityViolationException(ErrorMessage.Auth.ERR_EXIST_EMAIL);
         }
-        if(!registerRequestDto.getPassword().equals(registerRequestDto.getConfirmPassword())){
+        if (!registerRequestDto.getPassword().equals(registerRequestDto.getConfirmPassword())) {
             throw new DataIntegrityViolationException(ErrorMessage.INVALID_REPEAT_PASSWORD);
         }
         Role role = roleRepository.findByCode(RoleConstant.ROLE_USER).orElseThrow(
-                ()->new NotFoundException(ErrorMessage.Role.ERR_NOT_FOUND_ROLE,new String[]{String.valueOf(RoleConstant.ROLE_USER)})
+                () -> new NotFoundException(ErrorMessage.Role.ERR_NOT_FOUND_ROLE, new String[]{String.valueOf(RoleConstant.ROLE_USER)})
         );
         User user = User.builder()
                 .email(registerRequestDto.getEmail())
@@ -167,40 +164,58 @@ public class AuthServiceImpl implements AuthService {
                         .build()
         );
 
-        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.REGISTER_SUCCESS,null));
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.REGISTER_SUCCESS, null));
 
     }
 
     @Override
-    public CommonResponseDto changePassword(ChangePasswordRequestDto requestDto) {
-        User user= userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
-                ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,new String[]{requestDto.getEmail()})
+    public CommonResponseDto changePassword(ChangePasswordRequestDto requestDto, HttpServletRequest request) {
+
+        String token = getJwtFromRequest(request);
+        if (token == null) {
+            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+        }
+        String email = jwtTokenProvider.extractSubjectFromJwt(token);
+        if (!email.equals(requestDto.getEmail())) {
+            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+        }
+
+
+        User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{requestDto.getEmail()})
         );
 
-        Boolean isCorrectPassword=passwordEncoder.matches(requestDto.getOldPassword(),user.getPassword());
+        boolean isCorrectPassword = passwordEncoder.matches(requestDto.getOldPassword(), user.getPassword());
 
-        if(!isCorrectPassword){
+        if (!isCorrectPassword) {
             throw new DataIntegrityViolationException(ErrorMessage.Auth.ERR_INCORRECT_PASSWORD);
         }
 
-        if(!requestDto.getPassword().equals(requestDto.getConfirmPassword())){
+        if (!requestDto.getPassword().equals(requestDto.getConfirmPassword())) {
             throw new DataIntegrityViolationException(ErrorMessage.INVALID_REPEAT_PASSWORD);
         }
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         userRepository.save(user);
 
-        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.CHANGE_PASSWORD_SUCCESS,null));
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.CHANGE_PASSWORD_SUCCESS, null));
     }
 
     @Override
-    public CommonResponseDto sendOtp(SendOtpRequestDto sendOtpRequestDto) {
-
-        if(!userRepository.existsByEmail(sendOtpRequestDto.getEmail())){
-            throw new NotFoundException(ErrorMessage.Auth.ERR_NOT_EXIST_EMAIL,null);
+    public CommonResponseDto sendOtp(SendOtpRequestDto sendOtpRequestDto, HttpServletRequest request) {
+        String token = getJwtFromRequest(request);
+        if (token == null) {
+            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+        }
+        String email = jwtTokenProvider.extractSubjectFromJwt(token);
+        if (!email.equals(sendOtpRequestDto.getEmail())) {
+            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+        }
+        if (!userRepository.existsByEmail(sendOtpRequestDto.getEmail())) {
+            throw new NotFoundException(ErrorMessage.Auth.ERR_NOT_EXIST_EMAIL, null);
         }
 
-        User user= userRepository.findByEmail(sendOtpRequestDto.getEmail()).orElseThrow(
-                ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,new String[]{sendOtpRequestDto.getEmail()})
+        User user = userRepository.findByEmail(sendOtpRequestDto.getEmail()).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{sendOtpRequestDto.getEmail()})
         );
         SecureRandom secureRandom = new SecureRandom();
         String randomNumber = String.format("%06d", secureRandom.nextInt(1000000));
@@ -219,17 +234,24 @@ public class AuthServiceImpl implements AuthService {
             log.error(e.getMessage());
         }
 
-        if(redisTemplate.hasKey(user.getEmail())){
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(user.getEmail()))) {
             redisTemplate.delete(user.getEmail());
         }
         redisTemplate.opsForValue().set(user.getEmail(), randomNumber, 2, TimeUnit.MINUTES);
 
-
-        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.SEND_OTP_SUCCESS,null));
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.SEND_OTP_SUCCESS, null));
     }
 
     @Override
-    public Boolean verifyOtp(VerifyOtpRequestDto verifyOtpRequestDto) {
+    public Boolean verifyOtp(VerifyOtpRequestDto verifyOtpRequestDto, HttpServletRequest request) {
+        String token = getJwtFromRequest(request);
+        if (token == null) {
+            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+        }
+        String emailAuth = jwtTokenProvider.extractSubjectFromJwt(token);
+        if (!emailAuth.equals(verifyOtpRequestDto.getEmail())) {
+            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+        }
         String email = verifyOtpRequestDto.getEmail();
         String inputOtp = verifyOtpRequestDto.getOtp();
         Boolean isKeyExists = redisTemplate.hasKey(email);
@@ -244,18 +266,34 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public CommonResponseDto forgetPassword(ForgetPasswordDto forgetPasswordDto) {
-        User user= userRepository.findByEmail(forgetPasswordDto.getEmail()).orElseThrow(
-                    ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,new String[]{forgetPasswordDto.getEmail()})
+    public CommonResponseDto forgetPassword(ForgetPasswordDto forgetPasswordDto, HttpServletRequest request) {
+        String token = getJwtFromRequest(request);
+        if (token == null) {
+            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+        }
+        String email = jwtTokenProvider.extractSubjectFromJwt(token);
+        if (!email.equals(forgetPasswordDto.getEmail())) {
+            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
+        }
+        User user = userRepository.findByEmail(forgetPasswordDto.getEmail()).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{forgetPasswordDto.getEmail()})
         );
 
-        if(!forgetPasswordDto.getPassword().equals(forgetPasswordDto.getConfirmPassword())){
+        if (!forgetPasswordDto.getPassword().equals(forgetPasswordDto.getConfirmPassword())) {
             throw new DataIntegrityViolationException(ErrorMessage.INVALID_REPEAT_PASSWORD);
         }
         user.setPassword(passwordEncoder.encode(forgetPasswordDto.getPassword()));
         userRepository.save(user);
 
-        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.CHANGE_PASSWORD_SUCCESS,null));
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.CHANGE_PASSWORD_SUCCESS, null));
+    }
+
+    private String getJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 
 }

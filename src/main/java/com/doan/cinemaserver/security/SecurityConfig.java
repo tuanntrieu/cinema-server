@@ -16,6 +16,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,37 +34,40 @@ public class SecurityConfig {
     private final CustomUserDetailsServiceImpl userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtEntryPoint jwtEntryPoint;
-    private String[] AUTH_WHITELIST = {
+    private String[] WHITELIST = {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
-            "/api/v1/auth/**",
+            "/api/v1/auth/login",
+            "/api/v1/auth/register",
+            "/api/v1/cinema/**"
     };
-    private String[] USER_LIST={
 
-    };
-
-    private String[] ADMIN_LIST={
-            "/api/v1/cinema/**",
-            "/api/v1/movie-type/**",
-            "/api/v1/schedule/**",
-            "/api/v1/room/**",
-            "/api/v1/movie/**",
-            "/api/v1/ticket/**",
-            "/api/v1/combo/**",
-            "/api/v1/food/**",
-            "/api/v1/customer/**"
-
-    };
+    //    private String[] USER_LIST={
+//
+//    };
+//
+//    private String[] ADMIN_LIST={
+//            "/api/v1/cinema/**",
+//            "/api/v1/movie-type/**",
+//            "/api/v1/schedule/**",
+//            "/api/v1/room/**",
+//            "/api/v1/movie/**",
+//            "/api/v1/ticket/**",
+//            "/api/v1/combo/**",
+//            "/api/v1/food/**",
+//            "/api/v1/customer/**"
+//
+//    };
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> corsConfiguration()))
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .requestMatchers(USER_LIST).hasRole("USER")
-                        .requestMatchers(ADMIN_LIST).hasRole("ADMIN")
+                        .requestMatchers(WHITELIST).permitAll()
+                        //    .requestMatchers(USER_LIST).hasRole("USER")
+                        //    .requestMatchers(ADMIN_LIST).hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
