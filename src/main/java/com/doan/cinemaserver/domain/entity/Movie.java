@@ -30,6 +30,8 @@ public class Movie extends DateAuditing {
 
     private String image;
 
+    private String director;
+
     @Lob
     private String description;
 

@@ -103,9 +103,7 @@ public class RoomServiceImpl implements RoomService {
         Room room = roomRepository.findById(roomId).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(roomId)})
         );
-        room.getSeats().forEach(seat -> {
-            seatRepository.delete(seat);
-        });
+        seatRepository.deleteAll(room.getSeats());
         roomRepository.delete(room);
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.DELETE_SUCCESS, null));
     }

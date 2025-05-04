@@ -42,4 +42,10 @@ public class CustomerController {
     public ResponseEntity<?> getCinemaByCustomer(@RequestParam @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD) String username){
         return VsResponseUtil.success(customerService.loadCinemaByCustomer(username));
     }
+
+    @Operation(summary = "API Get Customer Infor")
+    @GetMapping(UrlConstant.Customer.GET_CUSTOMER_INFOR)
+    public ResponseEntity<?> getCustomerInfor(@RequestParam @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD) String email){
+        return VsResponseUtil.success(customerService.getCustomerInfor(email));
+    }
 }

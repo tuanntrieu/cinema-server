@@ -62,7 +62,7 @@ public class TicketServiceImpl implements TicketService {
         Cinema cinema = room.getCinema();
 
         Customer customer = customerRepository.findById(requestDto.getCustomerId()).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Customer.ERR_NOT_FOUND_CUSTOMER, new String[]{String.valueOf(requestDto.getCustomerId())})
+                () -> new NotFoundException(ErrorMessage.Customer.ERR_NOT_FOUND_ID, new String[]{String.valueOf(requestDto.getCustomerId())})
         );
 
         List<Seat> seats = Arrays.stream(requestDto.getSeatId())
@@ -131,7 +131,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public PaginationResponseDto<TicketResponseDto> getTickets(TicketRequestDto requestDto) {
         Customer customer = customerRepository.findById(requestDto.getCustomerId())
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Customer.ERR_NOT_FOUND_CUSTOMER, new String[]{requestDto.getCustomerId().toString()}));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Customer.ERR_NOT_FOUND_ID, new String[]{requestDto.getCustomerId().toString()}));
         Sort sort = requestDto.getIsAscending() != null && requestDto.getIsAscending()
                 ? Sort.by(requestDto.getSortBy()).ascending()
                 : Sort.by(requestDto.getSortBy()).descending();

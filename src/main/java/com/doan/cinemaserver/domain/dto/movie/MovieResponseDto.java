@@ -21,4 +21,5 @@ public class MovieResponseDto {
     private Date endDate;
     private String image;
     private Boolean isSub;
+    private String director;
 }

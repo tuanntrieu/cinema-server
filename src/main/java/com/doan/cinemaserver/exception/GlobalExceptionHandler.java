@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<RestData<?>> handlerInvalidException(InvalidException ex) {
         String errorMessage = messageSource.getMessage(ex.getMessage(), ex.getParams());
         log.error(errorMessage, ex);
-        return VsResponseUtil.error(HttpStatus.BAD_REQUEST, errorMessage);
+        return VsResponseUtil.error(ex.getStatus(), errorMessage);
     }
 
     @ExceptionHandler(ForbiddenException.class)
@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+   // @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<RestData<?>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         String message = messageSource.getMessage(ex.getMessage(), ex.getParams());
         log.error(message, ex);

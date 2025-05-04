@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
-    private final SeatRepository seatRepository;
     private final MovieMapper movieMapper;
     private final CinemaRepository cinemaRepository;
     private final MovieTypeRepository movieTypeRepository;
@@ -121,6 +120,7 @@ public class MovieServiceImpl implements MovieService {
                             .duration(movie.getDuration())
                             .language(movie.getLanguage())
                             .image(movie.getImage())
+                            .director(movie.getDirector())
                             .type(types)
                             .actors(movie.getActors())
                             .endDate(movie.getEndDate())
@@ -129,11 +129,9 @@ public class MovieServiceImpl implements MovieService {
                 }
         ).collect(Collectors.toList());
 
-        PaginationResponseDto<MovieResponseDto> response = new PaginationResponseDto<>(
+        return new PaginationResponseDto<>(
                 movies.getTotalElements(),movies.getTotalPages(),movies.getNumber(),movies.getNumberOfElements(),sort.toString(),moviesRep
         );
-
-        return response;
     }
 
     @Override
@@ -164,6 +162,7 @@ public class MovieServiceImpl implements MovieService {
                             .language(movie.getLanguage())
                             .image(movie.getImage())
                             .type(types)
+                            .director(movie.getDirector())
                             .actors(movie.getActors())
                             .endDate(movie.getEndDate())
                             .releaseDate(movie.getReleaseDate())
@@ -171,10 +170,9 @@ public class MovieServiceImpl implements MovieService {
                 }
         ).collect(Collectors.toList());
 
-        PaginationResponseDto<MovieResponseDto> response = new PaginationResponseDto<>(
+        return new PaginationResponseDto<>(
                 movies.getTotalElements(),movies.getTotalPages(),movies.getNumber(),movies.getNumberOfElements(),sort.toString(),moviesRep
         );
-        return response;
     }
 
     private LocalDate toLocalDate(Date date) {

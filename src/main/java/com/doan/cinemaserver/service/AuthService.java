@@ -21,7 +21,7 @@ public interface AuthService {
 
     public CommonResponseDto register(RegisterRequestDto registerRequestDto);
     public CommonResponseDto changePassword(ChangePasswordRequestDto requestDto, HttpServletRequest request);
-    public CommonResponseDto sendOtp(SendOtpRequestDto sendOtpRequestDto, HttpServletRequest request);
-    public Boolean verifyOtp(VerifyOtpRequestDto verifyOtpRequestDto, HttpServletRequest request);
-    public CommonResponseDto forgetPassword(ForgetPasswordDto forgetPasswordDto, HttpServletRequest request);
+    public CommonResponseDto sendOtp(SendOtpRequestDto sendOtpRequestDto);
+    public Boolean verifyOtp(VerifyOtpRequestDto verifyOtpRequestDto);
+    public CommonResponseDto forgetPassword(ForgetPasswordDto forgetPasswordDto);
 }

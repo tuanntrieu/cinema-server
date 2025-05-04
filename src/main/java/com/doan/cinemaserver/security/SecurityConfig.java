@@ -40,6 +40,10 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/api/v1/auth/login",
             "/api/v1/auth/register",
+            "/api/v1/auth/refresh-token",
+            "/api/v1/auth/send-otp",
+            "/api/v1/auth/verify-otp",
+            "/api/v1/auth/forget-password",
             "/api/v1/cinema/**"
     };
 

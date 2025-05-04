@@ -28,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -63,13 +65,12 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(), loginRequestDto.getPassword()));
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
             String access_token = jwtTokenProvider.generateToken(userPrincipal, Boolean.FALSE);
             String refresh_token = jwtTokenProvider.generateToken(userPrincipal, Boolean.TRUE);
             User user = userRepository.findByEmail(loginRequestDto.getUsername()).orElseThrow(
-                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{loginRequestDto.getUsername()})
+                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{loginRequestDto.getUsername()})
             );
             user.setRefreshToken(refresh_token);
             userRepository.save(user);
@@ -78,13 +79,8 @@ public class AuthServiceImpl implements AuthService {
                     .refresh_token(refresh_token)
                     .username(userPrincipal.getUsername())
                     .build();
-        } catch (AuthenticationException e) {
-            throw new UnauthorizedException(ErrorMessage.Auth.ERR_INCORRECT_USERNAME_PASSWORD);
-        } catch (UnauthorizedException e) {
-            throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(ErrorMessage.ERR_EXCEPTION_GENERAL);
+        } catch (InternalAuthenticationServiceException | BadCredentialsException e) {
+            throw new InvalidException(ErrorMessage.Auth.ERR_INCORRECT_USERNAME_PASSWORD);
         }
     }
 
@@ -100,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
             jwtTokenService.saveInvalidToken(access_token);
             String username = jwtTokenProvider.extractSubjectFromJwt(access_token);
             User user = userRepository.findByEmail(username).orElseThrow(
-                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{username})
+                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{username})
             );
             jwtTokenService.saveInvalidToken(user.getRefreshToken());
 
@@ -123,7 +119,7 @@ public class AuthServiceImpl implements AuthService {
 
             jwtTokenService.saveInvalidToken(token);
             User user = userRepository.findByEmail(username).orElseThrow(
-                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{username})
+                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{username})
             );
             user.setRefreshToken(refreshToken);
             userRepository.save(user);
@@ -149,7 +145,7 @@ public class AuthServiceImpl implements AuthService {
             throw new DataIntegrityViolationException(ErrorMessage.INVALID_REPEAT_PASSWORD);
         }
         Role role = roleRepository.findByCode(RoleConstant.ROLE_USER).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Role.ERR_NOT_FOUND_ROLE, new String[]{String.valueOf(RoleConstant.ROLE_USER)})
+                () -> new NotFoundException(ErrorMessage.Role.ERR_NOT_FOUND_ROLE, (Object) new String[]{String.valueOf(RoleConstant.ROLE_USER)})
         );
         User user = User.builder()
                 .email(registerRequestDto.getEmail())
@@ -202,21 +198,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public CommonResponseDto sendOtp(SendOtpRequestDto sendOtpRequestDto, HttpServletRequest request) {
-        String token = getJwtFromRequest(request);
-        if (token == null) {
-            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
-        }
-        String email = jwtTokenProvider.extractSubjectFromJwt(token);
-        if (!email.equals(sendOtpRequestDto.getEmail())) {
-            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
-        }
+    public CommonResponseDto sendOtp(SendOtpRequestDto sendOtpRequestDto) {
         if (!userRepository.existsByEmail(sendOtpRequestDto.getEmail())) {
-            throw new NotFoundException(ErrorMessage.Auth.ERR_NOT_EXIST_EMAIL, null);
+            throw new InvalidException(ErrorMessage.Auth.ERR_NOT_EXIST_EMAIL);
         }
 
         User user = userRepository.findByEmail(sendOtpRequestDto.getEmail()).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{sendOtpRequestDto.getEmail()})
+                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{sendOtpRequestDto.getEmail()})
         );
         SecureRandom secureRandom = new SecureRandom();
         String randomNumber = String.format("%06d", secureRandom.nextInt(1000000));
@@ -245,17 +233,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public Boolean verifyOtp(VerifyOtpRequestDto verifyOtpRequestDto, HttpServletRequest request) {
-        String token = getJwtFromRequest(request);
-        if (token == null) {
-            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
-        }
-        String emailAuth = jwtTokenProvider.extractSubjectFromJwt(token);
-        if (!emailAuth.equals(verifyOtpRequestDto.getEmail())) {
-            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
-        }
-
-
+    public Boolean verifyOtp(VerifyOtpRequestDto verifyOtpRequestDto) {
         String email = verifyOtpRequestDto.getEmail();
         String inputOtp = verifyOtpRequestDto.getOtp();
         Boolean isKeyExists = redisTemplate.hasKey(email);
@@ -272,17 +250,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public CommonResponseDto forgetPassword(ForgetPasswordDto forgetPasswordDto, HttpServletRequest request) {
-        String token = getJwtFromRequest(request);
-        if (token == null) {
-            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
-        }
-        String email = jwtTokenProvider.extractSubjectFromJwt(token);
-        if (!email.equals(forgetPasswordDto.getEmail())) {
-            throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED);
-        }
+    public CommonResponseDto forgetPassword(ForgetPasswordDto forgetPasswordDto) {
         User user = userRepository.findByEmail(forgetPasswordDto.getEmail()).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{forgetPasswordDto.getEmail()})
+                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{forgetPasswordDto.getEmail()})
         );
         if(user.getIsVerify().equals(Boolean.FALSE)){
             throw new InvalidException(ErrorMessage.Auth.ERR_INVALID_VERIFY_STATUS);
@@ -303,6 +273,6 @@ public class AuthServiceImpl implements AuthService {
             return bearerToken.substring(7);
         }
         return null;
-    }
+    }   
 
 }

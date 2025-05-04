@@ -1,8 +1,11 @@
 package com.doan.cinemaserver.security.jwt;
 
+import com.doan.cinemaserver.constant.ErrorMessage;
+import com.doan.cinemaserver.exception.InvalidException;
 import com.doan.cinemaserver.security.UserPrincipal;
 import com.doan.cinemaserver.service.JwtTokenService;
 import com.doan.cinemaserver.service.impl.CustomUserDetailsServiceImpl;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,10 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
             }
         } catch (Exception ex) {
-            log.error("Could not set user authentication in security context", ex);
+          log.error("Could not set user authentication in security context", ex);
         }
         filterChain.doFilter(request, response);
     }

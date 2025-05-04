@@ -38,6 +38,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerMapper.toCustomer(customerDto);
         customer.setId(user.getCustomer().getId());
         customer.setUser(user);
+        customer.setCinemaPicked(user.getCustomer().getCinemaPicked());
         customerRepository.save(customer);
 
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS,null));
@@ -63,14 +64,14 @@ public class CustomerServiceImpl implements CustomerService {
     public CommonResponseDto loadCinemaByCustomer(String username) {
 
         User user = userRepository.findByEmail(username).orElseThrow(
-                ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,new String[]{username})
+                ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{username})
         );
         Long cinemaId = user.getCustomer().getCinemaPicked();
         if (cinemaId == null) {
             return new CommonResponseDto("Chưa chọn rạp");
         }else{
             Cinema cinema = cinemaRepository.findById(cinemaId).orElseThrow(
-                    ()-> new NotFoundException(ErrorMessage.Cinema.ERR_NOT_FOUND_CINEMA,new String[]{cinemaId.toString()})
+                    ()-> new NotFoundException(ErrorMessage.Cinema.ERR_NOT_FOUND_CINEMA, (Object) new String[]{cinemaId.toString()})
             );
             CinemaResponseDto cinemaResponseDto = CinemaResponseDto.builder()
                     .id(cinema.getId())
@@ -80,6 +81,13 @@ public class CustomerServiceImpl implements CustomerService {
 
         }
 
+    }
+
+    @Override
+    public Customer getCustomerInfor(String email) {
+        return customerRepository.findByEmail(email).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Customer.ERR_NOT_FOUND_EMAIL, (Object) new String[]{email})
+        );
     }
 
 

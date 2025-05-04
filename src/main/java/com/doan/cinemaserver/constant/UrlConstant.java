@@ -20,6 +20,7 @@ public class UrlConstant {
 
     public static class Customer {
         public static final String PRE_FIX = "/customer";
+        public static final String GET_CUSTOMER_INFOR = PRE_FIX;
         public static final String UPDATE_CUSTOMER = PRE_FIX + "/update";
         public static final String UPDATE_CUSTOMER_CINEMA = PRE_FIX + "/update-cinema";
         public static final String GET_CUSTOMER_CINEMA = PRE_FIX + "/get-cinema";

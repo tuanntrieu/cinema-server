@@ -26,6 +26,9 @@ public class MovieRequestDto {
     @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
     private String actors;
 
+    @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
+    private String director;
+
     private int duration = CommonConstant.ZERO_INT_VALUE;
 
     @Lob

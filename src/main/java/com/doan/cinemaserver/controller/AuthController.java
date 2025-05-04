@@ -66,20 +66,20 @@ public class AuthController {
 
     @PostMapping(UrlConstant.Auth.SEND_OTP)
     @Operation(summary = "API Send Otp")
-    public ResponseEntity<?> sendOtp(@Valid @RequestBody SendOtpRequestDto requestDto, HttpServletRequest request) {
-        return VsResponseUtil.success(authService.sendOtp(requestDto, request));
+    public ResponseEntity<?> sendOtp(@Valid @RequestBody SendOtpRequestDto requestDto) {
+        return VsResponseUtil.success(authService.sendOtp(requestDto));
     }
 
     @PostMapping(UrlConstant.Auth.VERIFY_OTP)
     @Operation(summary = "API Verify Otp")
-    public ResponseEntity<?> verifyOtp(@Valid @RequestBody VerifyOtpRequestDto requestDto, HttpServletRequest request) {
-        return VsResponseUtil.success(authService.verifyOtp(requestDto, request));
+    public ResponseEntity<?> verifyOtp(@Valid @RequestBody VerifyOtpRequestDto requestDto) {
+        return VsResponseUtil.success(authService.verifyOtp(requestDto));
     }
 
     @PatchMapping(UrlConstant.Auth.FORGET_PASSWORD)
     @Operation(summary = "API Forget Password")
-    public ResponseEntity<?> forgetPassword(@Valid @RequestBody ForgetPasswordDto requestDto, HttpServletRequest request) {
-        return VsResponseUtil.success(authService.forgetPassword(requestDto, request));
+    public ResponseEntity<?> forgetPassword(@Valid @RequestBody ForgetPasswordDto requestDto) {
+        return VsResponseUtil.success(authService.forgetPassword(requestDto));
     }
 
 

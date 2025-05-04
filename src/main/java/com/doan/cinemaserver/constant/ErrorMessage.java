@@ -19,13 +19,17 @@ public class ErrorMessage {
     public static final String INVALID_DATETIME = "invalid.datetime_format";
     public static final String INVALID_REPEAT_PASSWORD = "invalid.password-repeat";
 
+    public static final String INVALID_TOKEN_EXPIRED = "invalid.token-expired";
+    public static final String INVALID_TOKEN = "exception.auth.invalid.token";
+
     public static class User{
         public static final String ERR_NOT_FOUND_USERNAME = "exception.user.not.found.username";
         public static final String ERR_NOT_FOUND_ID = "exception.user.not.found.id";
     }
 
     public static class Customer{
-        public static final String ERR_NOT_FOUND_CUSTOMER = "exception.customer.not.found.id";
+        public static final String ERR_NOT_FOUND_ID = "exception.customer.not.found.id";
+        public static final String ERR_NOT_FOUND_EMAIL = "exception.customer.not.found.email";
     }
 
     public static class Auth{
