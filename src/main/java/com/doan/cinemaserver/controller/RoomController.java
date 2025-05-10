@@ -37,7 +37,7 @@ public class RoomController {
         return VsResponseUtil.success(roomService.updateRoomSurcharge(requestDto));
     }
 
-    @Operation(summary = "API Update Delete Room")
+    @Operation(summary = "API Delete Room")
     @DeleteMapping(UrlConstant.Room.DELETE_ROOM)
     public ResponseEntity<?> deleteRoom(@PathVariable(name = "id") Long id) {
         return VsResponseUtil.success(roomService.deleteRoom(id));

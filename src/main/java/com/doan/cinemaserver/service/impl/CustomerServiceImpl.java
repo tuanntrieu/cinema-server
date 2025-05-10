@@ -32,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     public CommonResponseDto updateCustomer(CustomerDto customerDto) {
         User user = userRepository.findByEmail(customerDto.getEmail()).orElseThrow(
-                ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{customerDto.getEmail()})
+                ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, new String[]{customerDto.getEmail()})
         );
 
         Customer customer = customerMapper.toCustomer(customerDto);
@@ -64,14 +64,14 @@ public class CustomerServiceImpl implements CustomerService {
     public CommonResponseDto loadCinemaByCustomer(String username) {
 
         User user = userRepository.findByEmail(username).orElseThrow(
-                ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{username})
+                ()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,  new String[]{username})
         );
         Long cinemaId = user.getCustomer().getCinemaPicked();
         if (cinemaId == null) {
             return new CommonResponseDto("Chưa chọn rạp");
         }else{
             Cinema cinema = cinemaRepository.findById(cinemaId).orElseThrow(
-                    ()-> new NotFoundException(ErrorMessage.Cinema.ERR_NOT_FOUND_CINEMA, (Object) new String[]{cinemaId.toString()})
+                    ()-> new NotFoundException(ErrorMessage.Cinema.ERR_NOT_FOUND_CINEMA, new String[]{cinemaId.toString()})
             );
             CinemaResponseDto cinemaResponseDto = CinemaResponseDto.builder()
                     .id(cinema.getId())
@@ -86,7 +86,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer getCustomerInfor(String email) {
         return customerRepository.findByEmail(email).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Customer.ERR_NOT_FOUND_EMAIL, (Object) new String[]{email})
+                () -> new NotFoundException(ErrorMessage.Customer.ERR_NOT_FOUND_EMAIL, new String[]{email})
         );
     }
 

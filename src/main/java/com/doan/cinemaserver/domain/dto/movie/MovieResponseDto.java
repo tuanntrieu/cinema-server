@@ -22,4 +22,6 @@ public class MovieResponseDto {
     private String image;
     private Boolean isSub;
     private String director;
+    private int ageLimit;
+    private String trailer;
 }

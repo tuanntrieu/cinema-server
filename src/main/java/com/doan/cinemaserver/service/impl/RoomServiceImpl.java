@@ -101,7 +101,7 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     public CommonResponseDto deleteRoom(long roomId) {
         Room room = roomRepository.findById(roomId).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(roomId)})
+                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM,  new String[]{String.valueOf(roomId)})
         );
         seatRepository.deleteAll(room.getSeats());
         roomRepository.delete(room);
@@ -112,7 +112,7 @@ public class RoomServiceImpl implements RoomService {
     public RoomOrderResponseDto getRoomOrder(Long scheduleId) {
 
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Schedule.ERR_NOT_FOUND_SCHEDULE, new String[]{String.valueOf(scheduleId)})
+                () -> new NotFoundException(ErrorMessage.Schedule.ERR_NOT_FOUND_SCHEDULE,  new String[]{String.valueOf(scheduleId)})
         );
         Movie movie = schedule.getMovie();
         Room room = schedule.getRoom();
@@ -123,7 +123,7 @@ public class RoomServiceImpl implements RoomService {
         movie.getTypes().forEach(t -> {
             typeBuilder.append(t.getName()).append(", ");
         });
-        String types = typeBuilder.length() > 0
+        String types = !typeBuilder.isEmpty()
                 ? typeBuilder.substring(0, typeBuilder.length() - 2)
                 : "";
         RoomOrderResponseDto response = new RoomOrderResponseDto();
@@ -131,13 +131,14 @@ public class RoomServiceImpl implements RoomService {
         response.setCinemaName(cinema.getCinemaName());
         response.setMovieId(movie.getId());
         response.setMovieName(movie.getName());
-        response.setLanguage(movie.getLanguage() + (movie.getIsSub() ? "- phụ đề" : ""));
+        response.setLanguage(movie.getLanguage() + (movie.getIsSub() ? "(Phụ đề)" : ""));
         response.setDuration(movie.getDuration());
         response.setMovieImageUrl(movie.getImage());
         response.setMovieType(types);
         response.setDate(schedule.getScheduleTime().toLocalDate());
         response.setTime(schedule.getScheduleTime().toLocalTime());
         response.setRoomId(room.getId());
+        response.setAgeLimit(movie.getAgeLimit());
         response.setRoomName(room.getName());
         response.setRoomType(room.getRoomType().getRoomType().getValue());
         Map<Long, SeatStatus> seats = schedule.getSeats();

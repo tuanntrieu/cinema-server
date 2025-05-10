@@ -26,10 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -106,6 +103,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.DELETE_SUCCESS, null));
     }
 
+    //cho admin
     @Override
     public List<ScheduleForRoomResponseDto> searchSchedule(ScheduleSearchByRoomRequestDto requestDto) {
 
@@ -144,44 +142,14 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleForRoomResponse;
     }
 
+    //cho user
     @Override
-    public List<ScheduleForCinemaResponseDto> getScheduleForCinema(ScheduleSearchByCinemaRequestDto requestDto) {
+    public List<ScheduleForCinemaResponseDto> getScheduleForMovieByCinema(ScheduleSearchByCinemaRequestDto requestDto) {
 
         List<Schedule> schedules = scheduleRepository.getScheduleForCinema(requestDto.getCinemaId(), requestDto.getMovieId());
 
-        Map<RoomScheduleDto, List<TimeScheduleDto>> roomTimes = new HashMap<>();
-        Map<Long, Room> roomMap = new HashMap<>();
-        for (Schedule schedule : schedules) {
-            RoomScheduleDto roomScheduleDto = RoomScheduleDto.builder()
-                    .roomId(schedule.getRoom().getId())
-                    .date(schedule.getScheduleTime().toLocalDate())
-                    .build();
-            int count = seatRepository.countSeatByStatus(schedule.getRoom().getCinema().getId(), schedule.getId(), SeatStatus.AVAILABLE.toString());
-            Long roomId = schedule.getRoom().getId();
-            
-            TimeScheduleDto time = TimeScheduleDto.builder()
-                    .id(schedule.getId())
-                    .date(schedule.getScheduleTime().toLocalDate())
-                    .time(schedule.getScheduleTime().toLocalTime())
-                    .countSeatAvailable(count)
-                    .build();
-
-            roomTimes.computeIfAbsent(roomScheduleDto, k -> new ArrayList<>()).add(time);
-            roomMap.putIfAbsent(roomId, schedule.getRoom());
-        }
-
-        List<RoomScheduleResponseDto> roomSchedules = new ArrayList<>();
-        for (Map.Entry<RoomScheduleDto, List<TimeScheduleDto>> entry : roomTimes.entrySet()) {
-            Room tmp = roomMap.get(entry.getKey().getRoomId());
-            roomSchedules.add(RoomScheduleResponseDto.builder()
-                    .roomId(tmp.getId())
-                    .times(entry.getValue())
-                    .date(entry.getKey().getDate())
-                    .name(tmp.getName() + "-" + tmp.getRoomType().getRoomType().getValue())
-                    .build());
-        }
-
-        Map<LocalDate, List<RoomScheduleResponseDto>> scheduleTimes = new HashMap<>();
+        List<RoomScheduleResponseDto> roomSchedules =buildRoomScheduleResponse(schedules);
+        Map<LocalDate, List<RoomScheduleResponseDto>> scheduleTimes = new TreeMap<>();
         for (RoomScheduleResponseDto roomScheduleResponseDto : roomSchedules) {
             LocalDate date = roomScheduleResponseDto.getDate();
             if (scheduleTimes.containsKey(date)) {
@@ -202,6 +170,51 @@ public class ScheduleServiceImpl implements ScheduleService {
                     .build());
         }
         return response;
+    }
+
+    @Override
+    public ScheduleForCinemaResponseDto getScheduleForMovieByDate(ScheduleForMovieByDateRequestDto requestDto) {
+        List<Schedule> schedules = scheduleRepository.getScheduleForMovieByDate(requestDto.getCinemaId(), requestDto.getMovieId(),requestDto.getDate());
+
+        List<RoomScheduleResponseDto> roomSchedules =buildRoomScheduleResponse(schedules);
+        return ScheduleForCinemaResponseDto.builder()
+                .date(requestDto.getDate())
+                .roomSchedules(roomSchedules)
+                .build();
+    }
+
+    private List<RoomScheduleResponseDto> buildRoomScheduleResponse(List<Schedule> schedules){
+        Map<RoomScheduleDto, List<TimeScheduleDto>> roomTimes = new HashMap<>();
+        Map<Long, Room> roomMap = new HashMap<>();
+        for (Schedule schedule : schedules) {
+            RoomScheduleDto roomScheduleDto = RoomScheduleDto.builder()
+                    .roomId(schedule.getRoom().getId())
+                    .date(schedule.getScheduleTime().toLocalDate())
+                    .build();
+            int count = seatRepository.countSeatByStatus(schedule.getRoom().getCinema().getId(), schedule.getId(), SeatStatus.AVAILABLE.toString());
+            Long roomId = schedule.getRoom().getId();
+
+            TimeScheduleDto time = TimeScheduleDto.builder()
+                    .id(schedule.getId())
+                    .date(schedule.getScheduleTime().toLocalDate())
+                    .time(schedule.getScheduleTime().toLocalTime().truncatedTo(ChronoUnit.MINUTES))
+                    .countSeatAvailable(count)
+                    .build();
+
+            roomTimes.computeIfAbsent(roomScheduleDto, k -> new ArrayList<>()).add(time);
+            roomMap.putIfAbsent(roomId, schedule.getRoom());
+        }
+        List<RoomScheduleResponseDto> roomSchedules = new ArrayList<>();
+        for (Map.Entry<RoomScheduleDto, List<TimeScheduleDto>> entry : roomTimes.entrySet()) {
+            Room tmp = roomMap.get(entry.getKey().getRoomId());
+            roomSchedules.add(RoomScheduleResponseDto.builder()
+                    .roomId(tmp.getId())
+                    .times(entry.getValue())
+                    .date(entry.getKey().getDate())
+                    .name(tmp.getName() + "-" + tmp.getRoomType().getRoomType().getValue())
+                    .build());
+        }
+        return  roomSchedules;
     }
 
 }

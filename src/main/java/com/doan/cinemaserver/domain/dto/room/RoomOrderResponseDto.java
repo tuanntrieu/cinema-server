@@ -29,5 +29,6 @@ public class RoomOrderResponseDto {
     private Integer duration;
     private LocalDate date;
     private LocalTime time;
+    private int ageLimit;
     private List<SeatResponseDto> seats =new ArrayList<>();
 }

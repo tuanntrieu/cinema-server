@@ -12,5 +12,4 @@ public class ScheduleForRoomResponseDto {
     private LocalTime startTime;
     private LocalTime endTime;
     private String movieName;
-
 }

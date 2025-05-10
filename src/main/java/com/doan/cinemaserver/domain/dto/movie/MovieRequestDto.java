@@ -23,10 +23,10 @@ public class MovieRequestDto {
     @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
     private String name;
 
-    @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
+
     private String actors;
 
-    @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
+    private String trailer;
     private String director;
 
     private int duration = CommonConstant.ZERO_INT_VALUE;
@@ -38,6 +38,8 @@ public class MovieRequestDto {
     private String language;
 
     private Boolean isSub;
+
+    private int ageLimit = CommonConstant.ZERO_INT_VALUE;;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date releaseDate;

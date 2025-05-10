@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,5 +19,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
 
     @Query("select s from Schedule s join s.room r where s.movie.id = ?2 and r.cinema.id =?1 order by s.scheduleTime asc")
     List<Schedule> getScheduleForCinema(Long cinemaId, Long movieId );
+
+
+    @Query("select s from Schedule s join s.room r where s.movie.id = ?2 and r.cinema.id =?1 and date(s.scheduleTime) =?3 order by s.scheduleTime asc")
+    List<Schedule> getScheduleForMovieByDate(Long cinemaId, Long movieId, LocalDate date);
 
 }

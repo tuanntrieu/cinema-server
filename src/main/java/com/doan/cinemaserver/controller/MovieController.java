@@ -38,4 +38,10 @@ public class MovieController {
     public ResponseEntity<?> searchMovieComingSoon(@RequestBody MovieSearchRequestDto requestDto) {
         return VsResponseUtil.success(movieService.findMovieComingSoon(requestDto));
     }
+
+    @Operation(summary = "API Get Movie Detail")
+    @GetMapping(value = UrlConstant.Movie.GET_MOVIE_DETAIL)
+    public ResponseEntity<?> getMovieDetail(@PathVariable Long id) {
+        return VsResponseUtil.success(movieService.getMovieDetail(id));
+    }
 }

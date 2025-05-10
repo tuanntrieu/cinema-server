@@ -3,6 +3,7 @@ package com.doan.cinemaserver.controller;
 import com.doan.cinemaserver.common.RestApiV1;
 import com.doan.cinemaserver.common.VsResponseUtil;
 import com.doan.cinemaserver.constant.UrlConstant;
+import com.doan.cinemaserver.domain.dto.schedule.ScheduleForMovieByDateRequestDto;
 import com.doan.cinemaserver.domain.dto.schedule.ScheduleRequestDto;
 import com.doan.cinemaserver.domain.dto.schedule.ScheduleSearchByCinemaRequestDto;
 import com.doan.cinemaserver.domain.dto.schedule.ScheduleSearchByRoomRequestDto;
@@ -31,16 +32,23 @@ public class ScheduleController {
         return VsResponseUtil.success(scheduleService.deleteSchedule(id));
     }
 
+    //Cho Admin
     @Operation(summary = "API Get Schedule For Room")
     @PostMapping(UrlConstant.Schedule.GET_SCHEDULES_BY_ROOM)
     public ResponseEntity<?> getSchedulesForRoom(@RequestBody ScheduleSearchByRoomRequestDto scheduleRequestDto){
         return VsResponseUtil.success(scheduleService.searchSchedule(scheduleRequestDto));
     }
 
-    @Operation(summary = "API Get Schedule For Cinema")
-    @PostMapping(UrlConstant.Schedule.GET_SCHEDULES_BY_CINEMA)
-    public ResponseEntity<?> getSchedulesForCinema(@RequestBody ScheduleSearchByCinemaRequestDto scheduleRequestDto){
-        return VsResponseUtil.success(scheduleService.getScheduleForCinema(scheduleRequestDto));
+    //cho user
+    @Operation(summary = "API Get Schedule For Movie By Cinema")
+    @PostMapping(UrlConstant.Schedule.GET_SCHEDULES_FOR_MOVIE_BY_CINEMA)
+    public ResponseEntity<?> getSchedulesForMovieByCinema(@RequestBody ScheduleSearchByCinemaRequestDto scheduleRequestDto){
+        return VsResponseUtil.success(scheduleService.getScheduleForMovieByCinema(scheduleRequestDto));
+    }
+    @Operation(summary = "API Get Schedule For Movie By Date")
+    @PostMapping(UrlConstant.Schedule.GET_SCHEDULES_FOR_MOVIE_BY_DATE)
+    public ResponseEntity<?> getSchedulesFor(@RequestBody ScheduleForMovieByDateRequestDto scheduleRequestDto){
+        return VsResponseUtil.success(scheduleService.getScheduleForMovieByDate(scheduleRequestDto));
     }
 
 }

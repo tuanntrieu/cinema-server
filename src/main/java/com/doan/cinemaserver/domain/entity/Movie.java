@@ -32,7 +32,9 @@ public class Movie extends DateAuditing {
 
     private String director;
 
-    @Lob
+    private int ageLimit;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
 
     private String language;
@@ -40,7 +42,6 @@ public class Movie extends DateAuditing {
     private Boolean isSub;
 
     @ManyToMany(mappedBy = "movies")
-    @JsonIgnore
     private List<MovieType> types =new ArrayList<>();
 
     @ManyToMany(mappedBy = "movies")
@@ -52,6 +53,8 @@ public class Movie extends DateAuditing {
 
     @Column(name="end_date")
     private Date endDate;
+
+    private String trailer;
 
     @OneToMany(mappedBy = "movie")
     @JsonIgnore

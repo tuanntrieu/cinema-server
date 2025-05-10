@@ -70,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
             String access_token = jwtTokenProvider.generateToken(userPrincipal, Boolean.FALSE);
             String refresh_token = jwtTokenProvider.generateToken(userPrincipal, Boolean.TRUE);
             User user = userRepository.findByEmail(loginRequestDto.getUsername()).orElseThrow(
-                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{loginRequestDto.getUsername()})
+                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,  new String[]{loginRequestDto.getUsername()})
             );
             user.setRefreshToken(refresh_token);
             userRepository.save(user);
@@ -96,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
             jwtTokenService.saveInvalidToken(access_token);
             String username = jwtTokenProvider.extractSubjectFromJwt(access_token);
             User user = userRepository.findByEmail(username).orElseThrow(
-                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{username})
+                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,  new String[]{username})
             );
             jwtTokenService.saveInvalidToken(user.getRefreshToken());
 
@@ -119,7 +119,7 @@ public class AuthServiceImpl implements AuthService {
 
             jwtTokenService.saveInvalidToken(token);
             User user = userRepository.findByEmail(username).orElseThrow(
-                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{username})
+                    () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,  new String[]{username})
             );
             user.setRefreshToken(refreshToken);
             userRepository.save(user);
@@ -145,7 +145,7 @@ public class AuthServiceImpl implements AuthService {
             throw new DataIntegrityViolationException(ErrorMessage.INVALID_REPEAT_PASSWORD);
         }
         Role role = roleRepository.findByCode(RoleConstant.ROLE_USER).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Role.ERR_NOT_FOUND_ROLE, (Object) new String[]{String.valueOf(RoleConstant.ROLE_USER)})
+                () -> new NotFoundException(ErrorMessage.Role.ERR_NOT_FOUND_ROLE, new String[]{String.valueOf(RoleConstant.ROLE_USER)})
         );
         User user = User.builder()
                 .email(registerRequestDto.getEmail())
@@ -179,7 +179,7 @@ public class AuthServiceImpl implements AuthService {
 
 
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{requestDto.getEmail()})
+                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,  new String[]{requestDto.getEmail()})
         );
 
         boolean isCorrectPassword = passwordEncoder.matches(requestDto.getOldPassword(), user.getPassword());
@@ -204,7 +204,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = userRepository.findByEmail(sendOtpRequestDto.getEmail()).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{sendOtpRequestDto.getEmail()})
+                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,  new String[]{sendOtpRequestDto.getEmail()})
         );
         SecureRandom secureRandom = new SecureRandom();
         String randomNumber = String.format("%06d", secureRandom.nextInt(1000000));
@@ -252,7 +252,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public CommonResponseDto forgetPassword(ForgetPasswordDto forgetPasswordDto) {
         User user = userRepository.findByEmail(forgetPasswordDto.getEmail()).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME, (Object) new String[]{forgetPasswordDto.getEmail()})
+                () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,  new String[]{forgetPasswordDto.getEmail()})
         );
         if(user.getIsVerify().equals(Boolean.FALSE)){
             throw new InvalidException(ErrorMessage.Auth.ERR_INVALID_VERIFY_STATUS);

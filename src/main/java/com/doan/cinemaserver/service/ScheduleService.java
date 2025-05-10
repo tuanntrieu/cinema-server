@@ -11,6 +11,6 @@ public interface ScheduleService {
     public CommonResponseDto createSchedule(ScheduleRequestDto requestDto);
     public CommonResponseDto deleteSchedule(Long scheduleId);
     public List<ScheduleForRoomResponseDto> searchSchedule(ScheduleSearchByRoomRequestDto requestDto);
-    public List<ScheduleForCinemaResponseDto> getScheduleForCinema(ScheduleSearchByCinemaRequestDto requestDto);
-
+    public List<ScheduleForCinemaResponseDto> getScheduleForMovieByCinema(ScheduleSearchByCinemaRequestDto requestDto);
+    public ScheduleForCinemaResponseDto getScheduleForMovieByDate(ScheduleForMovieByDateRequestDto requestDto);
 }

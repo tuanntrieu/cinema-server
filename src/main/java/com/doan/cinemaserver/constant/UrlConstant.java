@@ -56,7 +56,8 @@ public class UrlConstant {
         public static final String CREATE_SCHEDULE = PRE_FIX + "/create";
         public static final String DELETE_SCHEDULE = PRE_FIX + "/delete" + "/{id}";
         public static final String GET_SCHEDULES_BY_ROOM = PRE_FIX + "/get-by-room";
-        public static final String GET_SCHEDULES_BY_CINEMA = PRE_FIX + "/get-by-cinema";
+        public static final String GET_SCHEDULES_FOR_MOVIE_BY_CINEMA = PRE_FIX + "/get-by-cinema";
+        public static final String GET_SCHEDULES_FOR_MOVIE_BY_DATE = PRE_FIX + "/get-by-date";
 
         private Schedule() {
         }
@@ -87,6 +88,7 @@ public class UrlConstant {
 
     public static class Movie {
         public static final String PRE_FIX = "/movie";
+        public static final String GET_MOVIE_DETAIL =PRE_FIX+ "/{id}";
         public static final String CREATE_MOVIE = PRE_FIX + "/create";
         public static final String SEARCH_MOVIE_BY_DATE = PRE_FIX + "/search-by-date";
         public static final String SEARCH_MOVIE_COMING_SOON = PRE_FIX + "/search-coming-soon";

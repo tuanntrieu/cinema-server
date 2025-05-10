@@ -1,10 +1,10 @@
 package com.doan.cinemaserver.constant;
 
 public enum RoomTypeEnum {
-    _2D("Phòng 2D"),
-    _3D("Phòng 3D"),
-    _4D("Phòng 4D"),
-    IMAX("Phòng IMAX");
+    _2D(" 2D"),
+    _3D(" 3D"),
+    _4D(" 4D"),
+    IMAX(" IMAX");
 
     private String value;
 

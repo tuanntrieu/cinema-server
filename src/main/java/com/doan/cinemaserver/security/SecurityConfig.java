@@ -44,7 +44,9 @@ public class SecurityConfig {
             "/api/v1/auth/send-otp",
             "/api/v1/auth/verify-otp",
             "/api/v1/auth/forget-password",
-            "/api/v1/cinema/**"
+            "/api/v1/schedule/**",
+            "/api/v1/cinema/**",
+            "/api/v1/movie/**"
     };
 
     //    private String[] USER_LIST={

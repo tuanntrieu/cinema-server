@@ -110,7 +110,7 @@ public class MovieServiceImpl implements MovieService {
                     movie.getTypes().forEach(t -> {
                         typeBuilder.append(t.getName()).append(", ");
                     });
-                    String types = typeBuilder.length() > 0
+                    String types = !typeBuilder.isEmpty()
                             ? typeBuilder.substring(0, typeBuilder.length() - 2)
                             : "";
                     return MovieResponseDto.builder()
@@ -122,15 +122,18 @@ public class MovieServiceImpl implements MovieService {
                             .image(movie.getImage())
                             .director(movie.getDirector())
                             .type(types)
+                            .isSub(movie.getIsSub())
+                            .ageLimit(movie.getAgeLimit())
                             .actors(movie.getActors())
                             .endDate(movie.getEndDate())
-                            .releaseDate(movie.getReleaseDate())
+                            .trailer(movie.getTrailer())
+                            //.releaseDate(movie.getReleaseDate())
                             .build();
                 }
         ).collect(Collectors.toList());
 
         return new PaginationResponseDto<>(
-                movies.getTotalElements(),movies.getTotalPages(),movies.getNumber(),movies.getNumberOfElements(),sort.toString(),moviesRep
+                movies.getTotalElements(),movies.getTotalPages(),movies.getNumber(),movieSearchRequestDto.getPageSize(),sort.toString(),moviesRep
         );
     }
 
@@ -162,17 +165,35 @@ public class MovieServiceImpl implements MovieService {
                             .language(movie.getLanguage())
                             .image(movie.getImage())
                             .type(types)
+                            .isSub(movie.getIsSub())
+                            .ageLimit(movie.getAgeLimit())
                             .director(movie.getDirector())
                             .actors(movie.getActors())
                             .endDate(movie.getEndDate())
+                            .trailer(movie.getTrailer())
                             .releaseDate(movie.getReleaseDate())
                             .build();
                 }
         ).collect(Collectors.toList());
 
         return new PaginationResponseDto<>(
-                movies.getTotalElements(),movies.getTotalPages(),movies.getNumber(),movies.getNumberOfElements(),sort.toString(),moviesRep
+                movies.getTotalElements(),movies.getTotalPages(),movies.getNumber(),movieSearchRequestDto.getPageSize(),sort.toString(),moviesRep
         );
+    }
+
+    @Override
+    public Movie getMovieDetail(Long movieId) {
+        return movieRepository.findById(movieId).orElseThrow(
+                ()-> new NotFoundException(ErrorMessage.Movie.ERR_NOT_FOUND_MOVIE, (Object) new Object[]{movieId.toString()})
+        );
+    }
+
+    @Override
+    public CommonResponseDto updateMovie(Long movieId, MovieRequestDto movieRequestDto) {
+        Movie movie = movieRepository.findById(movieId).orElseThrow(
+                ()-> new NotFoundException(ErrorMessage.Movie.ERR_NOT_FOUND_MOVIE, (Object) new Object[]{movieId.toString()})
+        );
+        return null;
     }
 
     private LocalDate toLocalDate(Date date) {
