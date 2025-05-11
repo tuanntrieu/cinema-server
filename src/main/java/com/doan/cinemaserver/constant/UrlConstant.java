@@ -78,7 +78,10 @@ public class UrlConstant {
 
     public static class Seat {
         public static final String PRE_FIX = "/seat";
-        public static final String UPDATE_SEAT = PRE_FIX + "/update";
+        public static final String UPDATE_SEAT_PRICE = PRE_FIX + "/update-price";
+        public static final String UPDATE_SEAT_STATUS = PRE_FIX + "/update-status";
+        public static final String HOLD_SEAT = PRE_FIX + "/hold-seat";
+        public static final String UNHOLD_SEAT = PRE_FIX + "/unhold-seat";
         public static final String DELETE_SEAT = PRE_FIX + "/delete";
         public static final String VALIDATE_SEATS = PRE_FIX + "/validate-seat/{id}";
 

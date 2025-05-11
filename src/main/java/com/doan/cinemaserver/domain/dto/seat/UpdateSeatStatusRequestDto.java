@@ -8,12 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SeatResponseDto {
-    private Long seatId;
-    private String seatName;
-    private String seatType;
+public class UpdateSeatStatusRequestDto {
+    private long scheduleId;
+    private long seatId;
     private SeatStatus seatStatus;
-    private int xCoordinate;
-    private int yCoordinate;
-    private Long price;
 }

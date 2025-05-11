@@ -26,7 +26,7 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             "inner join rooms r on r.room_id = rm.room_id " +
             "inner join cinemas c on c.cinema_id = r.cinema_id " +
             "inner join schedule_seat ss on ss.schedule_id = s.schedule_id " +
-            "where ss.status = ?3 and s.schedule_id = ?2 and c.cinema_id = ?1 ) " +
+            "where ss.seat_status = ?3 and s.schedule_id = ?2 and c.cinema_id = ?1 ) " +
             "select count(*) from tmp",nativeQuery = true)
     int countSeatByStatus(Long cinemaId, Long scheduleId, String seatStatus);
 

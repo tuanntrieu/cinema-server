@@ -4,7 +4,8 @@ public enum SeatStatus {
     AVAILABLE("Ghế trống"),
     SOLD("Đã bán"),
     MAINTENANCE  ("Ghế bảo trì"),
-    RESERVED("Được giữ");
+    HOLDING("Được giữ"),
+    SELECTED ("Được chọn");
 
 
     private final String value;

@@ -160,9 +160,7 @@ public class AuthServiceImpl implements AuthService {
                         .user(user)
                         .build()
         );
-
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.Auth.REGISTER_SUCCESS, null));
-
     }
 
     @Override

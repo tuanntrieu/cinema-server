@@ -54,6 +54,8 @@ public class ErrorMessage {
     public static class Schedule{
         public static final String ERR_NOT_FOUND_SCHEDULE = "exception.schedule.not.found.id";
         public static final String ERR_INTERVAL_CONFLICT = "exception.schedule.interval.conflict";
+        public static final String ERR_UNRELEASED = "exception.schedule.unreleased";
+
     }
     public static class Movie{
         public static final String ERR_NOT_FOUND_MOVIE = "exception.movie.not.found.id";
@@ -71,7 +73,7 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND_COORDINATES = "exception.seat.not.found.coordinates";
         public static final String ERR_NOT_EMPTY_SEAT_OUTSIDE ="exception.seat.not.empty.outside";
         public static final String ERR_NOT_EMPTY_SEAT_MIDDLE ="exception.seat.not.empty.middle";
-        public static final String ERR_INVALID_SEAT_TYPE = "exception.seat.invalid.status";
+        public static final String ERR_INVALID_SEAT_STATUS = "exception.seat.invalid.status";
     }
     public static class Combo{
         public static final String ERR_NOT_FOUND_COMBO = "exception.combo.not.found.id";

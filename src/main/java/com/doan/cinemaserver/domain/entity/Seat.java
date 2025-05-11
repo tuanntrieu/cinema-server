@@ -1,7 +1,5 @@
 package com.doan.cinemaserver.domain.entity;
 
-import com.doan.cinemaserver.constant.SeatStatus;
-import com.doan.cinemaserver.constant.SeatType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,14 +27,20 @@ public class Seat {
 
     private Integer yCoordinate;
 
+    private boolean isMaintained = false;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name="seat_type_id")
+    @JoinColumn(name = "seat_type_id")
     private SeatPrice seatType;
 
     @ManyToOne
-    @JoinColumn(name="room_id",foreignKey = @ForeignKey(name = "FK_ROOM_SEAT"))
+    @JoinColumn(name = "room_id", foreignKey = @ForeignKey(name = "FK_ROOM_SEAT"))
     private Room room;
 
+
+    @OneToMany(mappedBy = "seat")
+    @JsonIgnore
+    List<ScheduleSeat> scheduleSeats = new ArrayList<>();
 
 
 }

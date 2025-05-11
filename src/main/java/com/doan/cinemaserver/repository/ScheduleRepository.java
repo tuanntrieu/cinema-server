@@ -17,7 +17,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
     Optional<Schedule> findById(Long id);
 
 
-    @Query("select s from Schedule s join s.room r where s.movie.id = ?2 and r.cinema.id =?1 order by s.scheduleTime asc")
+    @Query("select s from Schedule s join s.room r where s.movie.id = ?2 and r.cinema.id =?1 and date(s.scheduleTime) >= CURRENT_DATE order by s.scheduleTime asc")
     List<Schedule> getScheduleForCinema(Long cinemaId, Long movieId );
 
 

@@ -9,6 +9,7 @@ import com.doan.cinemaserver.domain.dto.room.RoomRequestDto;
 import com.doan.cinemaserver.domain.dto.room.UpdateRoomSurchargeRequestDto;
 import com.doan.cinemaserver.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class RoomController {
 
     @Operation(summary = "API Update Room Surcharge")
     @PatchMapping(UrlConstant.Room.UPDATE_ROOM_SURCHARGE)
-    public ResponseEntity<?> updateRoomSurcharge(@RequestBody UpdateRoomSurchargeRequestDto requestDto) {
+    public ResponseEntity<?> updateRoomSurcharge(@RequestBody UpdateRoomSurchargeRequestDto requestDto, @PathVariable String id) {
         return VsResponseUtil.success(roomService.updateRoomSurcharge(requestDto));
     }
 
@@ -45,11 +46,8 @@ public class RoomController {
 
     @Operation(summary = "API Get Room Order")
     @GetMapping(UrlConstant.Room.GET_ROOM_ORDER)
-    public ResponseEntity<?> getRoomOrder(@PathVariable(name = "id") Long scheduleId) {
-        return VsResponseUtil.success(roomService.getRoomOrder(scheduleId));
+    public ResponseEntity<?> getRoomOrder(@PathVariable(name = "id") Long scheduleId, HttpServletRequest request) {
+        return VsResponseUtil.success(roomService.getRoomOrder(scheduleId,request));
     }
-
-
-
 
 }

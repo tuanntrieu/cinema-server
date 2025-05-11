@@ -54,7 +54,9 @@ public class TicketServiceImpl implements TicketService {
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId()).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.Schedule.ERR_NOT_FOUND_SCHEDULE, new String[]{String.valueOf(requestDto.getScheduleId())})
         );
-        Map<Long, SeatStatus> seatMap = schedule.getSeats();
+        Map<Long, ScheduleSeat> seatMap = schedule.getScheduleSeats()
+                .stream()
+                .collect(Collectors.toMap(ss -> ss.getSeat().getId(), ss -> ss));;
         Movie movie = movieRepository.findById(requestDto.getMovieId()).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.Movie.ERR_NOT_FOUND_MOVIE, new String[]{String.valueOf(requestDto.getMovieId())})
         );
@@ -75,8 +77,8 @@ public class TicketServiceImpl implements TicketService {
         AtomicReference<Long> price = new AtomicReference<>(0L);
         DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
         seats.forEach(seat -> {
-            if (!seatMap.get(seat.getId()).equals(SeatStatus.AVAILABLE)) {
-                throw new InvalidException(ErrorMessage.Seat.ERR_INVALID_SEAT_TYPE);
+            if (!seatMap.get(seat.getId()).getSeatStatus().equals(SeatStatus.AVAILABLE)) {
+                throw new InvalidException(ErrorMessage.Seat.ERR_INVALID_SEAT_STATUS);
             }
             seatsStrBui.append(seat.getSeatName()).append(",");
             seatRepository.updateSeatStatus(schedule.getId(), seat.getId(), SeatStatus.SOLD.toString());
