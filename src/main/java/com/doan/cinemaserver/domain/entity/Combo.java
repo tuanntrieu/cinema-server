@@ -30,11 +30,11 @@ public class Combo {
 
     private String description;
 
-    @OneToMany(mappedBy = "combo")
+    @OneToMany(mappedBy = "combo",fetch = FetchType.EAGER)
     @JsonIgnore
     private List<TicketCombo> ticketCombo = new ArrayList<>();
 
-    @OneToMany(mappedBy = "combo",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "combo",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JsonIgnore
     private List<ComboDetail> comboDetail = new ArrayList<>();
 

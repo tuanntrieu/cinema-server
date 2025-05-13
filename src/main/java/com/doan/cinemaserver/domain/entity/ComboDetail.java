@@ -22,7 +22,7 @@ public class ComboDetail {
     @JoinColumn(name = "combo_id")
     private Combo combo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "food_id")
     private Food food;
 

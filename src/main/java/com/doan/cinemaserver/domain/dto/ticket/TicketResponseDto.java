@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class TicketResponseDto {
-    private Long id;
+    private String id;
     private LocalDateTime createdDate;
     private String customerName;
     private String customerEmail;

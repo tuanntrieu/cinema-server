@@ -1,5 +1,7 @@
 package com.doan.cinemaserver.constant;
 
+import org.springframework.security.core.parameters.P;
+
 public class UrlConstant {
     public static class Auth {
         private static final String PRE_FIX = "/auth";
@@ -24,6 +26,7 @@ public class UrlConstant {
         public static final String UPDATE_CUSTOMER = PRE_FIX + "/update";
         public static final String UPDATE_CUSTOMER_CINEMA = PRE_FIX + "/update-cinema";
         public static final String GET_CUSTOMER_CINEMA = PRE_FIX + "/get-cinema";
+
         private Customer() {
         }
     }
@@ -91,7 +94,7 @@ public class UrlConstant {
 
     public static class Movie {
         public static final String PRE_FIX = "/movie";
-        public static final String GET_MOVIE_DETAIL =PRE_FIX+ "/{id}";
+        public static final String GET_MOVIE_DETAIL = PRE_FIX + "/{id}";
         public static final String CREATE_MOVIE = PRE_FIX + "/create";
         public static final String SEARCH_MOVIE_BY_DATE = PRE_FIX + "/search-by-date";
         public static final String SEARCH_MOVIE_COMING_SOON = PRE_FIX + "/search-coming-soon";
@@ -101,6 +104,12 @@ public class UrlConstant {
         public static final String PRE_FIX = "/ticket";
         public static final String CHECKOUT = PRE_FIX + "/checkout";
         public static final String GET_TICKETS_BY_CUSTOMER = PRE_FIX + "/get-tickets-by-customer";
+        public static final String GET_PAYMENT_URL = PRE_FIX + "/payment-url";
+        public static final String HANDLE_VNPAY_RETURN = PRE_FIX + "/handle-return";
+        public static final String SAVE_DATA_TMP= PRE_FIX + "/save-data-tmp";
+        public static final String READ_DATA_TMP= PRE_FIX + "/read-data-tmp";
+        public static final String DELETE_DATA_TMP= PRE_FIX + "/delete-data-tmp";
+        public static final String EXIST_BY_ID = PRE_FIX + "/exist-by-id";
     }
 
     public static class Combo {
@@ -117,5 +126,6 @@ public class UrlConstant {
         public static final String GET_FOOD_PAGE = PRE_FIX + "/get-all-page";
         public static final String DELETE_FOOD = PRE_FIX + "/delete/{id}";
     }
+
 
 }

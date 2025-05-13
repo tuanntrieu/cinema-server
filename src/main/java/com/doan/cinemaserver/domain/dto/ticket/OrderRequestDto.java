@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderRequestDto {
-
+    private String id;
     private Long customerId =0L;
     @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
     private String customerName;

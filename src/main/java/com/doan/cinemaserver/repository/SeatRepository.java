@@ -33,7 +33,7 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update schedule_seat s set s.status = ?3 where s.schedule_id = ?1 and s.seat_id = ?2 ",nativeQuery = true)
+    @Query(value = "update schedule_seat s set s.seat_status = ?3 where s.schedule_id = ?1 and s.seat_id = ?2 ",nativeQuery = true)
     void updateSeatStatus(Long scheduleId,Long seatId, String seatStatus);
 
 

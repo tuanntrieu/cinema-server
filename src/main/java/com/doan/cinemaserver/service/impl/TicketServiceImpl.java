@@ -4,38 +4,45 @@ import com.doan.cinemaserver.constant.ErrorMessage;
 import com.doan.cinemaserver.constant.SeatStatus;
 import com.doan.cinemaserver.constant.SuccessMessage;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
+import com.doan.cinemaserver.domain.dto.common.DataMailDto;
 import com.doan.cinemaserver.domain.dto.pagination.PaginationResponseDto;
 import com.doan.cinemaserver.domain.dto.ticket.*;
 import com.doan.cinemaserver.domain.entity.*;
+import com.doan.cinemaserver.exception.BadRequestException;
 import com.doan.cinemaserver.exception.InvalidException;
 import com.doan.cinemaserver.exception.NotFoundException;
 import com.doan.cinemaserver.repository.*;
 import com.doan.cinemaserver.service.TicketService;
 import com.doan.cinemaserver.util.MessageSourceUtil;
+import com.doan.cinemaserver.util.SendMailUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
@@ -46,7 +53,8 @@ public class TicketServiceImpl implements TicketService {
     private final CustomerRepository customerRepository;
     private final ComboRepository comboRepository;
     private final TicketComboRepository ticketComboRepository;
-
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final SendMailUtil sendMailUtil;
 
     @Override
     @Transactional
@@ -56,7 +64,8 @@ public class TicketServiceImpl implements TicketService {
         );
         Map<Long, ScheduleSeat> seatMap = schedule.getScheduleSeats()
                 .stream()
-                .collect(Collectors.toMap(ss -> ss.getSeat().getId(), ss -> ss));;
+                .collect(Collectors.toMap(ss -> ss.getSeat().getId(), ss -> ss));
+        ;
         Movie movie = movieRepository.findById(requestDto.getMovieId()).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.Movie.ERR_NOT_FOUND_MOVIE, new String[]{String.valueOf(requestDto.getMovieId())})
         );
@@ -77,7 +86,7 @@ public class TicketServiceImpl implements TicketService {
         AtomicReference<Long> price = new AtomicReference<>(0L);
         DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
         seats.forEach(seat -> {
-            if (!seatMap.get(seat.getId()).getSeatStatus().equals(SeatStatus.AVAILABLE)) {
+            if (!seatMap.get(seat.getId()).getSeatStatus().equals(SeatStatus.HOLDING)) {
                 throw new InvalidException(ErrorMessage.Seat.ERR_INVALID_SEAT_STATUS);
             }
             seatsStrBui.append(seat.getSeatName()).append(",");
@@ -85,9 +94,10 @@ public class TicketServiceImpl implements TicketService {
             price.updateAndGet(v -> v + (dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY) ? seat.getSeatType().getWeekendPrice() : seat.getSeatType().getWeekdayPrice()) + room.getRoomType().getSurcharge());
         });
         String seatsStr = !seatsStrBui.isEmpty()
-                ? seatsStrBui.substring(0, seatsStrBui.length() - 2)
+                ? seatsStrBui.substring(0, seatsStrBui.length() - 1)
                 : "";
         Ticket ticket = Ticket.builder()
+                .id(requestDto.getId())
                 .cinemaName(cinema.getCinemaName())
                 .addressCinema(cinema.getDetailAddress() + ", " + cinema.getWard() + ", " + cinema.getDistrict() + ", " + cinema.getProvince())
                 .customer(customer)
@@ -104,6 +114,7 @@ public class TicketServiceImpl implements TicketService {
         ticket.setLastModifiedDate(LocalDateTime.now());
         ticket.setTicketCombo(new ArrayList<>());
         ticketRepository.save(ticket);
+
         long priceCombo = 0L;
         for (ComboOrderDto combos : requestDto.getCombos()) {
             Combo combo = comboRepository.findById(combos.getComboId()).orElseThrow(
@@ -127,6 +138,31 @@ public class TicketServiceImpl implements TicketService {
         ticket.setPriceCombo(priceCombo);
         ticketRepository.save(ticket);
 
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DataMailDto mailDto = new DataMailDto();
+        mailDto.setTo(requestDto.getCustomerEmail());
+        mailDto.setSubject("Đặt vé thành công");
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("movieName", ticket.getMovieName());
+        properties.put("cinemaName", ticket.getCinemaName());
+        properties.put("cinemaAddress", ticket.getAddressCinema());
+        properties.put("id", ticket.getId());
+        properties.put("date", schedule.getScheduleTime().toLocalDate().format(dateFormatter));
+        properties.put("time", schedule.getScheduleTime().toLocalTime().format(timeFormatter));
+        properties.put("roomName", ticket.getRoomName());
+        properties.put("seats", ticket.getSeatsName());
+        properties.put("createdDate", ticket.getCreatedDate().format(dateTimeFormatter));
+        properties.put("totalCombos", ticket.getPriceCombo().toString() + " VND");
+        properties.put("totalSeats", ticket.getPriceSeat().toString() + " VND");
+        properties.put("total", String.valueOf(ticket.getPriceSeat() +ticket.getPriceCombo())+ " VND");
+        mailDto.setProperties(properties);
+        try {
+            sendMailUtil.sendEmailWithHTML(mailDto, "ticket.html");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.CREATE_SUCCESS, null));
     }
 
@@ -161,7 +197,7 @@ public class TicketServiceImpl implements TicketService {
                             .map(tc -> ComboTicketResponseDto.builder()
                                     .quantity(tc.getQuantity())
                                     .price(tc.getCurrentPrice())
-                                    .name(tc.getCombo().getName()+"( "+tc.getCombo().getDescription()+")")
+                                    .name(tc.getCombo().getName() + "( " + tc.getCombo().getDescription() + ")")
                                     .build())
                             .collect(Collectors.toList());
                     TicketResponseDto ticketResponseDto = TicketResponseDto.builder()
@@ -184,12 +220,87 @@ public class TicketServiceImpl implements TicketService {
                 }
         );
         PaginationResponseDto<TicketResponseDto> response = new PaginationResponseDto<>(
-                ticketPage.getTotalElements(), ticketPage.getTotalPages(), ticketPage.getNumber(), ticketPage.getNumberOfElements(), sort.toString(), ticketResponses
+                ticketPage.getTotalElements(), ticketPage.getTotalPages(), ticketPage.getNumber(), requestDto.getPageSize(), sort.toString(), ticketResponses
         );
 
         return response;
     }
 
+    @Override
+    public CommonResponseDto saveDataTmp(DataCacheForOrderRequestDto requestDto) {
+        try {
+            if (requestDto != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(requestDto);
+                redisTemplate.opsForValue().set(requestDto.getVnp_TxnRef(), json, Duration.ofMinutes(10));
+            }
+        } catch (JsonProcessingException e) {
+            throw new BadRequestException(ErrorMessage.ERR_EXCEPTION_GENERAL);
+        }
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.CREATE_SUCCESS, null));
+
+    }
+
+    @Override
+    public DataCacheForOrderRequestDto readDataOrder(String vnp_TxnRef) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String json = (String) redisTemplate.opsForValue().get(vnp_TxnRef);
+            if (json == null) throw new BadRequestException(ErrorMessage.Payment.ERR_PAYMENT_TIMEOUT);
+            return mapper.readValue(json, DataCacheForOrderRequestDto.class);
+        } catch (JsonProcessingException e) {
+            throw new BadRequestException(ErrorMessage.ERR_EXCEPTION_GENERAL);
+        }
+    }
+
+    @Override
+    public CommonResponseDto deleteDataCache(String vnp_TxnRef) {
+        Boolean existed = redisTemplate.hasKey(vnp_TxnRef);
+        if (Boolean.TRUE.equals(existed)) {
+            redisTemplate.delete(vnp_TxnRef);
+            return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.DELETE_SUCCESS, null));
+        } else {
+            throw new BadRequestException(ErrorMessage.ERR_EXCEPTION_GENERAL);
+        }
+    }
+
+    @Override
+    public boolean existById(String vnp_TxnRef) {
+        return ticketRepository.existsById(vnp_TxnRef);
+    }
+
+    @Override
+    public TicketResponseDto getTicketDetail(String id) {
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Ticket.ERR_NOT_FOUND_TICKET)
+        );
+        Schedule schedule = ticket.getSchedule();
+        List<ComboTicketResponseDto> ticketComboList = ticket.getTicketCombo().stream()
+                .map(tc -> ComboTicketResponseDto.builder()
+                        .quantity(tc.getQuantity())
+                        .price(tc.getCurrentPrice())
+                        .name(tc.getCombo().getName() + "( " + tc.getCombo().getDescription() + ")")
+                        .build())
+                .collect(Collectors.toList());
+        TicketResponseDto ticketResponseDto = TicketResponseDto.builder()
+                .id(ticket.getId())
+                .createdDate(ticket.getCreatedDate())
+                .customerName(ticket.getCustomerName())
+                .customerEmail(ticket.getCustomerEmail())
+                .date(schedule.getScheduleTime().toLocalDate())
+                .time(schedule.getScheduleTime().toLocalTime())
+                .seats(ticket.getSeatsName())
+                .movieName(ticket.getMovie().getName())
+                .roomName(schedule.getRoom().getName())
+                .totalSeats(ticket.getPriceSeat())
+                .cinemaName(ticket.getCinemaName())
+                .cinemaAddress(ticket.getAddressCinema())
+                .combo(ticketComboList)
+                .totalCombos(ticket.getPriceCombo())
+                .build();
+
+        return null;
+    }
 
 
 }

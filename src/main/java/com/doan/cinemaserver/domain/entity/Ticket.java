@@ -18,9 +18,8 @@ import java.util.List;
 @Builder
 public class Ticket extends DateAuditing {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ticket_id")
-    private Long id;
+    private String id;
 
     private String cinemaName;
 

@@ -22,64 +22,80 @@ public class ErrorMessage {
     public static final String INVALID_TOKEN_EXPIRED = "invalid.token-expired";
     public static final String INVALID_TOKEN = "exception.auth.invalid.token";
 
-    public static class User{
+    public static class User {
         public static final String ERR_NOT_FOUND_USERNAME = "exception.user.not.found.username";
         public static final String ERR_NOT_FOUND_ID = "exception.user.not.found.id";
     }
 
-    public static class Customer{
+    public static class Customer {
         public static final String ERR_NOT_FOUND_ID = "exception.customer.not.found.id";
         public static final String ERR_NOT_FOUND_EMAIL = "exception.customer.not.found.email";
     }
 
-    public static class Auth{
-        public static final String ERR_INCORRECT_USERNAME_PASSWORD ="exception.auth.incorrect.username-password";
-        public static final String ERR_INVALID_REFRESH_TOKEN ="exception.auth.invalid.refresh_token";
-        public static final String ERR_EXIST_EMAIL ="exception.auth.exist.email";
-        public static final String ERR_INCORRECT_PASSWORD ="exception.auth.incorrect.password";
-        public static final String ERR_NOT_EXIST_EMAIL ="exception.auth.not.exist.email";
-        public static final String ERR_INCORRECT_OTP="exception.auth.incorrect.otp";
+    public static class Auth {
+        public static final String ERR_INCORRECT_USERNAME_PASSWORD = "exception.auth.incorrect.username-password";
+        public static final String ERR_INVALID_REFRESH_TOKEN = "exception.auth.invalid.refresh_token";
+        public static final String ERR_EXIST_EMAIL = "exception.auth.exist.email";
+        public static final String ERR_INCORRECT_PASSWORD = "exception.auth.incorrect.password";
+        public static final String ERR_NOT_EXIST_EMAIL = "exception.auth.not.exist.email";
+        public static final String ERR_INCORRECT_OTP = "exception.auth.incorrect.otp";
         public static final String ERR_INVALID_VERIFY_STATUS = "exception.auth.invalid.verify_status";
     }
-    public static class Role{
+
+    public static class Role {
         public static final String ERR_NOT_FOUND_ROLE = "exception.role.not.found.code";
     }
-    public static class Cinema{
+
+    public static class Cinema {
         public static final String ERR_NOT_FOUND_CINEMA = "exception.cinema.not.found.id";
     }
 
-    public static class MovieType{
+    public static class MovieType {
         public static final String ERR_NOT_FOUND_MOVIE_TYPE = "exception.movie-type.not.found.id";
     }
-    public static class Schedule{
+
+    public static class Schedule {
         public static final String ERR_NOT_FOUND_SCHEDULE = "exception.schedule.not.found.id";
         public static final String ERR_INTERVAL_CONFLICT = "exception.schedule.interval.conflict";
         public static final String ERR_UNRELEASED = "exception.schedule.unreleased";
 
     }
-    public static class Movie{
+
+    public static class Movie {
         public static final String ERR_NOT_FOUND_MOVIE = "exception.movie.not.found.id";
-        public static final String ERR_INVALID_TIME ="exception.movie.invalid.time";
-        public static final String ERR_INVALID_DURATION ="exception.movie.invalid.duration";
+        public static final String ERR_INVALID_TIME = "exception.movie.invalid.time";
+        public static final String ERR_INVALID_DURATION = "exception.movie.invalid.duration";
 
     }
-    public static class Room{
+
+    public static class Room {
         public static final String ERR_NOT_FOUND_ROOM = "exception.room.not.found.id";
         public static final String ERR_NOT_FOUND_ROOM_TYPE = "exception.room-type.not.found.id";
     }
-    public static class Seat{
+
+    public static class Seat {
         public static final String ERR_NOT_FOUND_SEAT = "exception.seat.not.found.id";
         public static final String ERR_NOT_FOUND_SEAT_TYPE = "exception.seat-type.not.found.id";
         public static final String ERR_NOT_FOUND_COORDINATES = "exception.seat.not.found.coordinates";
-        public static final String ERR_NOT_EMPTY_SEAT_OUTSIDE ="exception.seat.not.empty.outside";
-        public static final String ERR_NOT_EMPTY_SEAT_MIDDLE ="exception.seat.not.empty.middle";
+        public static final String ERR_NOT_EMPTY_SEAT_OUTSIDE = "exception.seat.not.empty.outside";
+        public static final String ERR_NOT_EMPTY_SEAT_MIDDLE = "exception.seat.not.empty.middle";
         public static final String ERR_INVALID_SEAT_STATUS = "exception.seat.invalid.status";
     }
-    public static class Combo{
+
+    public static class Combo {
         public static final String ERR_NOT_FOUND_COMBO = "exception.combo.not.found.id";
     }
-    public static class Food{
+
+    public static class Food {
         public static final String ERR_NOT_FOUND_FOOD = "exception.food.not.found.id";
+    }
+
+    public static class Payment {
+        public static final String ERR_INVALID_OR_TAMPERED_DATA = "exception.payment.invalid.or.tampered.data";
+        public static final String ERR_PAYMENT_TIMEOUT = "exception.payment.timeout";
+    }
+    public static class Ticket {
+        public static final String ERR_NOT_FOUND_TICKET = "exception.ticket.not.found.id";
     }
 
 

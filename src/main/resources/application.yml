@@ -42,7 +42,14 @@ cloudinary:
   api_key: 777472666545861
   api_secret: DW6I8TSkkBIX4Om20vMf7JL-1LM
 
-
+vnpay:
+ tmn-code: 7W5CRLR8
+ hash-secret : BSE1158JP2DRXXYRINUD7K5D5SC0G9VD
+ pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+ return-url : http://localhost:4200/payment/result
+ version : 2.1.0
+ command : pay
+ orderType : other
 
 
 

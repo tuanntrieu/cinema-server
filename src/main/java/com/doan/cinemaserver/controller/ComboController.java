@@ -4,6 +4,7 @@ import com.doan.cinemaserver.common.RestApiV1;
 import com.doan.cinemaserver.common.VsResponseUtil;
 import com.doan.cinemaserver.constant.UrlConstant;
 import com.doan.cinemaserver.domain.dto.combo.ComboRequestDto;
+import com.doan.cinemaserver.domain.dto.combo.ComboSearchRequestDto;
 import com.doan.cinemaserver.service.ComboService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,8 +39,8 @@ public class ComboController {
 
     @Operation(summary = "API Get Combo")
     @PostMapping(UrlConstant.Combo.GET_COMBO)
-    public ResponseEntity<?> getCombo(@RequestParam(required = false) String name)  {
-        return VsResponseUtil.success(comboService.getAllCombo(name));
+    public ResponseEntity<?> getCombo(@RequestBody ComboSearchRequestDto requestDto)  {
+        return VsResponseUtil.success(comboService.getAllCombo(requestDto));
     }
 
     @Operation(summary = "API Delete Combo")

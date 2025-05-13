@@ -44,6 +44,14 @@ public class GlobalExceptionHandler {
         return VsResponseUtil.error(HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<RestData<?>> handlerBadRequestException(BadRequestException ex) {
+        String message = messageSource.getMessage(ErrorMessage.ERR_EXCEPTION_GENERAL, null);
+        log.error(message, ex);
+        return VsResponseUtil.error(HttpStatus.BAD_REQUEST, message);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<RestData<?>> handlerNotFoundException(NotFoundException ex) {

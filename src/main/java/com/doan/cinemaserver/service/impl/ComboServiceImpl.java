@@ -5,6 +5,7 @@ import com.doan.cinemaserver.constant.SuccessMessage;
 import com.doan.cinemaserver.domain.dto.combo.ComboDetailRequestDto;
 import com.doan.cinemaserver.domain.dto.combo.ComboRequestDto;
 import com.doan.cinemaserver.domain.dto.combo.ComboResponseDto;
+import com.doan.cinemaserver.domain.dto.combo.ComboSearchRequestDto;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
 import com.doan.cinemaserver.domain.dto.pagination.PaginationResponseDto;
 import com.doan.cinemaserver.domain.entity.Combo;
@@ -77,24 +78,26 @@ public class ComboServiceImpl implements ComboService {
     }
 
     @Override
-    public PaginationResponseDto<ComboResponseDto> getAllCombo(String name) {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+    public PaginationResponseDto<ComboResponseDto> getAllCombo(ComboSearchRequestDto requestDto) {
+        Sort sort = requestDto.getIsAscending() != null && requestDto.getIsAscending()
+                ? Sort.by(requestDto.getSortBy()).ascending()
+                : Sort.by(requestDto.getSortBy()).descending();
+        Pageable pageable = PageRequest.of(requestDto.getPageNo(), requestDto.getPageSize(), sort);
+
         Page<Combo> comboPage = comboRepository.findAll(
                 new Specification<Combo>() {
                     List<Predicate> predicates = new ArrayList<>();
 
                     @Override
                     public Predicate toPredicate(Root<Combo> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                        if (name != null) {
+                        if (requestDto.getName() != null && !requestDto.getName().equals("")) {
                             predicates.add(criteriaBuilder.like(
                                     root.get(Combo_.NAME).as(String.class),
-                                    "%" + name + "%"
+                                    "%" + requestDto.getName() + "%"
                             ));
                         }
                         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
                     }
-
-
                 }
                 , pageable);
         List<ComboResponseDto> comboList = comboPage.stream().map(
@@ -104,11 +107,12 @@ public class ComboServiceImpl implements ComboService {
                             .price(combo.getPrice())
                             .name(combo.getName())
                             .description(combo.getDescription())
+                            .image(combo.getImage())
                             .build();
                 }
         ).toList();
         return new PaginationResponseDto<>(
-                comboPage.getTotalElements(), comboPage.getTotalPages(), comboPage.getNumber(), comboPage.getNumberOfElements(), comboPage.getSort().toString(), comboList
+                comboPage.getTotalElements(), comboPage.getTotalPages(), comboPage.getNumber(), comboPage.getNumberOfElements(), sort.toString(), comboList
         );
     }
 

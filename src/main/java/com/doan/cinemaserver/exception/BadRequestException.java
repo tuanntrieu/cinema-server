@@ -12,10 +12,10 @@ public class BadRequestException extends RuntimeException {
     public BadRequestException(String message, Object... params) {
         super(message);
         this.params = params;
-        this.status = HttpStatus.FORBIDDEN;
+        this.status = HttpStatus.BAD_REQUEST;
     }
     public BadRequestException( String message) {
         super(message);
-        this.status = HttpStatus.FORBIDDEN;
+        this.status = HttpStatus.BAD_REQUEST;
     }
 }
