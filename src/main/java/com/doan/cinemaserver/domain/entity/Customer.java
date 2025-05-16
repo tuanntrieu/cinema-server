@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Customer {
+public class Customer  extends DateAuditing{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

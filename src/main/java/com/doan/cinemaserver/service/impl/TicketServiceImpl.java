@@ -109,6 +109,7 @@ public class TicketServiceImpl implements TicketService {
                 .seatsName(seatsStr)
                 .schedule(schedule)
                 .priceSeat(price.get())
+                .cinema(cinema)
                 .build();
         ticket.setCreatedDate(LocalDateTime.now());
         ticket.setLastModifiedDate(LocalDateTime.now());
@@ -299,7 +300,7 @@ public class TicketServiceImpl implements TicketService {
                 .totalCombos(ticket.getPriceCombo())
                 .build();
 
-        return null;
+        return ticketResponseDto;
     }
 
 

@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -153,7 +154,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<ScheduleForCinemaResponseDto> getScheduleForMovieByCinema(ScheduleSearchByCinemaRequestDto requestDto) {
 
-        List<Schedule> schedules = scheduleRepository.getScheduleForCinema(requestDto.getCinemaId(), requestDto.getMovieId());
+        List<Schedule> schedules = scheduleRepository.getScheduleForCinema(requestDto.getCinemaId(), requestDto.getMovieId(),LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
 
         List<RoomScheduleResponseDto> roomSchedules = buildRoomScheduleResponse(schedules);
         Map<LocalDate, List<RoomScheduleResponseDto>> scheduleTimes = new TreeMap<>();
@@ -181,7 +182,14 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleForCinemaResponseDto getScheduleForMovieByDate(ScheduleForMovieByDateRequestDto requestDto) {
-        List<Schedule> schedules = scheduleRepository.getScheduleForMovieByDate(requestDto.getCinemaId(), requestDto.getMovieId(), requestDto.getDate());
+        LocalDateTime startTime;
+        if (requestDto.getDate().equals(LocalDate.now())) {
+            startTime = LocalDateTime.now();
+        } else {
+            startTime = requestDto.getDate().atStartOfDay();
+        }
+        LocalDateTime endTime = requestDto.getDate().atTime(LocalTime.MAX);
+        List<Schedule> schedules = scheduleRepository.getScheduleForMovieByDate(requestDto.getCinemaId(), requestDto.getMovieId(),startTime,endTime);
 
         List<RoomScheduleResponseDto> roomSchedules = buildRoomScheduleResponse(schedules);
         return ScheduleForCinemaResponseDto.builder()

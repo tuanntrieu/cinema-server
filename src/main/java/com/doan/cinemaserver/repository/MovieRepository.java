@@ -28,7 +28,8 @@ public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecific
             "on r.room_id = rm.room_id " +
             "inner join cinemas c " +
             "on c.cinema_id = r.cinema_id " +
-            "where DATE(s.schedule_time) = DATE(?2)" +
+            "where DATE(s.schedule_time) = DATE(?2)"
+            +"and s.schedule_time> now()"+
             "and c.cinema_id = ?1",
             countQuery = "select count(distinct v.movie_id) " +
                     "from movies v " +
@@ -40,7 +41,8 @@ public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecific
                     "on r.room_id = rm.room_id " +
                     "inner join cinemas c " +
                     "on c.cinema_id = r.cinema_id " +
-                    "where DATE(s.schedule_time) = DATE(?2) " +
+                    "where DATE(s.schedule_time) = DATE(?2) "
+                    +"and s.schedule_time >= CONVERT_TZ(NOW(), 'SYSTEM', 'Asia/Ho_Chi_Minh')"+
                     "and c.cinema_id = ?1", nativeQuery = true)
     Page<Movie> getMoviesByDate(Long cinemaId, Date date, Pageable pageable);
 

@@ -1,7 +1,5 @@
 package com.doan.cinemaserver.constant;
 
-import org.springframework.security.core.parameters.P;
-
 public class UrlConstant {
     public static class Auth {
         private static final String PRE_FIX = "/auth";
@@ -106,10 +104,11 @@ public class UrlConstant {
         public static final String GET_TICKETS_BY_CUSTOMER = PRE_FIX + "/get-tickets-by-customer";
         public static final String GET_PAYMENT_URL = PRE_FIX + "/payment-url";
         public static final String HANDLE_VNPAY_RETURN = PRE_FIX + "/handle-return";
-        public static final String SAVE_DATA_TMP= PRE_FIX + "/save-data-tmp";
-        public static final String READ_DATA_TMP= PRE_FIX + "/read-data-tmp";
-        public static final String DELETE_DATA_TMP= PRE_FIX + "/delete-data-tmp";
+        public static final String SAVE_DATA_TMP = PRE_FIX + "/save-data-tmp";
+        public static final String READ_DATA_TMP = PRE_FIX + "/read-data-tmp";
+        public static final String DELETE_DATA_TMP = PRE_FIX + "/delete-data-tmp";
         public static final String EXIST_BY_ID = PRE_FIX + "/exist-by-id";
+        public static final String GET_TICKET_DETAIL = PRE_FIX + "/{id}";
     }
 
     public static class Combo {

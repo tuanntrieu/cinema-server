@@ -1,5 +1,6 @@
 package com.doan.cinemaserver.domain.entity;
 
+import com.doan.cinemaserver.domain.entity.common.DateAuditing;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,7 @@ import org.hibernate.annotations.UuidGenerator;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User  {
     @Id
     @UuidGenerator
     @Column(name = "user_id", columnDefinition = "NVARCHAR(64)")

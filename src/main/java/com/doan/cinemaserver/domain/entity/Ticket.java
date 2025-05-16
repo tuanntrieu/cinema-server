@@ -47,6 +47,10 @@ public class Ticket extends DateAuditing {
     @JoinColumn(name="schedule_id")
     private Schedule schedule;
 
+    @ManyToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="cinema_id")
+    private Cinema cinema;
+
     private Long priceSeat;
 
     private Long priceCombo;

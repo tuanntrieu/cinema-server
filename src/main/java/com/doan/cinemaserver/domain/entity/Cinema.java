@@ -32,9 +32,14 @@ public class Cinema  {
     private String ward;
     private String detailAddress;
 
-    @OneToMany(mappedBy = "cinema")
+    @OneToMany(mappedBy = "cinema",cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Room> rooms =new ArrayList<>();
 
     private String hotline;
+
+    @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Ticket> tickets =new ArrayList<>();
 
 }
