@@ -126,5 +126,22 @@ public class UrlConstant {
         public static final String DELETE_FOOD = PRE_FIX + "/delete/{id}";
     }
 
+    public static class Statistics {
+        public static final String PRE_FIX = "/statistics";
+        public static final String REVENUE_CINEMA = PRE_FIX + "/revenue-cinema";
+        public static final String REVENUE_MOVIE = PRE_FIX + "/revenue-movie";
+        public static final String REVENUE_CHART_BY_MONTH = PRE_FIX + "/revenue-by-month";
+        public static final String REVENUE_CHART_BY_YEAR = PRE_FIX + "/revenue-by-year";
+        public static final String COUNT_CUSTOMER_BY_DATE=PRE_FIX+"/count-customer-date";
+        public static final String COUNT_CUSTOMER_BY_WEEK=PRE_FIX+"/count-customer-week";
+        public static final String COUNT_CUSTOMER_BY_MONTH=PRE_FIX+"/count-customer-month";
+        public static final String COUNT_TICKET_BY_DATE=PRE_FIX+"/count-ticket-date";
+        public static final String COUNT_TICKET_BY_WEEK=PRE_FIX+"/count-ticket-week";
+        public static final String COUNT_TICKET_BY_MONTH=PRE_FIX+"/count-ticket-month";
+        public static final String SUM_TOTAL_BY_DATE=PRE_FIX+"/sum-total-date";
+        public static final String SUM_TOTAL_BY_WEEK=PRE_FIX+"/sum-total-week";
+        public static final String SUM_TOTAL_BY_MONTH=PRE_FIX+"/sum-total-month";
+    }
+
 
 }
