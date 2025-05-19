@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RevenueChartResponseDto {
+    public class RevenueChartResponseDto {
     private String label;
     private long countTickets;
     private long total;

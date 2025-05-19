@@ -6,11 +6,17 @@ import com.doan.cinemaserver.repository.CustomerRepository;
 import com.doan.cinemaserver.repository.StatisticRepository;
 import com.doan.cinemaserver.repository.TicketRepository;
 import com.doan.cinemaserver.service.StatisticsService;
+import com.doan.cinemaserver.util.ExcelUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,48 +28,190 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final StatisticRepository statisticRepository;
 
     @Override
-    public int countCustomerByDate(LocalDate date) {
-        return customerRepository.countCustomerByDate(date);
+    public GeneralStatisticsResponseDto countCustomerByDate(LocalDate date) {
+        long now = customerRepository.countCustomerByDate(date);
+        long last = customerRepository.countCustomerByDate(date.minusDays(1));
+
+        double rate = 0.0;
+        if (last > 0) {
+            if (now == 0) {
+                rate = 0;
+            } else {
+                rate = ((now - last) / (double) last) * 100;
+            }
+        } else if (now > 0) {
+            rate = 100.0;
+        }
+        return GeneralStatisticsResponseDto.builder()
+                .total(now)
+                .rate(rate)
+                .build();
     }
 
     @Override
-    public int countCustomerByWeek(LocalDate date) {
-        return customerRepository.countCustomerByWeek(date);
+    public GeneralStatisticsResponseDto countCustomerByWeek(LocalDate date) {
+        long now = customerRepository.countCustomerByWeek(date);
+        long last = customerRepository.countCustomerByWeek(date.minusWeeks(1));
+
+        double rate = 0.0;
+        if (last > 0) {
+            if (now == 0) {
+                rate = 0;
+            } else {
+                rate = ((now - last) / (double) last) * 100;
+            }
+        } else if (now > 0) {
+            rate = 100.0;
+        }
+        return GeneralStatisticsResponseDto.builder()
+                .total(now)
+                .rate(rate)
+                .build();
     }
 
     @Override
-    public int countCustomerByMonth(LocalDate date) {
-        return customerRepository.countCustomerByMonth(date);
+    public GeneralStatisticsResponseDto countCustomerByMonth(LocalDate date) {
+        long now = customerRepository.countCustomerByMonth(date);
+        long last = customerRepository.countCustomerByMonth(date.minusMonths(1));
+
+        double rate = 0.0;
+        if (last > 0) {
+            if (now == 0) {
+                rate = 0;
+            } else {
+                rate = ((now - last) / (double) last) * 100;
+            }
+        } else if (now > 0) {
+            rate = 100.0;
+        }
+        return GeneralStatisticsResponseDto.builder()
+                .total(now)
+                .rate(rate)
+                .build();
     }
 
     @Override
-    public int countTicketByDate(LocalDate date) {
-        return ticketRepository.countTicketByDate(date);
+    public GeneralStatisticsResponseDto countTicketByDate(LocalDate date) {
+        long now = ticketRepository.countTicketByDate(date);
+        long last = ticketRepository.countTicketByDate(date.minusDays(1));
+
+        double rate = 0.0;
+        if (last > 0) {
+            if (now == 0) {
+                rate = 0;
+            } else {
+                rate = ((now - last) / (double) last) * 100;
+            }
+        } else if (now > 0) {
+            rate = 100.0;
+        }
+        return GeneralStatisticsResponseDto.builder()
+                .total(now)
+                .rate(rate)
+                .build();
     }
 
     @Override
-    public int countTicketByWeek(LocalDate date) {
-        return ticketRepository.countTicketByWeek(date);
+    public GeneralStatisticsResponseDto countTicketByWeek(LocalDate date) {
+        long now = ticketRepository.countTicketByWeek(date);
+        long last = ticketRepository.countTicketByWeek(date.minusWeeks(1));
+
+        double rate = 0.0;
+        if (last > 0) {
+            if (now == 0) {
+                rate = 0;
+            } else {
+                rate = ((now - last) / (double) last) * 100;
+            }
+        } else if (now > 0) {
+            rate = 100.0;
+        }
+        return GeneralStatisticsResponseDto.builder()
+                .total(now)
+                .rate(rate)
+                .build();
     }
 
     @Override
-    public int countTicketByMonth(LocalDate date) {
-        return ticketRepository.countTicketByMonth(date);
+    public GeneralStatisticsResponseDto countTicketByMonth(LocalDate date) {
+        long now = ticketRepository.countTicketByMonth(date);
+        long last = ticketRepository.countTicketByMonth(date.minusMonths(1));
+
+        double rate = 0.0;
+        if (last > 0) {
+            if (now == 0) {
+                rate = 0;
+            } else {
+                rate = ((now - last) / (double) last) * 100;
+            }
+        } else if (now > 0) {
+            rate = 100.0;
+        }
+        return GeneralStatisticsResponseDto.builder()
+                .total(now)
+                .rate(rate)
+                .build();
     }
 
     @Override
-    public long sumTotalByDate(LocalDate date) {
-        return ticketRepository.sumTotalByDate(date);
+    public GeneralStatisticsResponseDto sumTotalByDate(LocalDate date) {
+        long now = ticketRepository.sumTotalByDate(date);
+        long last = ticketRepository.sumTotalByDate(date.minusDays(1));
+
+        double rate = 0.0;
+        if (last > 0) {
+            if (now == 0) {
+                rate = 0;
+            } else {
+                rate = ((now - last) / (double) last) * 100;
+            }
+        } else if (now > 0) {
+            rate = 100.0;
+        }
+        return GeneralStatisticsResponseDto.builder()
+                .total(now)
+                .rate(rate)
+                .build();
     }
 
     @Override
-    public long sumTotalByWeek(LocalDate date) {
-        return ticketRepository.sumTotalByWeek(date);
+    public GeneralStatisticsResponseDto sumTotalByWeek(LocalDate date) {
+        long now = ticketRepository.sumTotalByWeek(date);
+        long last = ticketRepository.sumTotalByWeek(date.minusWeeks(1));
+        double rate = 0.0;
+        if (last > 0) {
+            if (now == 0) {
+                rate = 0;
+            } else {
+                rate = ((now - last) / (double) last) * 100;
+            }
+        } else if (now > 0) {
+            rate = 100.0;
+        }
+        return GeneralStatisticsResponseDto.builder()
+                .total(now)
+                .rate(rate)
+                .build();
     }
 
     @Override
-    public long sumTotalByMonth(LocalDate date) {
-        return ticketRepository.sumTotalByMonth(date);
+    public GeneralStatisticsResponseDto sumTotalByMonth(LocalDate date) {
+        long now = ticketRepository.sumTotalByMonth(date);
+        long last = ticketRepository.sumTotalByMonth(date.minusMonths(1));
+        double rate = 0.0;
+        if (last > 0) {
+            if (now == 0) {
+                rate = 0;
+            } else {
+                rate = ((now - last) / (double) last) * 100;
+            }
+        } else if (now > 0) {
+            rate = 100.0;
+        }
+        return GeneralStatisticsResponseDto.builder()
+                .total(now)
+                .rate(rate)
+                .build();
     }
 
     @Override
@@ -81,7 +229,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<RevenueChartResponseDto> result = new ArrayList<>();
         LocalDate firstDay = request.getDate().withDayOfMonth(1);
         int lastDayOfMonth = request.getDate().lengthOfMonth();
-        int week=1;
+        int week = 1;
         for (int day = 1; day <= lastDayOfMonth; day += 7) {
             LocalDate start = firstDay.withDayOfMonth(day);
             LocalDate end = start.plusDays(6);
@@ -89,7 +237,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 end = firstDay.withDayOfMonth(lastDayOfMonth);
             }
             RevenueChartResponseDto dto = statisticRepository.getRevenueChart(start, end, request.getCinemaId());
-            dto.setLabel("Tuần "+week);
+            dto.setLabel("Tuần " + week);
             result.add(dto);
             week++;
         }
@@ -105,12 +253,43 @@ public class StatisticsServiceImpl implements StatisticsService {
             LocalDate start = LocalDate.of(year, month, 1);
             LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
             RevenueChartResponseDto dto = statisticRepository.getRevenueChart(start, end, request.getCinemaId());
-            dto.setLabel("Tháng "+month);
+            dto.setLabel("Tháng " + month);
             result.add(dto);
         }
         return result;
     }
 
+    private final ExcelUtil excelUtil;
+
+    @Override
+    public void exportExcelForMovie(RevenueMovieRequestDto requestDto, HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=statistic_movie_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        List<RevenueMovieResponseDto> list = statisticRepository.getRevenueMovieExcel(requestDto);
+        excelUtil.exportDataMovieToExcel(response, requestDto.getDate(), list);
+
+
+    }
+
+    @Override
+    public void exportExcelForCinema(RevenueCinemaRequestDto requestDto, HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=statistic_cinema_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        List<RevenueCinemaResponseDto> list = statisticRepository.getRevenueCinemaExcel(requestDto);
+        excelUtil.exportDataCinemaToExcel(response, requestDto.getDate(), list);
+    }
 
 
 }

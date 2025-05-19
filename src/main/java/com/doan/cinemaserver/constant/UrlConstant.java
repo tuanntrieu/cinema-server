@@ -141,6 +141,8 @@ public class UrlConstant {
         public static final String SUM_TOTAL_BY_DATE=PRE_FIX+"/sum-total-date";
         public static final String SUM_TOTAL_BY_WEEK=PRE_FIX+"/sum-total-week";
         public static final String SUM_TOTAL_BY_MONTH=PRE_FIX+"/sum-total-month";
+        public static final String EXPORT_MOVIE_EXCEL = PRE_FIX + "/export-movie-excel";
+        public static final String EXPORT_CINEMA_EXCEL = PRE_FIX + "/export-cinema-excel";
     }
 
 

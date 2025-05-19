@@ -9,6 +9,7 @@ import com.doan.cinemaserver.domain.dto.statistics.RevenueCinemaRequestDto;
 import com.doan.cinemaserver.domain.dto.statistics.RevenueMovieRequestDto;
 import com.doan.cinemaserver.service.StatisticsService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 @RestApiV1
@@ -54,12 +56,12 @@ public class StatisticsController {
     @Operation(summary = "API Count Customer By Week")
     @GetMapping(UrlConstant.Statistics.COUNT_CUSTOMER_BY_WEEK)
     public ResponseEntity<?> countCustomerByWeek(@RequestParam LocalDate date) {
-        return VsResponseUtil.success(statisticsService.countTicketByWeek(date));
+        return VsResponseUtil.success(statisticsService.countCustomerByWeek(date));
     }
     @Operation(summary = "API Count Customer By Month")
     @GetMapping(UrlConstant.Statistics.COUNT_CUSTOMER_BY_MONTH)
     public ResponseEntity<?> countCustomerByMonth(@RequestParam LocalDate date) {
-        return VsResponseUtil.success(statisticsService.countTicketByMonth(date));
+        return VsResponseUtil.success(statisticsService.countCustomerByMonth(date));
     }
     @Operation(summary = "API Count Ticket By Date")
     @GetMapping(UrlConstant.Statistics.COUNT_TICKET_BY_DATE)
@@ -92,5 +94,15 @@ public class StatisticsController {
         return VsResponseUtil.success(statisticsService.sumTotalByMonth(date));
     }
 
+    @Operation(summary = "API Export Movie Excel")
+    @PostMapping(UrlConstant.Statistics.EXPORT_MOVIE_EXCEL)
+    public void exportMovieExcel(@RequestBody RevenueMovieRequestDto requestDto, HttpServletResponse response) throws IOException {
+        statisticsService.exportExcelForMovie(requestDto,response);
+    }
+    @Operation(summary = "API Export Cinema Excel")
+    @PostMapping(UrlConstant.Statistics.EXPORT_CINEMA_EXCEL)
+    public void exportCinemaExcel(@RequestBody RevenueCinemaRequestDto requestDto, HttpServletResponse response) throws IOException {
+        statisticsService.exportExcelForCinema(requestDto,response);
+    }
 
 }

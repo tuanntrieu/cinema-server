@@ -21,7 +21,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query(value = "select count(*) from customers c where yearweek(c.created_date) = yearweek(:date)", nativeQuery = true)
     int countCustomerByWeek(@Param("date") LocalDate date);
 
-    @Query(value = "select count(*) from customers c where month(c.created_date) = month(:date) and year(t.created_date) = year(:date)", nativeQuery = true)
+    @Query(value = "select count(*) from customers c where month(c.created_date) = month(:date) and year(c.created_date) = year(:date)", nativeQuery = true)
     int countCustomerByMonth(@Param("date") LocalDate date);
 
 
