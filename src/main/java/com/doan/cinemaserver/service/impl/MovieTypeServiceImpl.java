@@ -4,6 +4,7 @@ import com.doan.cinemaserver.constant.ErrorMessage;
 import com.doan.cinemaserver.constant.SuccessMessage;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
 import com.doan.cinemaserver.domain.dto.movietype.MovieTypeRequestDto;
+import com.doan.cinemaserver.domain.dto.movietype.MovieTypeSearchRequestDto;
 import com.doan.cinemaserver.domain.dto.pagination.PaginationResponseDto;
 import com.doan.cinemaserver.domain.entity.MovieType;
 import com.doan.cinemaserver.domain.entity.MovieType_;
@@ -54,18 +55,21 @@ public class MovieTypeServiceImpl implements MovieTypeService {
     }
 
     @Override
-    public PaginationResponseDto<MovieType> getMovieTypePage(String name) {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+    public PaginationResponseDto<MovieType> getMovieTypePage(MovieTypeSearchRequestDto requestDto) {
+        Sort sort = requestDto.getIsAscending() != null && requestDto.getIsAscending()
+                ? Sort.by(requestDto.getSortBy()).ascending()
+                : Sort.by(requestDto.getSortBy()).descending();
+        Pageable pageable = PageRequest.of(requestDto.getPageNo(), requestDto.getPageSize(), sort);
         Page<MovieType> movieTypePage = movieTypeRepository.findAll(
                 new Specification<MovieType>() {
                     List<Predicate> predicates = new ArrayList<>();
 
                     @Override
                     public Predicate toPredicate(Root<MovieType> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                        if (name != null) {
+                        if (requestDto.getName() != null && !requestDto.getName().trim().isEmpty()) {
                             predicates.add(criteriaBuilder.like(
                                     root.get(MovieType_.NAME).as(String.class),
-                                    "%" + name + "%"
+                                    "%" + requestDto.getName() + "%"
                             ));
                         }
                         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -73,12 +77,22 @@ public class MovieTypeServiceImpl implements MovieTypeService {
                 }
                 , pageable);
         return new PaginationResponseDto<>(
-                movieTypePage.getTotalElements(), movieTypePage.getTotalPages(), movieTypePage.getNumber(), movieTypePage.getNumberOfElements(), movieTypePage.getSort().toString(), movieTypePage.getContent()
+                movieTypePage.getTotalElements(), movieTypePage.getTotalPages(), requestDto.getPageNo(), requestDto.getPageSize(), movieTypePage.getSort().toString(), movieTypePage.getContent()
         );
     }
 
     @Override
     public List<MovieType> getAllMovieType() {
         return movieTypeRepository.findAll();
+    }
+
+    @Override
+    public CommonResponseDto deleteMovieType(Long movieTypeId) {
+        MovieType movieType = movieTypeRepository.findById(movieTypeId).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.MovieType.ERR_NOT_FOUND_MOVIE_TYPE, new String[]{movieTypeId.toString()})
+        );
+        movieTypeRepository.delete(movieType);
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.DELETE_SUCCESS, null));
+
     }
 }

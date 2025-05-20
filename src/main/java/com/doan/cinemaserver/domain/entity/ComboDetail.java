@@ -18,11 +18,11 @@ public class ComboDetail {
     @Column(name="combo_detail_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "combo_id")
     private Combo combo;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     @JoinColumn(name = "food_id")
     private Food food;
 

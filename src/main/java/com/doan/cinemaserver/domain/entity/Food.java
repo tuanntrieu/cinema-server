@@ -21,7 +21,7 @@ public class Food {
 
     private String name;
 
-    @OneToMany(mappedBy = "food",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "food",cascade = CascadeType.ALL)
     @JsonIgnore
     private List<ComboDetail> comboDetails = new ArrayList<>();
 }

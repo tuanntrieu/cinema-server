@@ -4,6 +4,7 @@ import com.doan.cinemaserver.common.RestApiV1;
 import com.doan.cinemaserver.common.VsResponseUtil;
 import com.doan.cinemaserver.constant.UrlConstant;
 import com.doan.cinemaserver.domain.dto.movietype.MovieTypeRequestDto;
+import com.doan.cinemaserver.domain.dto.movietype.MovieTypeSearchRequestDto;
 import com.doan.cinemaserver.service.MovieTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
 @RequiredArgsConstructor
-public class MovieTypeController {
+public class  MovieTypeController {
     private final MovieTypeService movieTypeService;
 
     @Operation(summary = "API Create MovieType")
@@ -24,8 +25,13 @@ public class MovieTypeController {
 
     @Operation(summary = "API Update MovieType")
     @PatchMapping(UrlConstant.MovieType.UPDATE_TYPE)
-    public ResponseEntity<?> updateCinema(@PathVariable(name = "id") Long typeId, @Valid @RequestBody MovieTypeRequestDto movieTypeRequestDto){
-        return VsResponseUtil.success(movieTypeService.updateMovieType(typeId,movieTypeRequestDto));
+    public ResponseEntity<?> updateMovieType(@PathVariable Long id, @Valid @RequestBody MovieTypeRequestDto movieTypeRequestDto){
+        return VsResponseUtil.success(movieTypeService.updateMovieType(id,movieTypeRequestDto));
+    }
+    @Operation(summary = "API Delete MovieType")
+    @DeleteMapping(UrlConstant.MovieType.DELETE_TYPE)
+    public ResponseEntity<?> deleteMovieType(@PathVariable Long id){
+        return VsResponseUtil.success(movieTypeService.deleteMovieType(id));
     }
 
 
@@ -36,9 +42,9 @@ public class MovieTypeController {
     }
 
     @Operation(summary = "API Get All MovieType Page")
-    @GetMapping(UrlConstant.MovieType.GET_MOVIE_TYPE_PAGE)
-    public ResponseEntity<?> getAllMovieTypePage(@RequestParam(required = false) String name){
-        return VsResponseUtil.success(movieTypeService.getMovieTypePage(name));
+    @PostMapping(UrlConstant.MovieType.GET_MOVIE_TYPE_PAGE)
+    public ResponseEntity<?> getAllMovieTypePage(@RequestBody MovieTypeSearchRequestDto requestDto){
+        return VsResponseUtil.success(movieTypeService.getMovieTypePage(requestDto));
     }
 
 }

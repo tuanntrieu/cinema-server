@@ -2,6 +2,7 @@ package com.doan.cinemaserver.service;
 
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
 import com.doan.cinemaserver.domain.dto.movietype.MovieTypeRequestDto;
+import com.doan.cinemaserver.domain.dto.movietype.MovieTypeSearchRequestDto;
 import com.doan.cinemaserver.domain.dto.pagination.PaginationResponseDto;
 import com.doan.cinemaserver.domain.entity.MovieType;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import java.util.List;
 public interface MovieTypeService {
     public CommonResponseDto addMovieType(MovieTypeRequestDto movieTypeRequestDto);
     public CommonResponseDto updateMovieType(Long movieTypeId,MovieTypeRequestDto movieTypeRequestDto);
-    public PaginationResponseDto<MovieType> getMovieTypePage(String name);
+    public PaginationResponseDto<MovieType> getMovieTypePage(MovieTypeSearchRequestDto requestDto);
     public List<MovieType> getAllMovieType();
+    public CommonResponseDto deleteMovieType(Long movieTypeId);
 }

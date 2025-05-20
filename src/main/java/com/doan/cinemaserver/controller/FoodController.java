@@ -5,6 +5,7 @@ import com.doan.cinemaserver.common.VsResponseUtil;
 import com.doan.cinemaserver.constant.ErrorMessage;
 import com.doan.cinemaserver.constant.UrlConstant;
 import com.doan.cinemaserver.domain.dto.combo.ComboRequestDto;
+import com.doan.cinemaserver.domain.dto.food.FoodRequestDto;
 import com.doan.cinemaserver.service.ComboService;
 import com.doan.cinemaserver.service.FoodService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,9 +31,9 @@ public class FoodController {
         return VsResponseUtil.success(foodService.findAllFood());
     }
     @Operation(summary = "API Get Food By Page")
-    @GetMapping(value = UrlConstant.Food.GET_FOOD_PAGE)
-    public ResponseEntity<?> getFoodByPage(@RequestParam(required = false) String name) {
-        return VsResponseUtil.success(foodService.findFoodByPage(name));
+    @PostMapping(value = UrlConstant.Food.GET_FOOD_PAGE)
+    public ResponseEntity<?> getFoodByPage(@RequestBody FoodRequestDto requestDto) {
+        return VsResponseUtil.success(foodService.findFoodByPage(requestDto));
     }
 
     @Operation(summary = "API Delete Food")
