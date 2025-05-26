@@ -36,6 +36,7 @@ public class UrlConstant {
         public static final String LOAD_ALL_PROVINCE = PRE_FIX + "/province";
         public static final String LOAD_CINEMA_BY_PROVINCE = PRE_FIX + "/load-by-province";
         public static final String LOAD_ALL_CINEMA = PRE_FIX + "/load-all-cinema";
+        public static final String GET_ALL_CINEMA = PRE_FIX + "/get-all";
 
         private Cinema() {
         }
@@ -70,8 +71,9 @@ public class UrlConstant {
         public static final String CREATE_ROOM = PRE_FIX + "/create";
         public static final String DELETE_ROOM = PRE_FIX + "/delete" + "/{id}";
         public static final String UPDATE_ROOM_TYPE = PRE_FIX + "/update-room-type/{id}";
-        public static final String UPDATE_ROOM_SURCHARGE = PRE_FIX + "/update-room-surcharge/{id}";
+        public static final String UPDATE_ROOM_SURCHARGE = PRE_FIX + "/update-room-surcharge";
         public static final String GET_ROOM_ORDER = PRE_FIX + "/get-room-order/{id}";
+        public static final String GET_ALL_ROOM_TYPES = PRE_FIX + "/get-all-room-types";
 
         private Room() {
 
@@ -80,12 +82,14 @@ public class UrlConstant {
 
     public static class Seat {
         public static final String PRE_FIX = "/seat";
-        public static final String UPDATE_SEAT_PRICE = PRE_FIX + "/update-price";
+        public static final String UPDATE_SEAT_PRICE = PRE_FIX + "/update-seat-price";
         public static final String UPDATE_SEAT_STATUS = PRE_FIX + "/update-status";
         public static final String HOLD_SEAT = PRE_FIX + "/hold-seat";
         public static final String UNHOLD_SEAT = PRE_FIX + "/unhold-seat";
         public static final String DELETE_SEAT = PRE_FIX + "/delete";
         public static final String VALIDATE_SEATS = PRE_FIX + "/validate-seat/{id}";
+        public static final String GET_ALL_SEAT_PRICE = PRE_FIX + "/get-all-seat-price";
+        public static final String UPDATE_PRICE = PRE_FIX + "/update-price";
 
         private Seat() {
         }
@@ -97,6 +101,7 @@ public class UrlConstant {
         public static final String CREATE_MOVIE = PRE_FIX + "/create";
         public static final String SEARCH_MOVIE_BY_DATE = PRE_FIX + "/search-by-date";
         public static final String SEARCH_MOVIE_COMING_SOON = PRE_FIX + "/search-coming-soon";
+        public static final String GET_ALL_MOVIE = PRE_FIX + "/get-all";
     }
 
     public static class Ticket {
@@ -133,15 +138,15 @@ public class UrlConstant {
         public static final String REVENUE_MOVIE = PRE_FIX + "/revenue-movie";
         public static final String REVENUE_CHART_BY_MONTH = PRE_FIX + "/revenue-by-month";
         public static final String REVENUE_CHART_BY_YEAR = PRE_FIX + "/revenue-by-year";
-        public static final String COUNT_CUSTOMER_BY_DATE=PRE_FIX+"/count-customer-date";
-        public static final String COUNT_CUSTOMER_BY_WEEK=PRE_FIX+"/count-customer-week";
-        public static final String COUNT_CUSTOMER_BY_MONTH=PRE_FIX+"/count-customer-month";
-        public static final String COUNT_TICKET_BY_DATE=PRE_FIX+"/count-ticket-date";
-        public static final String COUNT_TICKET_BY_WEEK=PRE_FIX+"/count-ticket-week";
-        public static final String COUNT_TICKET_BY_MONTH=PRE_FIX+"/count-ticket-month";
-        public static final String SUM_TOTAL_BY_DATE=PRE_FIX+"/sum-total-date";
-        public static final String SUM_TOTAL_BY_WEEK=PRE_FIX+"/sum-total-week";
-        public static final String SUM_TOTAL_BY_MONTH=PRE_FIX+"/sum-total-month";
+        public static final String COUNT_CUSTOMER_BY_DATE = PRE_FIX + "/count-customer-date";
+        public static final String COUNT_CUSTOMER_BY_WEEK = PRE_FIX + "/count-customer-week";
+        public static final String COUNT_CUSTOMER_BY_MONTH = PRE_FIX + "/count-customer-month";
+        public static final String COUNT_TICKET_BY_DATE = PRE_FIX + "/count-ticket-date";
+        public static final String COUNT_TICKET_BY_WEEK = PRE_FIX + "/count-ticket-week";
+        public static final String COUNT_TICKET_BY_MONTH = PRE_FIX + "/count-ticket-month";
+        public static final String SUM_TOTAL_BY_DATE = PRE_FIX + "/sum-total-date";
+        public static final String SUM_TOTAL_BY_WEEK = PRE_FIX + "/sum-total-week";
+        public static final String SUM_TOTAL_BY_MONTH = PRE_FIX + "/sum-total-month";
         public static final String EXPORT_MOVIE_EXCEL = PRE_FIX + "/export-movie-excel";
         public static final String EXPORT_CINEMA_EXCEL = PRE_FIX + "/export-cinema-excel";
     }

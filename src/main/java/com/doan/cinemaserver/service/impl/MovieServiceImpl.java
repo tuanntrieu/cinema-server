@@ -7,9 +7,7 @@ import com.doan.cinemaserver.domain.dto.movie.MovieRequestDto;
 import com.doan.cinemaserver.domain.dto.movie.MovieResponseDto;
 import com.doan.cinemaserver.domain.dto.movie.MovieSearchRequestDto;
 import com.doan.cinemaserver.domain.dto.pagination.PaginationResponseDto;
-import com.doan.cinemaserver.domain.entity.Cinema;
-import com.doan.cinemaserver.domain.entity.Movie;
-import com.doan.cinemaserver.domain.entity.MovieType;
+import com.doan.cinemaserver.domain.entity.*;
 import com.doan.cinemaserver.exception.DataIntegrityViolationException;
 import com.doan.cinemaserver.exception.InvalidException;
 import com.doan.cinemaserver.exception.NotFoundException;
@@ -17,15 +15,19 @@ import com.doan.cinemaserver.mapper.MovieMapper;
 import com.doan.cinemaserver.repository.CinemaRepository;
 import com.doan.cinemaserver.repository.MovieRepository;
 import com.doan.cinemaserver.repository.MovieTypeRepository;
-import com.doan.cinemaserver.repository.SeatRepository;
 import com.doan.cinemaserver.service.MovieService;
 import com.doan.cinemaserver.util.MessageSourceUtil;
 import com.doan.cinemaserver.util.UploadFileUtil;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -91,20 +93,20 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public PaginationResponseDto<MovieResponseDto> findMovieByDate(MovieSearchRequestDto movieSearchRequestDto) {
-        if(movieSearchRequestDto.getDateSearch() == null) {
-            throw new InvalidException(ErrorMessage.INVALID_NOT_BLANK_FIELD,"DateSearch");
+        if (movieSearchRequestDto.getDateSearch() == null) {
+            throw new InvalidException(ErrorMessage.INVALID_NOT_BLANK_FIELD, "DateSearch");
         }
         Sort sort = movieSearchRequestDto.getIsAscending() != null && movieSearchRequestDto.getIsAscending()
                 ? Sort.by(movieSearchRequestDto.getSortBy()).ascending()
                 : Sort.by(movieSearchRequestDto.getSortBy()).descending();
-        Pageable pageable =PageRequest.of(movieSearchRequestDto.getPageNo(), movieSearchRequestDto.getPageSize(),sort);
+        Pageable pageable = PageRequest.of(movieSearchRequestDto.getPageNo(), movieSearchRequestDto.getPageSize(), sort);
 
         Cinema cinema = cinemaRepository.findById(movieSearchRequestDto.getCinemaId()).orElseThrow(() ->
                 new NotFoundException(ErrorMessage.Cinema.ERR_NOT_FOUND_CINEMA, new String[]{movieSearchRequestDto.getCinemaId().toString()}));
 
-        Page<Movie> movies = movieRepository.getMoviesByDate(movieSearchRequestDto.getCinemaId(),movieSearchRequestDto.getDateSearch(),pageable);
+        Page<Movie> movies = movieRepository.getMoviesByDate(movieSearchRequestDto.getCinemaId(), movieSearchRequestDto.getDateSearch(), pageable);
 
-        List<MovieResponseDto> moviesRep=movies.getContent().stream().map(
+        List<MovieResponseDto> moviesRep = movies.getContent().stream().map(
                 movie -> {
                     StringBuilder typeBuilder = new StringBuilder();
                     movie.getTypes().forEach(t -> {
@@ -133,22 +135,22 @@ public class MovieServiceImpl implements MovieService {
         ).collect(Collectors.toList());
 
         return new PaginationResponseDto<>(
-                movies.getTotalElements(),movies.getTotalPages(),movies.getNumber(),movieSearchRequestDto.getPageSize(),sort.toString(),moviesRep
+                movies.getTotalElements(), movies.getTotalPages(), movies.getNumber(), movieSearchRequestDto.getPageSize(), sort.toString(), moviesRep
         );
     }
 
     @Override
     public PaginationResponseDto<MovieResponseDto> findMovieComingSoon(MovieSearchRequestDto movieSearchRequestDto) {
-        if(movieSearchRequestDto.getDateSearch() == null) {
-            throw new InvalidException(ErrorMessage.INVALID_NOT_BLANK_FIELD,"DateSearch");
+        if (movieSearchRequestDto.getDateSearch() == null) {
+            throw new InvalidException(ErrorMessage.INVALID_NOT_BLANK_FIELD, "DateSearch");
         }
         Sort sort = movieSearchRequestDto.getIsAscending() != null && movieSearchRequestDto.getIsAscending()
                 ? Sort.by(movieSearchRequestDto.getSortBy()).ascending()
                 : Sort.by(movieSearchRequestDto.getSortBy()).descending();
-        Pageable pageable =PageRequest.of(movieSearchRequestDto.getPageNo(), movieSearchRequestDto.getPageSize(),sort);
+        Pageable pageable = PageRequest.of(movieSearchRequestDto.getPageNo(), movieSearchRequestDto.getPageSize(), sort);
 
-        Page<Movie> movies = movieRepository.getMoviesComingSoon(movieSearchRequestDto.getDateSearch(),pageable);
-        List<MovieResponseDto> moviesRep=movies.getContent().stream().map(
+        Page<Movie> movies = movieRepository.getMoviesComingSoon(movieSearchRequestDto.getDateSearch(), pageable);
+        List<MovieResponseDto> moviesRep = movies.getContent().stream().map(
                 movie -> {
                     StringBuilder typeBuilder = new StringBuilder();
                     movie.getTypes().forEach(t -> {
@@ -177,23 +179,75 @@ public class MovieServiceImpl implements MovieService {
         ).collect(Collectors.toList());
 
         return new PaginationResponseDto<>(
-                movies.getTotalElements(),movies.getTotalPages(),movies.getNumber(),movieSearchRequestDto.getPageSize(),sort.toString(),moviesRep
+                movies.getTotalElements(), movies.getTotalPages(), movies.getNumber(), movieSearchRequestDto.getPageSize(), sort.toString(), moviesRep
         );
     }
 
     @Override
     public Movie getMovieDetail(Long movieId) {
         return movieRepository.findById(movieId).orElseThrow(
-                ()-> new NotFoundException(ErrorMessage.Movie.ERR_NOT_FOUND_MOVIE, (Object) new Object[]{movieId.toString()})
+                () -> new NotFoundException(ErrorMessage.Movie.ERR_NOT_FOUND_MOVIE, (Object) new Object[]{movieId.toString()})
         );
     }
 
     @Override
     public CommonResponseDto updateMovie(Long movieId, MovieRequestDto movieRequestDto) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(
-                ()-> new NotFoundException(ErrorMessage.Movie.ERR_NOT_FOUND_MOVIE, (Object) new Object[]{movieId.toString()})
+                () -> new NotFoundException(ErrorMessage.Movie.ERR_NOT_FOUND_MOVIE, (Object) new Object[]{movieId.toString()})
         );
         return null;
+    }
+
+    @Override
+    public PaginationResponseDto<MovieResponseDto> getAllMovies(MovieSearchRequestDto movieSearchRequestDto) {
+        Sort sort = movieSearchRequestDto.getIsAscending() != null && movieSearchRequestDto.getIsAscending()
+                ? Sort.by(movieSearchRequestDto.getSortBy()).ascending()
+                : Sort.by(movieSearchRequestDto.getSortBy()).descending();
+        Pageable pageable = PageRequest.of(movieSearchRequestDto.getPageNo(), movieSearchRequestDto.getPageSize(), sort);
+        Page<Movie> getMovies = movieRepository.findAll(new Specification<Movie>() {
+            @Override
+            public Predicate toPredicate(Root<Movie> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<>();
+                if (movieSearchRequestDto.getName() != null && !movieSearchRequestDto.getName().trim().isEmpty()) {
+                    predicates.add(criteriaBuilder.like(
+                            root.get(Movie_.NAME).as(String.class),
+                            "%" + movieSearchRequestDto.getName() + "%"
+                    ));
+                }
+                return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            }
+        }, pageable);
+        List<MovieResponseDto> moviesRep = getMovies.getContent().stream().map(
+                movie -> {
+                    StringBuilder typeBuilder = new StringBuilder();
+                    movie.getTypes().forEach(t -> {
+                        typeBuilder.append(t.getName()).append(", ");
+                    });
+                    String types = typeBuilder.length() > 0
+                            ? typeBuilder.substring(0, typeBuilder.length() - 2)
+                            : "";
+                    return MovieResponseDto.builder()
+                            .id(movie.getId())
+                            .description(movie.getDescription())
+                            .name(movie.getName())
+                            .duration(movie.getDuration())
+                            .language(movie.getLanguage())
+                            .image(movie.getImage())
+                            .type(types)
+                            .isSub(movie.getIsSub())
+                            .ageLimit(movie.getAgeLimit())
+                            .director(movie.getDirector())
+                            .actors(movie.getActors())
+                            .endDate(movie.getEndDate())
+                            .trailer(movie.getTrailer())
+                            .releaseDate(movie.getReleaseDate())
+                            .build();
+                }
+        ).collect(Collectors.toList());
+
+        return new PaginationResponseDto<>(
+                getMovies.getTotalElements(), getMovies.getTotalPages(), getMovies.getNumber(), movieSearchRequestDto.getPageSize(), sort.toString(), moviesRep
+        );
     }
 
     private LocalDate toLocalDate(Date date) {

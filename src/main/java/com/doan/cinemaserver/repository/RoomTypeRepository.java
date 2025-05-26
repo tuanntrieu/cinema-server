@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,5 +20,8 @@ public interface RoomTypeRepository extends JpaRepository<RoomType, Long> {
     @Modifying
     @Transactional
     @Query(value ="update room_type set surcharge = ?2 where room_type = ?1" ,nativeQuery = true)
-    void updateRoomSurcharge(RoomTypeEnum roomType, Long surcharge);
+    void updateRoomSurcharge(String roomType, Long surcharge);
+
+    @Query("Select r From RoomType r")
+    List<RoomType> getAll();
 }

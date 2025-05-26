@@ -26,5 +26,4 @@ public class TicketResponseDto {
     private String seats;
     private Long totalSeats;
     private Long totalCombos;
-    private List<ComboTicketResponseDto> combo;
 }

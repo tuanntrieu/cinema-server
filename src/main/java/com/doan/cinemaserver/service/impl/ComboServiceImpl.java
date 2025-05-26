@@ -16,6 +16,7 @@ import com.doan.cinemaserver.exception.NotFoundException;
 import com.doan.cinemaserver.repository.ComboDetailRepository;
 import com.doan.cinemaserver.repository.ComboRepository;
 import com.doan.cinemaserver.repository.FoodRepository;
+import com.doan.cinemaserver.repository.TicketComboRepository;
 import com.doan.cinemaserver.service.ComboService;
 import com.doan.cinemaserver.util.MessageSourceUtil;
 import com.doan.cinemaserver.util.UploadFileUtil;
@@ -44,6 +45,7 @@ public class ComboServiceImpl implements ComboService {
     private final FoodRepository foodRepository;
     private final MessageSourceUtil messageSourceUtil;
     private final UploadFileUtil uploadFileUtil;
+    private final TicketComboRepository ticketComboRepository;
 
     @Override
     @Transactional
@@ -90,7 +92,7 @@ public class ComboServiceImpl implements ComboService {
 
                     @Override
                     public Predicate toPredicate(Root<Combo> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                        if (requestDto.getName() != null && !requestDto.getName().equals("")) {
+                        if (requestDto.getName() != null && !requestDto.getName().trim().isEmpty()) {
                             predicates.add(criteriaBuilder.like(
                                     root.get(Combo_.NAME).as(String.class),
                                     "%" + requestDto.getName() + "%"
@@ -112,18 +114,23 @@ public class ComboServiceImpl implements ComboService {
                 }
         ).toList();
         return new PaginationResponseDto<>(
-                comboPage.getTotalElements(), comboPage.getTotalPages(), comboPage.getNumber(), comboPage.getNumberOfElements(), sort.toString(), comboList
+                comboPage.getTotalElements(), comboPage.getTotalPages(), requestDto.getPageNo(), requestDto.getPageSize(), sort.toString(), comboList
         );
     }
 
 
     @Override
+    @Transactional
     public CommonResponseDto deleteCombo(Long id) {
         Combo combo = comboRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.Combo.ERR_NOT_FOUND_COMBO, new String[]{id.toString()})
         );
-        uploadFileUtil.destroyFileWithUrl(combo.getImage());
+
+        comboDetailRepository.deleteAll(combo.getComboDetail());
+        ticketComboRepository.deleteAll(combo.getTicketCombo());
         comboRepository.delete(combo);
+
+        uploadFileUtil.destroyFileWithUrl(combo.getImage());
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.DELETE_SUCCESS, null));
     }
 

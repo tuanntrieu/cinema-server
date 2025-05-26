@@ -44,4 +44,9 @@ public class MovieController {
     public ResponseEntity<?> getMovieDetail(@PathVariable Long id) {
         return VsResponseUtil.success(movieService.getMovieDetail(id));
     }
+    @Operation(summary = "API Get All Movie")
+    @PostMapping(value = UrlConstant.Movie.GET_ALL_MOVIE)
+    public ResponseEntity<?> getAllMovies(@RequestBody MovieSearchRequestDto requestDto) {
+        return VsResponseUtil.success(movieService.getAllMovies(requestDto));
+    }
 }

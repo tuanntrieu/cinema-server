@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +20,10 @@ public interface SeatPriceRepository extends JpaRepository<SeatPrice, Long> {
     @Modifying
     @Query(value = "update seat_type_price set weekday_price = ?2, weekend_price = ?3 where seat_type = ?1 ",nativeQuery = true)
     void updateSeatPrice(String seatType, Long weekDayPrice,Long weekendPrice);
+
+    @Query("SELECT s FROM SeatPrice s")
+    List<SeatPrice> findAll();
+
+
+
 }

@@ -10,8 +10,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateSeatPriceRequestDto {
+public class SeatTypeRequestDto {
+    private long id;
+    private long weekdayPrice;
+    private long weekendPrice;
     private SeatType seatType;
-    private Long weekDayPrice;
-    private Long weekendPrice;
 }

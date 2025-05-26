@@ -1,14 +1,16 @@
 package com.doan.cinemaserver.service;
 
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
-import com.doan.cinemaserver.domain.dto.seat.UpdateSeatPriceRequestDto;
+import com.doan.cinemaserver.domain.dto.seat.UpdatePriceRequestDto;
 import com.doan.cinemaserver.domain.dto.seat.UpdateSeatStatusRequestDto;
+import com.doan.cinemaserver.domain.entity.SeatPrice;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface SeatService {
-    public CommonResponseDto updateSeatPrice(UpdateSeatPriceRequestDto requestDto);
 
     public CommonResponseDto updateSeatStatus(UpdateSeatStatusRequestDto requestDto);
 
@@ -19,4 +21,8 @@ public interface SeatService {
     public CommonResponseDto holdingSeat(UpdateSeatStatusRequestDto requestDto, HttpServletRequest request);
 
     public CommonResponseDto unHoldSeat(UpdateSeatStatusRequestDto requestDto);
+
+    public List<SeatPrice> getAllSeatPrices();
+
+    public CommonResponseDto updatePrice(UpdatePriceRequestDto requestDto);
 }

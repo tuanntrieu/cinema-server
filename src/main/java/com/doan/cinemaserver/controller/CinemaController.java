@@ -4,7 +4,9 @@ import com.doan.cinemaserver.common.RestApiV1;
 import com.doan.cinemaserver.common.VsResponseUtil;
 import com.doan.cinemaserver.constant.UrlConstant;
 import com.doan.cinemaserver.domain.dto.cinema.CinemaRequestDto;
+import com.doan.cinemaserver.domain.dto.cinema.CinemaSearchRequestDto;
 import com.doan.cinemaserver.domain.dto.customer.CustomerDto;
+import com.doan.cinemaserver.domain.dto.movie.MovieSearchRequestDto;
 import com.doan.cinemaserver.service.CinemaService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -45,6 +47,12 @@ public class CinemaController {
     @GetMapping(UrlConstant.Cinema.LOAD_ALL_CINEMA)
     public ResponseEntity<?> loadAllCinema(){
         return VsResponseUtil.success(cinemaService.loadAllCinemas());
+    }
+
+    @Operation(summary = "API Get All Cinema")
+    @PostMapping(value = UrlConstant.Cinema.GET_ALL_CINEMA)
+    public ResponseEntity<?> getAllCinema(@RequestBody CinemaSearchRequestDto requestDto) {
+        return VsResponseUtil.success(cinemaService.getAllCinema(requestDto));
     }
 
 }

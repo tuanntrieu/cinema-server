@@ -5,16 +5,13 @@ import com.doan.cinemaserver.constant.SeatStatus;
 import com.doan.cinemaserver.constant.SeatType;
 import com.doan.cinemaserver.constant.SuccessMessage;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
-import com.doan.cinemaserver.domain.dto.seat.UpdateSeatPriceRequestDto;
+import com.doan.cinemaserver.domain.dto.seat.UpdatePriceRequestDto;
 import com.doan.cinemaserver.domain.dto.seat.UpdateSeatStatusRequestDto;
 import com.doan.cinemaserver.domain.entity.*;
 import com.doan.cinemaserver.exception.InvalidException;
 import com.doan.cinemaserver.exception.NotFoundException;
 import com.doan.cinemaserver.exception.UnauthorizedException;
-import com.doan.cinemaserver.repository.ScheduleRepository;
-import com.doan.cinemaserver.repository.ScheduleSeatRepository;
-import com.doan.cinemaserver.repository.SeatPriceRepository;
-import com.doan.cinemaserver.repository.SeatRepository;
+import com.doan.cinemaserver.repository.*;
 import com.doan.cinemaserver.security.jwt.JwtTokenProvider;
 import com.doan.cinemaserver.service.SeatService;
 import com.doan.cinemaserver.util.MessageSourceUtil;
@@ -41,16 +38,9 @@ public class SeatServiceImpl implements SeatService {
     private final ScheduleSeatRepository scheduleSeatRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
+    private final RoomTypeRepository roomTypeRepository;
 
-    @Override
-    public CommonResponseDto updateSeatPrice(UpdateSeatPriceRequestDto requestDto) {
-        SeatPrice seatPrice = seatPriceRepository.findBySeatType(requestDto.getSeatType()).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Seat.ERR_NOT_FOUND_SEAT_TYPE, new String[]{requestDto.getSeatType().toString()})
-        );
-        seatPriceRepository.updateSeatPrice(requestDto.getSeatType().toString(), requestDto.getWeekDayPrice(), requestDto.getWeekendPrice());
 
-        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS, null));
-    }
 
     @Override
     public CommonResponseDto updateSeatStatus(UpdateSeatStatusRequestDto requestDto) {
@@ -214,6 +204,27 @@ public class SeatServiceImpl implements SeatService {
 
     }
 
+    @Override
+    public List<SeatPrice> getAllSeatPrices() {
+        return seatPriceRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public CommonResponseDto updatePrice(UpdatePriceRequestDto requestDto) {
+        Arrays.stream(requestDto.getRoomRequest()).forEach(
+                room -> {
+                    roomTypeRepository.updateRoomSurcharge(room.getRoomType().toString(),room.getSurcharge());
+                }
+        );
+        Arrays.stream(requestDto.getSeatRequest()).forEach(
+                seat -> {
+                    seatPriceRepository.updateSeatPrice(seat.getSeatType().toString(),seat.getWeekdayPrice(), seat.getWeekendPrice());
+                }
+        );
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS, null));
+    }
+
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
@@ -221,5 +232,6 @@ public class SeatServiceImpl implements SeatService {
         }
         return null;
     }
+
 
 }

@@ -32,12 +32,6 @@ public class RoomController {
         return VsResponseUtil.success(roomService.updateRoomType(id, roomType));
     }
 
-    @Operation(summary = "API Update Room Surcharge")
-    @PatchMapping(UrlConstant.Room.UPDATE_ROOM_SURCHARGE)
-    public ResponseEntity<?> updateRoomSurcharge(@RequestBody UpdateRoomSurchargeRequestDto requestDto, @PathVariable String id) {
-        return VsResponseUtil.success(roomService.updateRoomSurcharge(requestDto));
-    }
-
     @Operation(summary = "API Delete Room")
     @DeleteMapping(UrlConstant.Room.DELETE_ROOM)
     public ResponseEntity<?> deleteRoom(@PathVariable(name = "id") Long id) {
@@ -48,6 +42,12 @@ public class RoomController {
     @GetMapping(UrlConstant.Room.GET_ROOM_ORDER)
     public ResponseEntity<?> getRoomOrder(@PathVariable(name = "id") Long scheduleId, HttpServletRequest request) {
         return VsResponseUtil.success(roomService.getRoomOrder(scheduleId,request));
+    }
+
+    @Operation(summary = "API Get All RoomType")
+    @GetMapping(UrlConstant.Room.GET_ALL_ROOM_TYPES)
+    public ResponseEntity<?> getALlRoomTye() {
+        return VsResponseUtil.success(roomService.getALlRoomType());
     }
 
 }

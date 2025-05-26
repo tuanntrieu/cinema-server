@@ -3,7 +3,7 @@ package com.doan.cinemaserver.controller;
 import com.doan.cinemaserver.common.RestApiV1;
 import com.doan.cinemaserver.common.VsResponseUtil;
 import com.doan.cinemaserver.constant.UrlConstant;
-import com.doan.cinemaserver.domain.dto.seat.UpdateSeatPriceRequestDto;
+import com.doan.cinemaserver.domain.dto.seat.UpdatePriceRequestDto;
 import com.doan.cinemaserver.domain.dto.seat.UpdateSeatStatusRequestDto;
 import com.doan.cinemaserver.service.SeatService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,11 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class SeatController {
     private final SeatService seatService;
 
-    @Operation(summary = "API Update Seat Price")
-    @PatchMapping(UrlConstant.Seat.UPDATE_SEAT_PRICE)
-    public ResponseEntity<?> updateSeatPrice(@RequestBody UpdateSeatPriceRequestDto requestDto) {
-        return VsResponseUtil.success(seatService.updateSeatPrice(requestDto));
-    }
 
     @Operation(summary = "API Update Seat Status")
     @PatchMapping(UrlConstant.Seat.UPDATE_SEAT_STATUS)
@@ -51,6 +46,18 @@ public class SeatController {
     @GetMapping(UrlConstant.Seat.VALIDATE_SEATS)
     public ResponseEntity<?> validateSeats(@PathVariable Long id, @RequestParam Long[] seatId) {
         return VsResponseUtil.success(seatService.validateSeats(id, seatId));
+    }
+
+    @Operation(summary = "API Get ALl Seat Price")
+    @GetMapping(UrlConstant.Seat.GET_ALL_SEAT_PRICE)
+    public ResponseEntity<?> getAllSeatPrice() {
+        return VsResponseUtil.success(seatService.getAllSeatPrices());
+    }
+
+    @Operation(summary = "API Update Price")
+    @PatchMapping(UrlConstant.Seat.UPDATE_PRICE)
+    public ResponseEntity<?> updatePrice(@RequestBody UpdatePriceRequestDto requestDto) {
+        return VsResponseUtil.success(seatService.updatePrice(requestDto));
     }
 
 }

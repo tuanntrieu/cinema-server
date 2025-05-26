@@ -22,4 +22,5 @@ public class MovieSearchRequestDto extends PaginationRequestDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateSearch;
 
+    private String name;
 }

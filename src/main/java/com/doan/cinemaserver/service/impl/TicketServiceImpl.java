@@ -194,13 +194,6 @@ public class TicketServiceImpl implements TicketService {
         ticketPage.getContent().forEach(
                 ticket -> {
                     Schedule schedule = ticket.getSchedule();
-                    List<ComboTicketResponseDto> ticketComboList = ticket.getTicketCombo().stream()
-                            .map(tc -> ComboTicketResponseDto.builder()
-                                    .quantity(tc.getQuantity())
-                                    .price(tc.getCurrentPrice())
-                                    .name(tc.getCombo().getName() + "( " + tc.getCombo().getDescription() + ")")
-                                    .build())
-                            .collect(Collectors.toList());
                     TicketResponseDto ticketResponseDto = TicketResponseDto.builder()
                             .id(ticket.getId())
                             .createdDate(ticket.getCreatedDate())
@@ -214,7 +207,6 @@ public class TicketServiceImpl implements TicketService {
                             .totalSeats(ticket.getPriceSeat())
                             .cinemaName(ticket.getCinemaName())
                             .cinemaAddress(ticket.getAddressCinema())
-                            .combo(ticketComboList)
                             .totalCombos(ticket.getPriceCombo())
                             .build();
                     ticketResponses.add(ticketResponseDto);
@@ -276,13 +268,6 @@ public class TicketServiceImpl implements TicketService {
                 () -> new NotFoundException(ErrorMessage.Ticket.ERR_NOT_FOUND_TICKET)
         );
         Schedule schedule = ticket.getSchedule();
-        List<ComboTicketResponseDto> ticketComboList = ticket.getTicketCombo().stream()
-                .map(tc -> ComboTicketResponseDto.builder()
-                        .quantity(tc.getQuantity())
-                        .price(tc.getCurrentPrice())
-                        .name(tc.getCombo().getName() + "( " + tc.getCombo().getDescription() + ")")
-                        .build())
-                .collect(Collectors.toList());
         TicketResponseDto ticketResponseDto = TicketResponseDto.builder()
                 .id(ticket.getId())
                 .createdDate(ticket.getCreatedDate())
@@ -296,7 +281,6 @@ public class TicketServiceImpl implements TicketService {
                 .totalSeats(ticket.getPriceSeat())
                 .cinemaName(ticket.getCinemaName())
                 .cinemaAddress(ticket.getAddressCinema())
-                .combo(ticketComboList)
                 .totalCombos(ticket.getPriceCombo())
                 .build();
 

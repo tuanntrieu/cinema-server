@@ -19,4 +19,6 @@ public interface MovieService {
     public PaginationResponseDto<MovieResponseDto> findMovieComingSoon(MovieSearchRequestDto movieSearchRequestDto);
     public Movie getMovieDetail(Long movieId);
     public CommonResponseDto updateMovie(Long movieId, MovieRequestDto movieRequestDto);
+    public PaginationResponseDto<MovieResponseDto> getAllMovies(MovieSearchRequestDto movieSearchRequestDto);
+
 }

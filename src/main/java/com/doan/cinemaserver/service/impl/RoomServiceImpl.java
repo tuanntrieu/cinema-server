@@ -90,17 +90,6 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional
-    public CommonResponseDto updateRoomSurcharge(UpdateRoomSurchargeRequestDto requestDto) {
-        RoomType roomTypeTmp = roomTypeRepository.findByRoomType(requestDto.getRoomType()).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM_TYPE, new String[]{requestDto.getRoomType().toString()})
-        );
-        roomTypeTmp.setSurcharge(requestDto.getSurcharge());
-        roomTypeRepository.save(roomTypeTmp);
-        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS, null));
-    }
-
-    @Override
-    @Transactional
     public CommonResponseDto deleteRoom(long roomId) {
         Room room = roomRepository.findById(roomId).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(roomId)})
@@ -186,6 +175,11 @@ public class RoomServiceImpl implements RoomService {
         }
         response.setSeats(seatsResponse);
         return response;
+    }
+
+    @Override
+    public List<RoomType> getALlRoomType() {
+        return roomTypeRepository.getAll();
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {

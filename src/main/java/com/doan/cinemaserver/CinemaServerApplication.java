@@ -91,12 +91,6 @@ public class CinemaServerApplication {
                         .surcharge(0L)
                         .build());
             }
-            if(!roomTypeRepository.existsByRoomType(RoomTypeEnum._4D)){
-                roomTypeRepository.save(RoomType.builder()
-                        .roomType(RoomTypeEnum._4D)
-                        .surcharge(0L)
-                        .build());
-            }
 
         };
     }
