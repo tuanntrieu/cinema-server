@@ -1,6 +1,7 @@
 package com.doan.cinemaserver.service;
 
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
+import com.doan.cinemaserver.domain.dto.movie.MovieDetailResponseDto;
 import com.doan.cinemaserver.domain.dto.movie.MovieRequestDto;
 import com.doan.cinemaserver.domain.dto.movie.MovieResponseDto;
 import com.doan.cinemaserver.domain.dto.movie.MovieSearchRequestDto;
@@ -18,7 +19,9 @@ public interface MovieService {
     public PaginationResponseDto<MovieResponseDto> findMovieByDate(MovieSearchRequestDto movieSearchRequestDto);
     public PaginationResponseDto<MovieResponseDto> findMovieComingSoon(MovieSearchRequestDto movieSearchRequestDto);
     public Movie getMovieDetail(Long movieId);
-    public CommonResponseDto updateMovie(Long movieId, MovieRequestDto movieRequestDto);
+    public CommonResponseDto updateMovie(Long movieId, MovieRequestDto movieRequestDto,MultipartFile image);
     public PaginationResponseDto<MovieResponseDto> getAllMovies(MovieSearchRequestDto movieSearchRequestDto);
+    public MovieDetailResponseDto getMovieDetail(long movieId);
+    public CommonResponseDto deleteMovie(Long movieId);
 
 }

@@ -65,7 +65,9 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND_MOVIE = "exception.movie.not.found.id";
         public static final String ERR_INVALID_TIME = "exception.movie.invalid.time";
         public static final String ERR_INVALID_DURATION = "exception.movie.invalid.duration";
-
+        public static final String ERR_CURRENTLY_SHOWING="exception.movie.currently.showing";
+        public static final String ERR_PREVIOUS_SCHEDULE="exception.movie.previous.schedule";
+        public static final String ERR_NEXT_SCHEDULE="exception.movie.next.schedule";
     }
 
     public static class Room {

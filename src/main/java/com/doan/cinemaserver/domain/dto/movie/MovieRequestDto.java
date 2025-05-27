@@ -2,6 +2,7 @@ package com.doan.cinemaserver.domain.dto.movie;
 
 import com.doan.cinemaserver.constant.CommonConstant;
 import com.doan.cinemaserver.constant.ErrorMessage;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,10 +34,10 @@ public class MovieRequestDto {
     private String language;
     private Boolean isSub;
     private int ageLimit = CommonConstant.ZERO_INT_VALUE;;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date releaseDate;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date endDate;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Ho_Chi_Minh")
+    private LocalDate releaseDate;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Ho_Chi_Minh")
+    private LocalDate endDate;
     private List<Long> movieTypeId =new ArrayList<>();
 
 }

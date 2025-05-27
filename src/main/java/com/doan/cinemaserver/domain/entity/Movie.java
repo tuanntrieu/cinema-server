@@ -41,7 +41,7 @@ public class Movie extends DateAuditing {
 
     private Boolean isSub;
 
-    @ManyToMany(mappedBy = "movies")
+    @ManyToMany(mappedBy = "movies",cascade = CascadeType.ALL)
     private List<MovieType> types =new ArrayList<>();
 
     @ManyToMany(mappedBy = "movies")

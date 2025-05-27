@@ -24,8 +24,16 @@ public class MovieController {
     @PostMapping(value = UrlConstant.Movie.CREATE_MOVIE,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createMovie( @ModelAttribute("requestDto") @Valid MovieRequestDto requestDto,
-                                          @RequestParam("image")  MultipartFile image) {
+                                          @RequestParam(value = "image")  MultipartFile image) {
         return VsResponseUtil.success(movieService.createMovie(requestDto,image));
+    }
+
+    @Operation(summary = "API Update Movie")
+    @PatchMapping(value = UrlConstant.Movie.UPDATE_MOVIE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateMovie(@ModelAttribute("requestDto") @Valid MovieRequestDto requestDto,
+                                         @RequestParam(value = "image",required = false)  MultipartFile image, @PathVariable Long id) {
+        return VsResponseUtil.success(movieService.updateMovie(id,requestDto,image));
     }
 
     @Operation(summary = "API Search  Movie By Date")
@@ -48,5 +56,10 @@ public class MovieController {
     @PostMapping(value = UrlConstant.Movie.GET_ALL_MOVIE)
     public ResponseEntity<?> getAllMovies(@RequestBody MovieSearchRequestDto requestDto) {
         return VsResponseUtil.success(movieService.getAllMovies(requestDto));
+    }
+    @Operation(summary = "API Delete Movie")
+    @DeleteMapping(value = UrlConstant.Movie.DELETE_MOVIE)
+    public ResponseEntity<?> deleteMovie(@PathVariable Long id) {
+        return VsResponseUtil.success(movieService.deleteMovie(id));
     }
 }

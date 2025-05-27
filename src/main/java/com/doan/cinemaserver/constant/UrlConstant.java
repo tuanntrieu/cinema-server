@@ -102,6 +102,9 @@ public class UrlConstant {
         public static final String SEARCH_MOVIE_BY_DATE = PRE_FIX + "/search-by-date";
         public static final String SEARCH_MOVIE_COMING_SOON = PRE_FIX + "/search-coming-soon";
         public static final String GET_ALL_MOVIE = PRE_FIX + "/get-all";
+        public static final String UPDATE_MOVIE = PRE_FIX + "/update/{id}";
+        public static final String DELETE_MOVIE = PRE_FIX + "/delete/{id}";
+
     }
 
     public static class Ticket {

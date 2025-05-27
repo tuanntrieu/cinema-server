@@ -23,7 +23,7 @@ public class MovieType {
 
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "movie_type",
             joinColumns = @JoinColumn(name = "type_id", referencedColumnName = "type_id"),
