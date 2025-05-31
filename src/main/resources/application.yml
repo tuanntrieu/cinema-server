@@ -22,7 +22,7 @@ spring:
 
 jwt:
   secret: 1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/i
-  access: 60
+  access: 120
   refresh: 1440
 
 springdoc:

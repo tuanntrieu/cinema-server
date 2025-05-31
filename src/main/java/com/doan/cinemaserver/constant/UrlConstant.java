@@ -37,6 +37,8 @@ public class UrlConstant {
         public static final String LOAD_CINEMA_BY_PROVINCE = PRE_FIX + "/load-by-province";
         public static final String LOAD_ALL_CINEMA = PRE_FIX + "/load-all-cinema";
         public static final String GET_ALL_CINEMA = PRE_FIX + "/get-all";
+        public static final String GET_CINEMA_DETAIL = PRE_FIX + "/{id}";
+        public static final String GET_ROOM_BY_CINEMA = PRE_FIX + "/get-room";
 
         private Cinema() {
         }
@@ -74,6 +76,8 @@ public class UrlConstant {
         public static final String UPDATE_ROOM_SURCHARGE = PRE_FIX + "/update-room-surcharge";
         public static final String GET_ROOM_ORDER = PRE_FIX + "/get-room-order/{id}";
         public static final String GET_ALL_ROOM_TYPES = PRE_FIX + "/get-all-room-types";
+        public static final String VALIDATE_ROOM = PRE_FIX + "/validate/{id}";
+        public static final String GET_ROOM_DETAIL = PRE_FIX + "/{id}";
 
         private Room() {
 
@@ -90,6 +94,11 @@ public class UrlConstant {
         public static final String VALIDATE_SEATS = PRE_FIX + "/validate-seat/{id}";
         public static final String GET_ALL_SEAT_PRICE = PRE_FIX + "/get-all-seat-price";
         public static final String UPDATE_PRICE = PRE_FIX + "/update-price";
+        public static final String MAINTAIN_SEATS = PRE_FIX + "/maintain";
+        public static final String UN_MAINTAIN_SEATS = PRE_FIX + "/un-maintain";
+        public static final String UPDATE_VIP_SEAT = PRE_FIX + "/update-vip";
+        public static final String UPDATE_COUPLE_SEAT = PRE_FIX + "/update-couple";
+        public static final String UPDATE_STANDARD_SEAT = PRE_FIX + "/update-standard";
 
         private Seat() {
         }

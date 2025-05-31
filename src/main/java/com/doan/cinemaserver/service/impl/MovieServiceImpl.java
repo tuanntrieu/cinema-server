@@ -319,6 +319,8 @@ public class MovieServiceImpl implements MovieService {
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.CREATE_SUCCESS, null));
     }
 
+
+
     private LocalDate toLocalDate(Date date) {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }

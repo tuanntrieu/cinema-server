@@ -7,6 +7,7 @@ import com.doan.cinemaserver.constant.SuccessMessage;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
 import com.doan.cinemaserver.domain.dto.seat.UpdatePriceRequestDto;
 import com.doan.cinemaserver.domain.dto.seat.UpdateSeatStatusRequestDto;
+import com.doan.cinemaserver.domain.dto.seat.UpdateSeatTypeRequestDto;
 import com.doan.cinemaserver.domain.entity.*;
 import com.doan.cinemaserver.exception.InvalidException;
 import com.doan.cinemaserver.exception.NotFoundException;
@@ -25,6 +26,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -39,8 +41,7 @@ public class SeatServiceImpl implements SeatService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
     private final RoomTypeRepository roomTypeRepository;
-
-
+    private final RoomRepository roomRepository;
 
     @Override
     public CommonResponseDto updateSeatStatus(UpdateSeatStatusRequestDto requestDto) {
@@ -214,16 +215,157 @@ public class SeatServiceImpl implements SeatService {
     public CommonResponseDto updatePrice(UpdatePriceRequestDto requestDto) {
         Arrays.stream(requestDto.getRoomRequest()).forEach(
                 room -> {
-                    roomTypeRepository.updateRoomSurcharge(room.getRoomType().toString(),room.getSurcharge());
+                    roomTypeRepository.updateRoomSurcharge(room.getRoomType().toString(), room.getSurcharge());
                 }
         );
         Arrays.stream(requestDto.getSeatRequest()).forEach(
                 seat -> {
-                    seatPriceRepository.updateSeatPrice(seat.getSeatType().toString(),seat.getWeekdayPrice(), seat.getWeekendPrice());
+                    seatPriceRepository.updateSeatPrice(seat.getSeatType().toString(), seat.getWeekdayPrice(), seat.getWeekendPrice());
                 }
         );
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS, null));
     }
+
+    @Override
+    @Transactional
+    public CommonResponseDto maintainSeats(Long[] seatIds) {
+        for (Long seatId : seatIds) {
+            seatRepository.maintainSeat(seatId);
+        }
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS, null));
+    }
+
+    @Override
+    @Transactional
+    public CommonResponseDto unMaintainSeats(Long[] seatIds) {
+        for (Long seatId : seatIds) {
+            seatRepository.unMaintainSeat(seatId);
+        }
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS, null));
+
+    }
+
+    @Override
+    @Transactional
+    public CommonResponseDto updateVipSeats(UpdateSeatTypeRequestDto requestDto) {
+        Room room = roomRepository.findById(requestDto.getRoomId())
+                .orElseThrow(() -> new NotFoundException(
+                        ErrorMessage.Room.ERR_NOT_FOUND_ROOM,
+                        new String[]{String.valueOf(requestDto.getRoomId())}
+                ));
+
+        int row = requestDto.getRow();
+
+        if (row < 1 || row > room.getNumberOfRow() + 1) {
+            throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_INVALID_ROW);
+        }
+
+        if (row <= 3) {
+            throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_VIP_NOT_THE_FIRST_THREE_ROW);
+        }
+
+        Map<Integer, List<Seat>> seatMap = room.getSeats().stream()
+                .collect(Collectors.groupingBy(Seat::getXCoordinate));
+
+        List<Seat> currentRowSeats = seatMap.get(row);
+        if (currentRowSeats == null || currentRowSeats.isEmpty()) {
+            throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_INVALID_ROW);
+        }
+
+        // Check ghế couple ở dòng sau cùng
+        if (row == room.getNumberOfRow() + 1) {
+            SeatType type = seatMap.get(row-1).get(0).getSeatType().getSeatType();
+            if (type == SeatType.COUPLE) {
+                throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_COUPLE_NEXT_ROW);
+            }
+        }
+
+        // Check ghế standard ở dòng kế tiếp
+        List<Seat> nextRowSeats = seatMap.get(row + 1);
+        if (row <= room.getNumberOfRow() && nextRowSeats != null && !nextRowSeats.isEmpty()) {
+            SeatType nextType = nextRowSeats.get(0).getSeatType().getSeatType();
+            if (nextType == SeatType.STANDARD) {
+                throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_NEXT_ROW_STANDARD);
+            }
+        }
+
+        SeatPrice vipSeatPrice = seatPriceRepository.findBySeatType(SeatType.VIP)
+                .orElseThrow(() -> new NotFoundException(
+                        ErrorMessage.Seat.ERR_NOT_FOUND_SEAT_TYPE,
+                        new String[]{SeatType.VIP.toString()}
+                ));
+
+        currentRowSeats.forEach(seat -> seat.setSeatType(vipSeatPrice));
+        seatRepository.saveAll(currentRowSeats);
+
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS, null));
+    }
+
+
+    @Override
+    public CommonResponseDto updateCoupleSeats(UpdateSeatTypeRequestDto requestDto) {
+        Room room = roomRepository.findById(requestDto.getRoomId()).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(requestDto.getRoomId())})
+        );
+
+        if (requestDto.getRow() < 1 || requestDto.getRow() > room.getNumberOfRow() + 1) {
+            throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_INVALID_ROW);
+        }
+        if (requestDto.getRow() < room.getNumberOfRow()) {
+            throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_COUPLE_TWO_LAST_ROW);
+        }
+        if (requestDto.getRow() == room.getNumberOfRow()) {
+            if (!room.getSeats().get(room.getSeats().size() - 1).getSeatType().getSeatType().equals(SeatType.COUPLE)) {
+                throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_COUPLE_LAST_ROW);
+            }
+        }
+        SeatPrice seatPrice = seatPriceRepository.findBySeatType(SeatType.COUPLE).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Seat.ERR_NOT_FOUND_SEAT_TYPE, new String[]{String.valueOf(SeatType.VIP)})
+        );
+        room.getSeats().forEach(seat -> {
+            if (seat.getXCoordinate() == requestDto.getRow()) {
+                seat.setSeatType(seatPrice);
+                seatRepository.save(seat);
+            }
+        });
+
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS, null));
+    }
+
+    @Override
+    public CommonResponseDto updateStandardSeats(UpdateSeatTypeRequestDto requestDto) {
+        Room room = roomRepository.findById(requestDto.getRoomId()).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(requestDto.getRoomId())})
+        );
+
+        if (requestDto.getRow() < 1 || requestDto.getRow() > room.getNumberOfRow() + 1) {
+            throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_INVALID_ROW);
+        }
+        int row=requestDto.getRow();
+        Map<Integer, List<Seat>> seatMap = room.getSeats().stream()
+                .collect(Collectors.groupingBy(Seat::getXCoordinate));
+
+        List<Seat> currentRowSeats = seatMap.get(row);
+        if (currentRowSeats == null || currentRowSeats.isEmpty()) {
+            throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_INVALID_ROW);
+        }
+
+        if(row>1 && !seatMap.get(row-1).get(0).getSeatType().getSeatType().equals(SeatType.STANDARD)){
+            throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_PREV_ROW_STANDARD);
+        }
+
+        SeatPrice standardSeatPrice = seatPriceRepository.findBySeatType(SeatType.STANDARD)
+                .orElseThrow(() -> new NotFoundException(
+                        ErrorMessage.Seat.ERR_NOT_FOUND_SEAT_TYPE,
+                        new String[]{SeatType.VIP.toString()}
+                ));
+
+        currentRowSeats.forEach(seat -> seat.setSeatType(standardSeatPrice));
+        seatRepository.saveAll(currentRowSeats);
+
+        return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS, null));
+    }
+
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

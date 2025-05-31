@@ -34,11 +34,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         double rate = 0.0;
         if (last > 0) {
-            if (now == 0) {
-                rate = 0;
-            } else {
-                rate = ((now - last) / (double) last) * 100;
-            }
+            rate = ((now - last) / (double) last) * 100;
         } else if (now > 0) {
             rate = 100.0;
         }
@@ -46,20 +42,16 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .total(now)
                 .rate(rate)
                 .build();
+
     }
 
     @Override
     public GeneralStatisticsResponseDto countCustomerByWeek(LocalDate date) {
         long now = customerRepository.countCustomerByWeek(date);
         long last = customerRepository.countCustomerByWeek(date.minusWeeks(1));
-
         double rate = 0.0;
         if (last > 0) {
-            if (now == 0) {
-                rate = 0;
-            } else {
-                rate = ((now - last) / (double) last) * 100;
-            }
+            rate = ((now - last) / (double) last) * 100;
         } else if (now > 0) {
             rate = 100.0;
         }
@@ -73,14 +65,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     public GeneralStatisticsResponseDto countCustomerByMonth(LocalDate date) {
         long now = customerRepository.countCustomerByMonth(date);
         long last = customerRepository.countCustomerByMonth(date.minusMonths(1));
-
         double rate = 0.0;
         if (last > 0) {
-            if (now == 0) {
-                rate = 0;
-            } else {
-                rate = ((now - last) / (double) last) * 100;
-            }
+            rate = ((now - last) / (double) last) * 100;
         } else if (now > 0) {
             rate = 100.0;
         }
@@ -97,11 +84,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         double rate = 0.0;
         if (last > 0) {
-            if (now == 0) {
-                rate = 0;
-            } else {
-                rate = ((now - last) / (double) last) * 100;
-            }
+            rate = ((now - last) / (double) last) * 100;
         } else if (now > 0) {
             rate = 100.0;
         }
@@ -115,14 +98,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     public GeneralStatisticsResponseDto countTicketByWeek(LocalDate date) {
         long now = ticketRepository.countTicketByWeek(date);
         long last = ticketRepository.countTicketByWeek(date.minusWeeks(1));
-
         double rate = 0.0;
         if (last > 0) {
-            if (now == 0) {
-                rate = 0;
-            } else {
-                rate = ((now - last) / (double) last) * 100;
-            }
+            rate = ((now - last) / (double) last) * 100;
         } else if (now > 0) {
             rate = 100.0;
         }
@@ -136,14 +114,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     public GeneralStatisticsResponseDto countTicketByMonth(LocalDate date) {
         long now = ticketRepository.countTicketByMonth(date);
         long last = ticketRepository.countTicketByMonth(date.minusMonths(1));
-
         double rate = 0.0;
         if (last > 0) {
-            if (now == 0) {
-                rate = 0;
-            } else {
-                rate = ((now - last) / (double) last) * 100;
-            }
+            rate = ((now - last) / (double) last) * 100;
         } else if (now > 0) {
             rate = 100.0;
         }
@@ -157,14 +130,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     public GeneralStatisticsResponseDto sumTotalByDate(LocalDate date) {
         long now = ticketRepository.sumTotalByDate(date);
         long last = ticketRepository.sumTotalByDate(date.minusDays(1));
-
         double rate = 0.0;
         if (last > 0) {
-            if (now == 0) {
-                rate = 0;
-            } else {
-                rate = ((now - last) / (double) last) * 100;
-            }
+            rate = ((now - last) / (double) last) * 100;
         } else if (now > 0) {
             rate = 100.0;
         }
@@ -180,11 +148,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         long last = ticketRepository.sumTotalByWeek(date.minusWeeks(1));
         double rate = 0.0;
         if (last > 0) {
-            if (now == 0) {
-                rate = 0;
-            } else {
-                rate = ((now - last) / (double) last) * 100;
-            }
+            rate = ((now - last) / (double) last) * 100;
         } else if (now > 0) {
             rate = 100.0;
         }
@@ -200,11 +164,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         long last = ticketRepository.sumTotalByMonth(date.minusMonths(1));
         double rate = 0.0;
         if (last > 0) {
-            if (now == 0) {
-                rate = 0;
-            } else {
-                rate = ((now - last) / (double) last) * 100;
-            }
+            rate = ((now - last) / (double) last) * 100;
         } else if (now > 0) {
             rate = 100.0;
         }

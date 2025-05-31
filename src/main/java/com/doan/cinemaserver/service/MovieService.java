@@ -24,4 +24,5 @@ public interface MovieService {
     public MovieDetailResponseDto getMovieDetail(long movieId);
     public CommonResponseDto deleteMovie(Long movieId);
 
+
 }

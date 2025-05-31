@@ -2,11 +2,13 @@ package com.doan.cinemaserver.service.impl;
 
 import com.doan.cinemaserver.constant.*;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
+import com.doan.cinemaserver.domain.dto.room.RoomDetailResponseDto;
 import com.doan.cinemaserver.domain.dto.room.RoomOrderResponseDto;
 import com.doan.cinemaserver.domain.dto.room.RoomRequestDto;
 import com.doan.cinemaserver.domain.dto.room.UpdateRoomSurchargeRequestDto;
 import com.doan.cinemaserver.domain.dto.seat.SeatResponseDto;
 import com.doan.cinemaserver.domain.entity.*;
+import com.doan.cinemaserver.exception.InvalidException;
 import com.doan.cinemaserver.exception.NotFoundException;
 import com.doan.cinemaserver.exception.UnauthorizedException;
 import com.doan.cinemaserver.mapper.RoomMapper;
@@ -24,6 +26,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +40,7 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final MessageSourceUtil messageSourceUtil;
     private final JwtTokenProvider jwtTokenProvider;
-
+    private final ScheduleSeatRepository scheduleSeatRepository;
 
     @Override
     @Transactional
@@ -94,7 +97,17 @@ public class RoomServiceImpl implements RoomService {
         Room room = roomRepository.findById(roomId).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(roomId)})
         );
+        LocalDate now = LocalDate.now();
+
+        room.getSchedules().forEach(schedule -> {
+            if(now.isBefore(schedule.getScheduleTime().toLocalDate()) || now.equals(schedule.getScheduleTime().toLocalDate())) {
+                throw new InvalidException(ErrorMessage.Room.ERR_HAS_SCHEDULE);
+            }
+        });
+        room.getSchedules().forEach(schedule ->
+                scheduleSeatRepository.deleteAll(schedule.getScheduleSeats()));
         seatRepository.deleteAll(room.getSeats());
+
         roomRepository.delete(room);
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.DELETE_SUCCESS, null));
     }
@@ -181,6 +194,52 @@ public class RoomServiceImpl implements RoomService {
     public List<RoomType> getALlRoomType() {
         return roomTypeRepository.getAll();
     }
+
+    @Override
+    public CommonResponseDto validateRoom(Long roomId) {
+        Room room = roomRepository.findById(roomId).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(roomId)})
+        );
+        LocalDate now = LocalDate.now();
+
+        boolean hasTodayOrFutureSchedule = room.getSchedules().stream()
+                .anyMatch(schedule -> {
+                    LocalDate scheduleDate = schedule.getScheduleTime().toLocalDate();
+                    return !scheduleDate.isBefore(now) || scheduleDate.isEqual(now);
+                });
+
+        if (hasTodayOrFutureSchedule) {
+            return new CommonResponseDto(messageSourceUtil.getMessage(ErrorMessage.Room.ERR_HAS_SCHEDULE,null), Boolean.FALSE);
+        }
+
+        return new CommonResponseDto("Hợp lệ!",Boolean.TRUE);
+    }
+
+    @Override
+    public RoomDetailResponseDto getRoomDetail(Long roomId) {
+        Room room = roomRepository.findById(roomId).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(roomId)})
+        );
+
+
+
+        return RoomDetailResponseDto.builder()
+                .id(room.getId())
+                .name(room.getName())
+                .roomType(room.getRoomType().getRoomType())
+                .seats(room.getSeats().stream().map(
+                        seat-> SeatResponseDto.builder()
+                                .seatId(seat.getId())
+                                .seatName(seat.getSeatName())
+                                .xCoordinate(seat.getXCoordinate())
+                                .yCoordinate(seat.getYCoordinate())
+                                .seatType(seat.getSeatType().getSeatType().toString())
+                                .seatStatus(seat.isMaintained() ? SeatStatus.MAINTENANCE:SeatStatus.AVAILABLE)
+                                .build()
+                ).collect(Collectors.toList()))
+                .build();
+    }
+
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

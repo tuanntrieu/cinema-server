@@ -73,6 +73,7 @@ public class ErrorMessage {
     public static class Room {
         public static final String ERR_NOT_FOUND_ROOM = "exception.room.not.found.id";
         public static final String ERR_NOT_FOUND_ROOM_TYPE = "exception.room-type.not.found.id";
+        public static final String ERR_HAS_SCHEDULE ="exception.room.has.schedule";
     }
 
     public static class Seat {
@@ -81,7 +82,14 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND_COORDINATES = "exception.seat.not.found.coordinates";
         public static final String ERR_NOT_EMPTY_SEAT_OUTSIDE = "exception.seat.not.empty.outside";
         public static final String ERR_NOT_EMPTY_SEAT_MIDDLE = "exception.seat.not.empty.middle";
-        public static final String ERR_INVALID_SEAT_STATUS = "exception.seat.invalid.status";
+        public static final String ERR_INVALID_SEAT_STATUS = "exception.couple.invalid.status";
+        public static final String ERR_SEAT_COUPLE_NEXT_ROW = "exception.seat.couple.next-row";
+        public static final String ERR_SEAT_COUPLE_LAST_ROW = "exception.seat.couple.last-row";
+        public static final String ERR_SEAT_COUPLE_TWO_LAST_ROW = "exception.seat.couple.two-last-row";
+        public static final String ERR_SEAT_INVALID_ROW="exception.seat.invalid.row";
+        public static final String ERR_SEAT_VIP_NOT_THE_FIRST_THREE_ROW="exception.seat.vip.not-the-first-three-row";
+        public static final String ERR_SEAT_NEXT_ROW_STANDARD = "exception.seat.next-row-standard";
+        public static final String ERR_SEAT_PREV_ROW_STANDARD="exception.seat.prev-row-must-standard";
     }
 
     public static class Combo {

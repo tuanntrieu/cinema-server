@@ -5,8 +5,6 @@ import com.doan.cinemaserver.common.VsResponseUtil;
 import com.doan.cinemaserver.constant.RoomTypeEnum;
 import com.doan.cinemaserver.constant.UrlConstant;
 import com.doan.cinemaserver.domain.dto.room.RoomRequestDto;
-
-import com.doan.cinemaserver.domain.dto.room.UpdateRoomSurchargeRequestDto;
 import com.doan.cinemaserver.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,13 +39,26 @@ public class RoomController {
     @Operation(summary = "API Get Room Order")
     @GetMapping(UrlConstant.Room.GET_ROOM_ORDER)
     public ResponseEntity<?> getRoomOrder(@PathVariable(name = "id") Long scheduleId, HttpServletRequest request) {
-        return VsResponseUtil.success(roomService.getRoomOrder(scheduleId,request));
+        return VsResponseUtil.success(roomService.getRoomOrder(scheduleId, request));
     }
 
     @Operation(summary = "API Get All RoomType")
     @GetMapping(UrlConstant.Room.GET_ALL_ROOM_TYPES)
     public ResponseEntity<?> getALlRoomTye() {
         return VsResponseUtil.success(roomService.getALlRoomType());
+    }
+
+
+    @Operation(summary = "API Validate Room")
+    @GetMapping(UrlConstant.Room.VALIDATE_ROOM)
+    public ResponseEntity<?> validateRoom(@PathVariable(name = "id") Long id) {
+        return VsResponseUtil.success(roomService.validateRoom(id));
+    }
+
+    @Operation(summary = "API Get Room Detail")
+    @GetMapping(UrlConstant.Room.GET_ROOM_DETAIL)
+    public ResponseEntity<?> getRoomDetail(@PathVariable(name = "id") Long id) {
+        return VsResponseUtil.success(roomService.getRoomDetail(id));
     }
 
 }

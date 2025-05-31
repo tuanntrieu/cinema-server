@@ -3,10 +3,12 @@ package com.doan.cinemaserver.controller;
 import com.doan.cinemaserver.common.RestApiV1;
 import com.doan.cinemaserver.common.VsResponseUtil;
 import com.doan.cinemaserver.constant.UrlConstant;
+import com.doan.cinemaserver.domain.dto.cinema.CinemaGetRoomRequestDto;
 import com.doan.cinemaserver.domain.dto.cinema.CinemaRequestDto;
 import com.doan.cinemaserver.domain.dto.cinema.CinemaSearchRequestDto;
 import com.doan.cinemaserver.domain.dto.customer.CustomerDto;
 import com.doan.cinemaserver.domain.dto.movie.MovieSearchRequestDto;
+import com.doan.cinemaserver.domain.dto.pagination.PaginationRequestDto;
 import com.doan.cinemaserver.service.CinemaService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -53,6 +55,16 @@ public class CinemaController {
     @PostMapping(value = UrlConstant.Cinema.GET_ALL_CINEMA)
     public ResponseEntity<?> getAllCinema(@RequestBody CinemaSearchRequestDto requestDto) {
         return VsResponseUtil.success(cinemaService.getAllCinema(requestDto));
+    }
+    @Operation(summary = "API Get Cinema Detail")
+    @GetMapping(UrlConstant.Cinema.GET_CINEMA_DETAIL)
+    public ResponseEntity<?> getCinemaDetail(@PathVariable(name = "id") Long cinemaId) {
+        return VsResponseUtil.success(cinemaService.getCinemaDetail(cinemaId));
+    }
+    @Operation(summary = "API Get Room By Cinema")
+    @PostMapping(UrlConstant.Cinema.GET_ROOM_BY_CINEMA)
+    public ResponseEntity<?> getRoomByCinema(@RequestBody CinemaGetRoomRequestDto requestDto) {
+        return VsResponseUtil.success(cinemaService.getRoomByCinema(requestDto));
     }
 
 }
