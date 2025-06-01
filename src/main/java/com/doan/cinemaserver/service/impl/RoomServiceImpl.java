@@ -5,7 +5,6 @@ import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
 import com.doan.cinemaserver.domain.dto.room.RoomDetailResponseDto;
 import com.doan.cinemaserver.domain.dto.room.RoomOrderResponseDto;
 import com.doan.cinemaserver.domain.dto.room.RoomRequestDto;
-import com.doan.cinemaserver.domain.dto.room.UpdateRoomSurchargeRequestDto;
 import com.doan.cinemaserver.domain.dto.seat.SeatResponseDto;
 import com.doan.cinemaserver.domain.entity.*;
 import com.doan.cinemaserver.exception.InvalidException;
@@ -100,7 +99,7 @@ public class RoomServiceImpl implements RoomService {
         LocalDate now = LocalDate.now();
 
         room.getSchedules().forEach(schedule -> {
-            if(now.isBefore(schedule.getScheduleTime().toLocalDate()) || now.equals(schedule.getScheduleTime().toLocalDate())) {
+            if (now.isBefore(schedule.getScheduleTime().toLocalDate()) || now.equals(schedule.getScheduleTime().toLocalDate())) {
                 throw new InvalidException(ErrorMessage.Room.ERR_HAS_SCHEDULE);
             }
         });
@@ -165,14 +164,14 @@ public class RoomServiceImpl implements RoomService {
                     price = seat.getSeatType().getWeekdayPrice();
                 }
                 if (scheduleSeat.getEmail() != null && scheduleSeat.getSeatStatus().equals(SeatStatus.HOLDING)) {
-                    if ( scheduleSeat.getEmail().equals(email)) {
+                    if (scheduleSeat.getEmail().equals(email)) {
                         seatStatus = SeatStatus.SELECTED;
-                    }else {
+                    } else {
                         seatStatus = SeatStatus.HOLDING;
                     }
-                }
-                else {
-                    seatStatus = scheduleSeat.getSeatStatus();
+                } else {
+                    if (seat.isMaintained()) seatStatus = SeatStatus.MAINTENANCE;
+                    else seatStatus = scheduleSeat.getSeatStatus();
                 }
                 seatsResponse.add(SeatResponseDto.builder()
                         .seatId(scheduleSeat.getSeat().getId())
@@ -209,10 +208,10 @@ public class RoomServiceImpl implements RoomService {
                 });
 
         if (hasTodayOrFutureSchedule) {
-            return new CommonResponseDto(messageSourceUtil.getMessage(ErrorMessage.Room.ERR_HAS_SCHEDULE,null), Boolean.FALSE);
+            return new CommonResponseDto(messageSourceUtil.getMessage(ErrorMessage.Room.ERR_HAS_SCHEDULE, null), Boolean.FALSE);
         }
 
-        return new CommonResponseDto("Hợp lệ!",Boolean.TRUE);
+        return new CommonResponseDto("Hợp lệ!", Boolean.TRUE);
     }
 
     @Override
@@ -221,20 +220,18 @@ public class RoomServiceImpl implements RoomService {
                 () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(roomId)})
         );
 
-
-
         return RoomDetailResponseDto.builder()
                 .id(room.getId())
                 .name(room.getName())
                 .roomType(room.getRoomType().getRoomType())
                 .seats(room.getSeats().stream().map(
-                        seat-> SeatResponseDto.builder()
+                        seat -> SeatResponseDto.builder()
                                 .seatId(seat.getId())
                                 .seatName(seat.getSeatName())
                                 .xCoordinate(seat.getXCoordinate())
                                 .yCoordinate(seat.getYCoordinate())
                                 .seatType(seat.getSeatType().getSeatType().toString())
-                                .seatStatus(seat.isMaintained() ? SeatStatus.MAINTENANCE:SeatStatus.AVAILABLE)
+                                .seatStatus(seat.isMaintained() ? SeatStatus.MAINTENANCE : SeatStatus.AVAILABLE)
                                 .build()
                 ).collect(Collectors.toList()))
                 .build();

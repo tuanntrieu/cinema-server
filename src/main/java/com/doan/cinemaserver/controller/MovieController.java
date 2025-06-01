@@ -6,6 +6,7 @@ import com.doan.cinemaserver.constant.UrlConstant;
 import com.doan.cinemaserver.domain.dto.movie.MovieRequestDto;
 import com.doan.cinemaserver.domain.dto.movie.MovieSearchRequestDto;
 import com.doan.cinemaserver.service.MovieService;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -14,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
 
 @RestApiV1
 @RequiredArgsConstructor
@@ -54,7 +57,7 @@ public class MovieController {
     }
     @Operation(summary = "API Get All Movie")
     @PostMapping(value = UrlConstant.Movie.GET_ALL_MOVIE)
-    public ResponseEntity<?> getAllMovies(@RequestBody MovieSearchRequestDto requestDto) {
+    public ResponseEntity<?> getAllMovies(@RequestBody  MovieSearchRequestDto requestDto) {
         return VsResponseUtil.success(movieService.getAllMovies(requestDto));
     }
     @Operation(summary = "API Delete Movie")
@@ -62,4 +65,11 @@ public class MovieController {
     public ResponseEntity<?> deleteMovie(@PathVariable Long id) {
         return VsResponseUtil.success(movieService.deleteMovie(id));
     }
+
+    @Operation(summary = "API Get Movie Detail")
+    @GetMapping(value = UrlConstant.Movie.GET_MOVIE_SCHEDULE)
+    public ResponseEntity<?> getMovieSchedule(@RequestParam  @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Ho_Chi_Minh")  LocalDate date) {
+        return VsResponseUtil.success(movieService.getMovieSchedule(date));
+    }
+
 }

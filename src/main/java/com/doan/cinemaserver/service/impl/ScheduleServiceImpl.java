@@ -7,6 +7,7 @@ import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
 import com.doan.cinemaserver.domain.dto.schedule.*;
 import com.doan.cinemaserver.domain.entity.*;
 import com.doan.cinemaserver.exception.DataIntegrityViolationException;
+import com.doan.cinemaserver.exception.InvalidException;
 import com.doan.cinemaserver.exception.NotFoundException;
 import com.doan.cinemaserver.repository.*;
 import com.doan.cinemaserver.service.ScheduleService;
@@ -59,6 +60,12 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new DataIntegrityViolationException(ErrorMessage.Schedule.ERR_UNRELEASED);
         }
 
+        if (requestDto.getScheduleTime().toLocalDate().isAfter(movie.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) {
+            throw new DataIntegrityViolationException(ErrorMessage.Schedule.ERR_OVERTIME);
+        }
+
+
+
         //kiem tra xem co khoang thoi gian nao giao voi khoang thoi gian moi khong co thi khong thoa man
         for (Schedule schedule : room.getSchedules()) {
             LocalDateTime existingStart = schedule.getScheduleTime();
@@ -70,10 +77,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
         room.getMovies().add(movie);
         roomRepository.save(room);
-
         List<ScheduleSeat> scheduleSeats = new ArrayList<>();
-
-
         Schedule schedule = Schedule.builder()
                 .scheduleTime(startTime)
                 .room(room)
@@ -96,10 +100,17 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 
     @Override
+    @Transactional
     public CommonResponseDto deleteSchedule(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.Schedule.ERR_NOT_FOUND_SCHEDULE, new String[]{scheduleId.toString()})
         );
+
+        schedule.getScheduleSeats().forEach(seat -> {
+            if(seat.getSeatStatus().equals(SeatStatus.SOLD)){
+                throw new InvalidException(ErrorMessage.Schedule.ERR_TICKET_SOLD);
+            }
+        });
 
         schedule.getRoom().getSchedules().remove(schedule);
         roomRepository.save(schedule.getRoom());
@@ -130,7 +141,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
                             predicates.add(criteriaBuilder.equal(criteriaBuilder.function("DATE", LocalDate.class, root.get(Schedule_.scheduleTime)), requestDto.getDate()));
                         }
-
+                        query.orderBy(criteriaBuilder.asc(root.get(Schedule_.scheduleTime)));
                         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
                     }
                 }
@@ -140,6 +151,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedules.forEach(schedule -> {
             scheduleForRoomResponse.add(
                     ScheduleForRoomResponseDto.builder()
+                            .id(schedule.getId())
                             .movieName(schedule.getMovie().getName())
                             .startTime(schedule.getScheduleTime().toLocalTime())
                             .endTime(schedule.getScheduleTime().plus(schedule.getMovie().getDuration(), ChronoUnit.MINUTES).toLocalTime())

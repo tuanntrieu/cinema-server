@@ -72,6 +72,9 @@ public class AuthServiceImpl implements AuthService {
             User user = userRepository.findByEmail(loginRequestDto.getUsername()).orElseThrow(
                     () -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,  new String[]{loginRequestDto.getUsername()})
             );
+            if(user.getIsLocked()){
+                throw new UnauthorizedException(ErrorMessage.Auth.ERR_ACCOUNT_LOCKED);
+            }
             user.setRefreshToken(refresh_token);
             userRepository.save(user);
             return LoginResponseDto.builder()
@@ -152,6 +155,7 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(registerRequestDto.getPassword()))
                 .isVerify(Boolean.FALSE)
                 .role(role)
+                .isLocked(Boolean.FALSE)
                 .build();
         userRepository.save(user);
         customerRepository.save(

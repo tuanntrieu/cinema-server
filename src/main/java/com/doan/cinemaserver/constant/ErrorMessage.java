@@ -40,6 +40,7 @@ public class ErrorMessage {
         public static final String ERR_NOT_EXIST_EMAIL = "exception.auth.not.exist.email";
         public static final String ERR_INCORRECT_OTP = "exception.auth.incorrect.otp";
         public static final String ERR_INVALID_VERIFY_STATUS = "exception.auth.invalid.verify_status";
+        public static final String ERR_ACCOUNT_LOCKED="exception.auth.user.locked";
     }
 
     public static class Role {
@@ -58,7 +59,8 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND_SCHEDULE = "exception.schedule.not.found.id";
         public static final String ERR_INTERVAL_CONFLICT = "exception.schedule.interval.conflict";
         public static final String ERR_UNRELEASED = "exception.schedule.unreleased";
-
+        public static final String ERR_OVERTIME = "exception.schedule.overtime";
+        public static final String ERR_TICKET_SOLD="exception.schedule.sold-ticket";
     }
 
     public static class Movie {

@@ -24,6 +24,7 @@ public class User  {
     private String email;
 
     private Boolean isVerify = Boolean.FALSE;
+    private Boolean isLocked = Boolean.FALSE;
 
     @JsonIgnore
     @Column(name = "refresh_token", columnDefinition = "LONGTEXT")

@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -62,5 +63,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecific
     @Query(value = "delete from movie_type mt where mt.movie_id =?1 and mt.type_id = ?2",nativeQuery = true)
     void deleteMovieType(long movieId,long typeId);
 
+    @Query(value = "select m.* from movies m where date(?1)>= date(m.release_date) and date(?1)<=date(m.end_date) order by m.movie_id asc",nativeQuery = true)
+    List<Movie> getMovieSchedule(LocalDate date);
 
 }

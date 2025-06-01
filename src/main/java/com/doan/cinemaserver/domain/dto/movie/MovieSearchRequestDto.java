@@ -2,7 +2,7 @@ package com.doan.cinemaserver.domain.dto.movie;
 
 import com.doan.cinemaserver.constant.ErrorMessage;
 import com.doan.cinemaserver.domain.dto.pagination.PaginationRequestDto;
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -3,10 +3,7 @@ package com.doan.cinemaserver.service.impl;
 import com.doan.cinemaserver.constant.ErrorMessage;
 import com.doan.cinemaserver.constant.SuccessMessage;
 import com.doan.cinemaserver.domain.dto.common.CommonResponseDto;
-import com.doan.cinemaserver.domain.dto.movie.MovieDetailResponseDto;
-import com.doan.cinemaserver.domain.dto.movie.MovieRequestDto;
-import com.doan.cinemaserver.domain.dto.movie.MovieResponseDto;
-import com.doan.cinemaserver.domain.dto.movie.MovieSearchRequestDto;
+import com.doan.cinemaserver.domain.dto.movie.*;
 import com.doan.cinemaserver.domain.dto.pagination.PaginationResponseDto;
 import com.doan.cinemaserver.domain.entity.Cinema;
 import com.doan.cinemaserver.domain.entity.Movie;
@@ -177,15 +174,15 @@ public class MovieServiceImpl implements MovieService {
             throw new DataIntegrityViolationException(ErrorMessage.Movie.ERR_INVALID_TIME);
         }
         movie.getSchedules().forEach(schedule -> {
-            if(!schedule.getScheduleTime().toLocalDate().isAfter(releaseDate)) {
+            if (!schedule.getScheduleTime().toLocalDate().isAfter(releaseDate)) {
                 throw new DataIntegrityViolationException(ErrorMessage.Movie.ERR_PREVIOUS_SCHEDULE);
             }
-            if(!schedule.getScheduleTime().toLocalDate().isBefore(endDate) ) {
+            if (!schedule.getScheduleTime().toLocalDate().isBefore(endDate)) {
                 throw new DataIntegrityViolationException(ErrorMessage.Movie.ERR_NEXT_SCHEDULE);
             }
         });
         movie.getTypes().forEach(movieType -> {
-            movieRepository.deleteMovieType(movie.getId(),movieType.getId());
+            movieRepository.deleteMovieType(movie.getId(), movieType.getId());
         });
         for (MovieType type : movie.getTypes()) {
             type.getMovies().remove(movie);
@@ -216,6 +213,7 @@ public class MovieServiceImpl implements MovieService {
         movieRepository.save(movie);
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.UPDATE_SUCCESS, null));
     }
+
     public static Date convertLocalDateToDate(LocalDate localDate) {
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
@@ -313,12 +311,23 @@ public class MovieServiceImpl implements MovieService {
         if (!now.isBefore(release) && !now.isAfter(end)) {
             throw new InvalidException(ErrorMessage.Movie.ERR_CURRENTLY_SHOWING);
         }
-        String imageTmp=movie.getImage();
+        String imageTmp = movie.getImage();
         movieRepository.delete(movie);
         uploadFileUtil.destroyFileWithUrl(imageTmp);
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.CREATE_SUCCESS, null));
     }
 
+    @Override
+    public List<MovieScheduleResponseDto> getMovieSchedule(LocalDate date) {
+        return movieRepository.getMovieSchedule(date).stream().map(
+                movie -> {
+                    return MovieScheduleResponseDto.builder()
+                            .id(movie.getId())
+                            .name(movie.getName())
+                            .build();
+                }
+        ).collect(Collectors.toList());
+    }
 
 
     private LocalDate toLocalDate(Date date) {

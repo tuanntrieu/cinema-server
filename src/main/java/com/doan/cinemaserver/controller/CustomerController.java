@@ -5,16 +5,14 @@ import com.doan.cinemaserver.common.VsResponseUtil;
 import com.doan.cinemaserver.constant.ErrorMessage;
 import com.doan.cinemaserver.constant.UrlConstant;
 import com.doan.cinemaserver.domain.dto.customer.CustomerDto;
+import com.doan.cinemaserver.domain.dto.customer.CustomerSearchRequestDto;
 import com.doan.cinemaserver.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
 @RequiredArgsConstructor
@@ -25,6 +23,17 @@ public class CustomerController {
     @PatchMapping(UrlConstant.Customer.UPDATE_CUSTOMER)
     public ResponseEntity<?> updateCustomer(@Valid @RequestBody CustomerDto customerDto){
         return VsResponseUtil.success(customerService.updateCustomer(customerDto));
+    }
+
+    @Operation(summary = "API Lock Account")
+    @PatchMapping(UrlConstant.Customer.LOCK_ACCOUNT)
+    public ResponseEntity<?> lockAccount(@PathVariable long id){
+        return VsResponseUtil.success(customerService.lockAccount(id));
+    }
+    @Operation(summary = "API UnLock Account")
+    @PatchMapping(UrlConstant.Customer.UN_LOCK_ACCOUNT)
+    public ResponseEntity<?> unLockAccount(@PathVariable long id){
+        return VsResponseUtil.success(customerService.unlockAccount(id));
     }
 
 
@@ -47,5 +56,10 @@ public class CustomerController {
     @GetMapping(UrlConstant.Customer.GET_CUSTOMER_INFOR)
     public ResponseEntity<?> getCustomerInfor(@RequestParam @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD) String email){
         return VsResponseUtil.success(customerService.getCustomerInfor(email));
+    }
+    @Operation(summary = "API Get All Customer ")
+    @PostMapping(UrlConstant.Customer.GET_ALL_CUSTOMER)
+    public ResponseEntity<?> getAllCustomers(@RequestBody CustomerSearchRequestDto requestDto){
+        return VsResponseUtil.success(customerService.customersPage(requestDto));
     }
 }
