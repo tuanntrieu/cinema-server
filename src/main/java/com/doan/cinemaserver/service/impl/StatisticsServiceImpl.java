@@ -3,6 +3,7 @@ package com.doan.cinemaserver.service.impl;
 import com.doan.cinemaserver.domain.dto.pagination.PaginationResponseDto;
 import com.doan.cinemaserver.domain.dto.statistics.*;
 import com.doan.cinemaserver.repository.CustomerRepository;
+import com.doan.cinemaserver.repository.ScheduleRepository;
 import com.doan.cinemaserver.repository.StatisticRepository;
 import com.doan.cinemaserver.repository.TicketRepository;
 import com.doan.cinemaserver.service.StatisticsService;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +29,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final TicketRepository ticketRepository;
     private final CustomerRepository customerRepository;
     private final StatisticRepository statisticRepository;
+    private final ScheduleRepository scheduleRepository;
 
     @Override
     public GeneralStatisticsResponseDto countCustomerByDate(LocalDate date) {
@@ -251,5 +255,31 @@ public class StatisticsServiceImpl implements StatisticsService {
         excelUtil.exportDataCinemaToExcel(response, requestDto.getDate(), list);
     }
 
+    @Override
+    public List<StatisticsScheduleResponseDto> getStatisticsSchedule(LocalDate dateSearch) {
+        int month = dateSearch.getMonthValue();
+        int year = dateSearch.getYear();
+        List<StatisticsScheduleResponseDto> result = new ArrayList<>();
+        for (int hour = 0; hour < 24; hour += 2) {
+            LocalDateTime slotStart = LocalDate.of(year, month, 1).atTime(hour, 0);
+            LocalDateTime slotEnd;
+            if (hour == 22) {
+                slotEnd = slotStart.withHour(23).withMinute(59).withSecond(59);
+            } else {
+                slotEnd = slotStart.plusHours(2);
+            }
 
+            String slotStartStr = slotStart.toLocalTime().toString();
+            String slotEndStr = slotEnd.toLocalTime().toString();
+            String dummyDate = "2000-01-01";
+            String fullStart = dummyDate + " " + slotStartStr;
+            String fullEnd = dummyDate + " " + slotEndStr;
+            int countSeats = scheduleRepository.countSoldSeatsInSlot(
+                    fullStart, fullEnd, month, year);
+            String label = String.format("%02d:00 - %02d:00", hour, (hour + 2) % 24);
+            result.add(new StatisticsScheduleResponseDto(label, countSeats));
+        }
+
+        return result;
+    }
 }

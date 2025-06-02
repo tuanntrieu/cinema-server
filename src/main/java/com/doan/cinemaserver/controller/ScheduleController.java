@@ -51,4 +51,7 @@ public class ScheduleController {
         return VsResponseUtil.success(scheduleService.getScheduleForMovieByDate(scheduleRequestDto));
     }
 
+
+
+
 }

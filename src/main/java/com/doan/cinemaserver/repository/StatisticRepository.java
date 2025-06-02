@@ -8,6 +8,8 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -254,4 +256,7 @@ public class StatisticRepository {
         query.setMaxResults(requestDto.getPageSize());
         return query.getResultList();
     }
+
+
+
 }

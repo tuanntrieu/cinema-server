@@ -33,6 +33,7 @@ public interface StatisticsService {
     public void exportExcelForMovie(RevenueMovieRequestDto requestDto, HttpServletResponse response)throws IOException;
     public void exportExcelForCinema(RevenueCinemaRequestDto requestDto, HttpServletResponse response)throws IOException;
 
+    public List<StatisticsScheduleResponseDto> getStatisticsSchedule(LocalDate dateSearch);
 
 
 }

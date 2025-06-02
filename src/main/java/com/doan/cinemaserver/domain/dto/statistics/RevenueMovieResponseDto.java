@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+
 public class RevenueMovieResponseDto {
     private long id;
     private String name;

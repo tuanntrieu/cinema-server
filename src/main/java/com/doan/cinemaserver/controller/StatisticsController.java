@@ -105,4 +105,10 @@ public class StatisticsController {
         statisticsService.exportExcelForCinema(requestDto,response);
     }
 
+    @Operation(summary = "API Get Statistics Schedule")
+    @GetMapping(UrlConstant.Statistics.STATISTIC_SCHEDULE)
+    public ResponseEntity<?> getStatisticsSchedule(@RequestParam LocalDate date) {
+        return VsResponseUtil.success(statisticsService.getStatisticsSchedule(date));
+    }
+
 }

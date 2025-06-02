@@ -24,9 +24,9 @@ public class UrlConstant {
         public static final String UPDATE_CUSTOMER = PRE_FIX + "/update";
         public static final String UPDATE_CUSTOMER_CINEMA = PRE_FIX + "/update-cinema";
         public static final String GET_CUSTOMER_CINEMA = PRE_FIX + "/get-cinema";
-        public static final String GET_ALL_CUSTOMER= PRE_FIX + "/get-all";
-        public static final String LOCK_ACCOUNT= PRE_FIX + "/lock/{id}";
-        public static final String UN_LOCK_ACCOUNT= PRE_FIX + "/un-lock/{id}";
+        public static final String GET_ALL_CUSTOMER = PRE_FIX + "/get-all";
+        public static final String LOCK_ACCOUNT = PRE_FIX + "/lock/{id}";
+        public static final String UN_LOCK_ACCOUNT = PRE_FIX + "/un-lock/{id}";
 
         private Customer() {
         }
@@ -116,7 +116,7 @@ public class UrlConstant {
         public static final String GET_ALL_MOVIE = PRE_FIX + "/get-all";
         public static final String UPDATE_MOVIE = PRE_FIX + "/update/{id}";
         public static final String DELETE_MOVIE = PRE_FIX + "/delete/{id}";
-        public static final String GET_MOVIE_SCHEDULE=PRE_FIX+"/schedule";
+        public static final String GET_MOVIE_SCHEDULE = PRE_FIX + "/schedule";
     }
 
     public static class Ticket {
@@ -164,6 +164,7 @@ public class UrlConstant {
         public static final String SUM_TOTAL_BY_MONTH = PRE_FIX + "/sum-total-month";
         public static final String EXPORT_MOVIE_EXCEL = PRE_FIX + "/export-movie-excel";
         public static final String EXPORT_CINEMA_EXCEL = PRE_FIX + "/export-cinema-excel";
+        public static final String STATISTIC_SCHEDULE = PRE_FIX + "/statistics-schedule";
     }
 
 
