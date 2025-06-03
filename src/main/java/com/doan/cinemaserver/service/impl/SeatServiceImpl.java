@@ -273,7 +273,7 @@ public class SeatServiceImpl implements SeatService {
         }
 
         // Check ghế couple ở dòng sau cùng
-        if (row == room.getNumberOfRow() + 1) {
+        if (row == room.getNumberOfRow() ) {
             SeatType type = seatMap.get(row-1).get(0).getSeatType().getSeatType();
             if (type == SeatType.COUPLE) {
                 throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_COUPLE_NEXT_ROW);
@@ -308,13 +308,13 @@ public class SeatServiceImpl implements SeatService {
                 () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(requestDto.getRoomId())})
         );
 
-        if (requestDto.getRow() < 1 || requestDto.getRow() > room.getNumberOfRow() + 1) {
+        if (requestDto.getRow() < 1 || requestDto.getRow() > room.getNumberOfRow() ) {
             throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_INVALID_ROW);
         }
-        if (requestDto.getRow() < room.getNumberOfRow()) {
+        if (requestDto.getRow() < room.getNumberOfRow()-1) {
             throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_COUPLE_TWO_LAST_ROW);
         }
-        if (requestDto.getRow() == room.getNumberOfRow()) {
+        if (requestDto.getRow() == room.getNumberOfRow()-1) {
             if (!room.getSeats().get(room.getSeats().size() - 1).getSeatType().getSeatType().equals(SeatType.COUPLE)) {
                 throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_COUPLE_LAST_ROW);
             }

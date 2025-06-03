@@ -29,7 +29,7 @@ public class Seat {
 
     private boolean isMaintained = false;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "seat_type_id")
     private SeatPrice seatType;
 

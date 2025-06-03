@@ -58,9 +58,9 @@ public class RoomServiceImpl implements RoomService {
         SeatPrice seatPrice = seatPriceRepository.findBySeatType(SeatType.STANDARD).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.Seat.ERR_NOT_FOUND_SEAT_TYPE, new String[]{SeatType.STANDARD.toString()})
         );
-        for (int i = 0; i < roomRequestDto.getNumberOfColumn(); i++) {
+        for (int i = 0; i < roomRequestDto.getNumberOfRow(); i++) {
             char columnLetter = (char) ('A' + i);
-            for (int j = 0; j < roomRequestDto.getNumberOfRow(); j++) {
+            for (int j = 0; j < roomRequestDto.getNumberOfColumn(); j++) {
                 seatRepository.save(Seat.builder()
                         .room(room)
                         .seatName(columnLetter + String.valueOf(j + 1))
