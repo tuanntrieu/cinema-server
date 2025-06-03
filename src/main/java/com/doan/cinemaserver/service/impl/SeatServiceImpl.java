@@ -80,8 +80,6 @@ public class SeatServiceImpl implements SeatService {
                 .stream()
                 //        .filter(ss -> !ss.getSeatStatus().equals(SeatStatus.MAINTENANCE))
                 .collect(Collectors.toMap(ss -> ss.getSeat().getId(), ss -> ss));
-
-
         Map<Integer, Map<Integer, Seat>> seatMap = new HashMap<>();
         for (Seat seat : allSeats) {
             if (!scheduleSeatMap.get(seat.getId()).getSeatStatus().equals(SeatStatus.MAINTENANCE)) {
@@ -90,30 +88,25 @@ public class SeatServiceImpl implements SeatService {
                         .put(seat.getYCoordinate(), seat);
             }
         }
-
         //lay danh sach ghe dc chon
         for (int i = 0; i < seatId.length; i++) {
             int finalI = i;
             Seat seatSelected = seatRepository.findById(seatId[i]).orElseThrow(
                     () -> new NotFoundException(ErrorMessage.Seat.ERR_NOT_FOUND_SEAT, new String[]{String.valueOf(seatId[finalI])})
             );
-
             ScheduleSeat ss = scheduleSeatMap.get(seatSelected.getId());
             if (ss == null || !SeatStatus.HOLDING.equals(ss.getSeatStatus())) {
                 throw new InvalidException(ErrorMessage.Seat.ERR_INVALID_SEAT_STATUS);
             }
             selectedSeats.add(seatSelected);
         }
-
         for (Seat seat : selectedSeats) {
             if (!SeatType.COUPLE.equals(seat.getSeatType().getSeatType())) {
                 int x = seat.getXCoordinate();
                 int y = seat.getYCoordinate();
-
                 Map<Integer, Seat> row = seatMap.get(x);
                 int minY = Collections.min(row.keySet());
                 int maxY = Collections.max(row.keySet());
-
                 // Ghế đầu hàng
                 if (y == minY + 1) {
                     Seat left = row.get(y - 1);
@@ -124,7 +117,6 @@ public class SeatServiceImpl implements SeatService {
                         }
                     }
                 }
-
                 // Ghế cuối hàng
                 if (y == maxY - 1) {
                     Seat right = row.get(y + 1);
@@ -135,7 +127,6 @@ public class SeatServiceImpl implements SeatService {
                         }
                     }
                 }
-
                 // Ghế ở giữa bị trống
                 Seat mid = row.get(y + 1);
                 Seat far = row.get(y + 2);
@@ -148,7 +139,6 @@ public class SeatServiceImpl implements SeatService {
                 }
             }
         }
-
         return new CommonResponseDto("Hợp lệ", true);
     }
 

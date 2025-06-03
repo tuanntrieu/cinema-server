@@ -15,10 +15,10 @@ public class ForbiddenException extends RuntimeException {
     public ForbiddenException(String message, Object... params) {
         super(message);
         this.params = params;
-        this.status = HttpStatus.BAD_REQUEST;
+        this.status = HttpStatus.FORBIDDEN;
     }
     public ForbiddenException( String message) {
         super(message);
-        this.status = HttpStatus.BAD_REQUEST;
+        this.status = HttpStatus.FORBIDDEN;
     }
 }

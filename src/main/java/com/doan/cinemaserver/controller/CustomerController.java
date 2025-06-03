@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
@@ -27,6 +28,7 @@ public class CustomerController {
 
     @Operation(summary = "API Lock Account")
     @PatchMapping(UrlConstant.Customer.LOCK_ACCOUNT)
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> lockAccount(@PathVariable long id){
         return VsResponseUtil.success(customerService.lockAccount(id));
     }
