@@ -14,6 +14,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -30,6 +32,11 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity(
+        securedEnabled = true,
+        jsr250Enabled = true,
+        prePostEnabled = true
+)
 public class SecurityConfig {
     private final CustomUserDetailsServiceImpl userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -55,14 +62,14 @@ public class SecurityConfig {
 //    };
 //
 //    private String[] ADMIN_LIST={
-//            "/api/v1/cinema/**",
-//            "/api/v1/movie-type/**",
-//            "/api/v1/schedule/**",
-//            "/api/v1/room/**",
-//            "/api/v1/movie/**",
-//            "/api/v1/ticket/**",
-//            "/api/v1/combo/**",
-//            "/api/v1/food/**",
+////            "/api/v1/cinema/**",
+////            "/api/v1/movie-type/**",
+////            "/api/v1/schedule/**",
+////            "/api/v1/room/**",
+////            "/api/v1/movie/**",
+////            "/api/v1/ticket/**",
+////            "/api/v1/combo/**",
+////            "/api/v1/food/**",
 //            "/api/v1/customer/**"
 //
 //    };
@@ -74,14 +81,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers(WHITELIST).permitAll()
                         //    .requestMatchers(USER_LIST).hasRole("USER")
-                        //    .requestMatchers(ADMIN_LIST).hasRole("ADMIN")
+//                            .requestMatchers(ADMIN_LIST).hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(jwtEntryPoint)
-                        .accessDeniedHandler(customAccessDeniedHandler()));
+                        .authenticationEntryPoint(jwtEntryPoint));
+                       /// .accessDeniedHandler(customAccessDeniedHandler()));
         return http.build();
     }
 
@@ -94,15 +101,15 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-    @Bean
-    public AccessDeniedHandler customAccessDeniedHandler() {
-        return (request, response, accessDeniedException) -> {
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.getOutputStream().write(new ObjectMapper().writeValueAsBytes(RestData.error(HttpStatus.FORBIDDEN.value(), accessDeniedException.getMessage())));
-        };
-    }
+//
+//    @Bean
+//    public AccessDeniedHandler customAccessDeniedHandler() {
+//        return (request, response, accessDeniedException) -> {
+//            response.setStatus(HttpStatus.FORBIDDEN.value());
+//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//            response.getOutputStream().write(new ObjectMapper().writeValueAsBytes(RestData.error(HttpStatus.FORBIDDEN.value(), accessDeniedException.getMessage())));
+//        };
+//    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
