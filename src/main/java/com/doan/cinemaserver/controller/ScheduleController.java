@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
@@ -20,12 +21,13 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @Operation(summary = "API Create Schedule")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(UrlConstant.Schedule.CREATE_SCHEDULE)
     public ResponseEntity<?> createSchedule(@Valid @RequestBody ScheduleRequestDto scheduleRequestDto){
         return VsResponseUtil.success(scheduleService.createSchedule(scheduleRequestDto));
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "API Delete Schedule")
     @DeleteMapping(UrlConstant.Schedule.DELETE_SCHEDULE)
     public ResponseEntity<?> deleteSchedule(@PathVariable(name = "id") Long id){
@@ -45,6 +47,7 @@ public class ScheduleController {
     public ResponseEntity<?> getSchedulesForMovieByCinema(@RequestBody ScheduleSearchByCinemaRequestDto scheduleRequestDto){
         return VsResponseUtil.success(scheduleService.getScheduleForMovieByCinema(scheduleRequestDto));
     }
+
     @Operation(summary = "API Get Schedule For Movie By Date")
     @PostMapping(UrlConstant.Schedule.GET_SCHEDULES_FOR_MOVIE_BY_DATE)
     public ResponseEntity<?> getSchedulesFor(@RequestBody ScheduleForMovieByDateRequestDto scheduleRequestDto){

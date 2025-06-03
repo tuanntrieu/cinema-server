@@ -22,6 +22,7 @@ public class CustomerController {
 
     @Operation(summary = "API Update Customer")
     @PatchMapping(UrlConstant.Customer.UPDATE_CUSTOMER)
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> updateCustomer(@Valid @RequestBody CustomerDto customerDto){
         return VsResponseUtil.success(customerService.updateCustomer(customerDto));
     }
@@ -33,6 +34,7 @@ public class CustomerController {
         return VsResponseUtil.success(customerService.lockAccount(id));
     }
     @Operation(summary = "API UnLock Account")
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(UrlConstant.Customer.UN_LOCK_ACCOUNT)
     public ResponseEntity<?> unLockAccount(@PathVariable long id){
         return VsResponseUtil.success(customerService.unlockAccount(id));
@@ -61,6 +63,7 @@ public class CustomerController {
     }
     @Operation(summary = "API Get All Customer ")
     @PostMapping(UrlConstant.Customer.GET_ALL_CUSTOMER)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllCustomers(@RequestBody CustomerSearchRequestDto requestDto){
         return VsResponseUtil.success(customerService.customersPage(requestDto));
     }

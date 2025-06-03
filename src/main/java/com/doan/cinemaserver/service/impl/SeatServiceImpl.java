@@ -162,7 +162,7 @@ public class SeatServiceImpl implements SeatService {
             scheduleSeatRepository.save(scheduleSeat);
             String redisKey = "schedule:" + requestDto.getScheduleId() + "-seat:" + requestDto.getSeatId();
             String redisValue = "1";
-            redisTemplate.opsForValue().set(redisKey, redisValue, Duration.ofMinutes(10));
+            redisTemplate.opsForValue().set(redisKey, redisValue, Duration.ofMinutes(1));
             messagingTemplate.convertAndSend("/topic/seat-expired/" + schedule.getId(), requestDto.getSeatId());
         } else {
             throw new InvalidException(ErrorMessage.Seat.ERR_INVALID_SEAT_STATUS);

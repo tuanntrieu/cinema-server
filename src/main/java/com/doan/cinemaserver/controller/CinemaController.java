@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
@@ -23,6 +24,7 @@ public class CinemaController {
 
     @Operation(summary = "API Create Cinema")
     @PostMapping(UrlConstant.Cinema.CREATE_CINEMA)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createCinema(@Valid @RequestBody CinemaRequestDto cinemaRequestDto){
         return VsResponseUtil.success(cinemaService.createCinema(cinemaRequestDto));
     }
@@ -58,11 +60,13 @@ public class CinemaController {
     }
     @Operation(summary = "API Get Cinema Detail")
     @GetMapping(UrlConstant.Cinema.GET_CINEMA_DETAIL)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getCinemaDetail(@PathVariable(name = "id") Long cinemaId) {
         return VsResponseUtil.success(cinemaService.getCinemaDetail(cinemaId));
     }
     @Operation(summary = "API Get Room By Cinema")
     @PostMapping(UrlConstant.Cinema.GET_ROOM_BY_CINEMA)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getRoomByCinema(@RequestBody CinemaGetRoomRequestDto requestDto) {
         return VsResponseUtil.success(cinemaService.getRoomByCinema(requestDto));
     }

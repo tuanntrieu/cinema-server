@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
@@ -20,12 +21,14 @@ public class FoodController {
     private final FoodService foodService;
 
     @Operation(summary = "API Create Food")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = UrlConstant.Food.CREATE_FOOD)
     public ResponseEntity<?> createFood(@RequestParam @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD) String name) {
         return VsResponseUtil.success(foodService.createFood(name));
     }
 
     @Operation(summary = "API Get Food")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = UrlConstant.Food.GET_FOOD)
     public ResponseEntity<?> getFood() {
         return VsResponseUtil.success(foodService.findAllFood());
@@ -37,6 +40,7 @@ public class FoodController {
     }
 
     @Operation(summary = "API Delete Food")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(value = UrlConstant.Food.DELETE_FOOD)
     public ResponseEntity<?> deleteFood(@PathVariable Long id) {
         return VsResponseUtil.success(foodService.deleteFood(id));

@@ -24,6 +24,25 @@ import java.util.Locale;
 public class GlobalExceptionHandler {
     private final MessageSourceUtil messageSource;
 
+
+
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<RestData<?>> handleAccessDeniedException(ForbiddenException ex) {
+        String message = messageSource.getMessage(ex.getMessage(), ex.getParams());
+        log.error(message, ex);
+        return VsResponseUtil.error(ex.getStatus(), message);
+    }
+
+    @ExceptionHandler(org.springframework.security.authorization.AuthorizationDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<RestData<?>> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        String message = messageSource.getMessage(ex.getMessage(), ex.getParams());
+        log.error(message, ex);
+        return VsResponseUtil.error(ex.getStatus(), message);
+    }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<RestData<?>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -68,13 +87,6 @@ public class GlobalExceptionHandler {
         return VsResponseUtil.error(ex.getStatus(), errorMessage);
     }
 
-    @ExceptionHandler(ForbiddenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseEntity<RestData<?>> handleAccessDeniedException(ForbiddenException ex) {
-        String message = messageSource.getMessage(ex.getMessage(), ex.getParams());
-        log.error(message, ex);
-        return VsResponseUtil.error(ex.getStatus(), message);
-    }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
    // @ResponseStatus(HttpStatus.CONFLICT)

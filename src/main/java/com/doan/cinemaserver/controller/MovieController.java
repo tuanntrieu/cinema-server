@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,7 @@ public class MovieController {
     private final MovieService movieService;
 
     @Operation(summary = "API Create Movie")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = UrlConstant.Movie.CREATE_MOVIE,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createMovie( @ModelAttribute("requestDto") @Valid MovieRequestDto requestDto,
@@ -32,6 +34,7 @@ public class MovieController {
     }
 
     @Operation(summary = "API Update Movie")
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(value = UrlConstant.Movie.UPDATE_MOVIE,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateMovie(@ModelAttribute("requestDto") @Valid MovieRequestDto requestDto,
@@ -61,12 +64,14 @@ public class MovieController {
         return VsResponseUtil.success(movieService.getAllMovies(requestDto));
     }
     @Operation(summary = "API Delete Movie")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(value = UrlConstant.Movie.DELETE_MOVIE)
     public ResponseEntity<?> deleteMovie(@PathVariable Long id) {
         return VsResponseUtil.success(movieService.deleteMovie(id));
     }
 
     @Operation(summary = "API Get Movie Detail")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = UrlConstant.Movie.GET_MOVIE_SCHEDULE)
     public ResponseEntity<?> getMovieSchedule(@RequestParam  @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Ho_Chi_Minh")  LocalDate date) {
         return VsResponseUtil.success(movieService.getMovieSchedule(date));

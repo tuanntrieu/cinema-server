@@ -87,8 +87,8 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(jwtEntryPoint));
-                       /// .accessDeniedHandler(customAccessDeniedHandler()));
+                        .authenticationEntryPoint(jwtEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler()));
         return http.build();
     }
 
@@ -101,15 +101,15 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-//
-//    @Bean
-//    public AccessDeniedHandler customAccessDeniedHandler() {
-//        return (request, response, accessDeniedException) -> {
-//            response.setStatus(HttpStatus.FORBIDDEN.value());
-//            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//            response.getOutputStream().write(new ObjectMapper().writeValueAsBytes(RestData.error(HttpStatus.FORBIDDEN.value(), accessDeniedException.getMessage())));
-//        };
-//    }
+
+    @Bean
+    public AccessDeniedHandler customAccessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getOutputStream().write(new ObjectMapper().writeValueAsBytes(RestData.error(HttpStatus.FORBIDDEN.value(), accessDeniedException.getMessage())));
+        };
+    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

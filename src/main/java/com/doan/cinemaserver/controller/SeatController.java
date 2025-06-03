@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
@@ -20,6 +21,7 @@ public class SeatController {
 
 
     @Operation(summary = "API Update Seat Status")
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(UrlConstant.Seat.UPDATE_SEAT_STATUS)
     public ResponseEntity<?> updateSeatStatus(@RequestBody UpdateSeatStatusRequestDto requestDto) {
         return VsResponseUtil.success(seatService.updateSeatStatus(requestDto));
@@ -38,6 +40,7 @@ public class SeatController {
     }
 
     @Operation(summary = "API  Delete Seat")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(UrlConstant.Seat.DELETE_SEAT)
     public ResponseEntity<?> deleteSeat(@PathVariable(name = "id") Long id) {
         return VsResponseUtil.success(seatService.deleteSeat(id));
@@ -51,37 +54,45 @@ public class SeatController {
 
     @Operation(summary = "API Get ALl Seat Price")
     @GetMapping(UrlConstant.Seat.GET_ALL_SEAT_PRICE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllSeatPrice() {
         return VsResponseUtil.success(seatService.getAllSeatPrices());
     }
 
     @Operation(summary = "API Update Price")
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(UrlConstant.Seat.UPDATE_PRICE)
     public ResponseEntity<?> updatePrice(@RequestBody UpdatePriceRequestDto requestDto) {
         return VsResponseUtil.success(seatService.updatePrice(requestDto));
     }
 
     @Operation(summary = "API Maintain Seat")
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(UrlConstant.Seat.MAINTAIN_SEATS)
     public ResponseEntity<?> maintainSeat(@RequestParam Long[] seatIds) {
         return VsResponseUtil.success(seatService.maintainSeats(seatIds));
     }
     @Operation(summary = "API Un-Maintain Seat")
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(UrlConstant.Seat.UN_MAINTAIN_SEATS)
     public ResponseEntity<?> unMaintainSeat(@RequestParam Long[] seatIds) {
         return VsResponseUtil.success(seatService.unMaintainSeats(seatIds));
     }
 
     @Operation(summary = "API Update Vip Seat")
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(UrlConstant.Seat.UPDATE_VIP_SEAT)
     public ResponseEntity<?> updateVipSeat(@RequestBody UpdateSeatTypeRequestDto requestDto) {
         return VsResponseUtil.success(seatService.updateVipSeats(requestDto));
     }
     @Operation(summary = "API Update Couple Seat")
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(UrlConstant.Seat.UPDATE_COUPLE_SEAT)
     public ResponseEntity<?> updateCoupleSeat(@RequestBody UpdateSeatTypeRequestDto requestDto) {
         return VsResponseUtil.success(seatService.updateCoupleSeats(requestDto));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "API Update Standard Seat")
     @PatchMapping(UrlConstant.Seat.UPDATE_STANDARD_SEAT)
     public ResponseEntity<?> updateStandardSeat(@RequestBody UpdateSeatTypeRequestDto requestDto) {

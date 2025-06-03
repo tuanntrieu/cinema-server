@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestApiV1
@@ -18,17 +19,20 @@ public class  MovieTypeController {
     private final MovieTypeService movieTypeService;
 
     @Operation(summary = "API Create MovieType")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(UrlConstant.MovieType.CREATE_TYPE)
     public ResponseEntity<?> createMovieType(@Valid @RequestBody MovieTypeRequestDto movieTypeRequestDto){
         return VsResponseUtil.success(movieTypeService.addMovieType(movieTypeRequestDto));
     }
 
     @Operation(summary = "API Update MovieType")
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(UrlConstant.MovieType.UPDATE_TYPE)
     public ResponseEntity<?> updateMovieType(@PathVariable Long id, @Valid @RequestBody MovieTypeRequestDto movieTypeRequestDto){
         return VsResponseUtil.success(movieTypeService.updateMovieType(id,movieTypeRequestDto));
     }
     @Operation(summary = "API Delete MovieType")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(UrlConstant.MovieType.DELETE_TYPE)
     public ResponseEntity<?> deleteMovieType(@PathVariable Long id){
         return VsResponseUtil.success(movieTypeService.deleteMovieType(id));
@@ -36,12 +40,14 @@ public class  MovieTypeController {
 
 
     @Operation(summary = "API Get All MovieType")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(UrlConstant.MovieType.GET_MOVIE_TYPE)
     public ResponseEntity<?> getAllMovieType(){
         return VsResponseUtil.success(movieTypeService.getAllMovieType());
     }
 
     @Operation(summary = "API Get All MovieType Page")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(UrlConstant.MovieType.GET_MOVIE_TYPE_PAGE)
     public ResponseEntity<?> getAllMovieTypePage(@RequestBody MovieTypeSearchRequestDto requestDto){
         return VsResponseUtil.success(movieTypeService.getMovieTypePage(requestDto));

@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,7 @@ public class ComboController {
 
 
     @Operation(summary = "API Create Combo")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = UrlConstant.Combo.CREATE_COMBO, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createCombo(
             @Parameter(
@@ -45,6 +47,7 @@ public class ComboController {
 
     @Operation(summary = "API Delete Combo")
     @DeleteMapping(UrlConstant.Combo.DELETE_COMBO)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteCombo(@PathVariable Long id)  {
         return VsResponseUtil.success(comboService.deleteCombo(id));
     }
