@@ -51,6 +51,10 @@ vnpay:
  command : pay
  orderType : other
 
-
+payos:
+  client-id: cab127bf-8793-400d-8827-2375785ba9ce
+  api-key: 28f3af1b-e186-46bd-b56e-1037b32874bb
+  checksum-key: 4e6fcdb1bac7cead3cd70798352356c35a811400affcd912d754bb9453685544
+  api-url: https://api-merchant.payos.vn/v2/payment-requests
 
 

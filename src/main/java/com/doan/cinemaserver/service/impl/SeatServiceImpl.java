@@ -246,7 +246,7 @@ public class SeatServiceImpl implements SeatService {
 
         int row = requestDto.getRow();
 
-        if (row < 1 || row > room.getNumberOfRow() + 1) {
+        if (row < 1 || row > room.getNumberOfRow() ) {
             throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_INVALID_ROW);
         }
 

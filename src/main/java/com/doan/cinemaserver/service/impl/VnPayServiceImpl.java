@@ -4,10 +4,9 @@ import com.doan.cinemaserver.config.VnPayConfig;
 import com.doan.cinemaserver.constant.ErrorMessage;
 import com.doan.cinemaserver.domain.dto.vnpay.PaymentResponseDTO;
 import com.doan.cinemaserver.domain.dto.vnpay.PaymentStatusResponse;
-import com.doan.cinemaserver.exception.BadRequestException;
 import com.doan.cinemaserver.exception.InvalidException;
 import com.doan.cinemaserver.service.VnPayService;
-import com.doan.cinemaserver.util.VNPayUtil;
+import com.doan.cinemaserver.util.PaymentUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,7 +44,7 @@ public class VnPayServiceImpl implements VnPayService {
         String vnp_OrderInfo = request.getParameter("vnp_OrderInfo");
         String orderType = request.getParameter("ordertype");
         String vnp_TxnRef = UUID.randomUUID().toString().replace("-", "");;
-        String vnp_IpAddr = VNPayUtil.getIpAddress(request);
+        String vnp_IpAddr = PaymentUtil.getIpAddress(request);
         String vnp_TmnCode = vnPayConfig.getTmnCode();
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
@@ -137,7 +136,7 @@ public class VnPayServiceImpl implements VnPayService {
             }
         }
         String queryUrl = query.toString();
-        String vnp_SecureHash = VNPayUtil.hmacSHA512(vnPayConfig.getHashSecret(), hashData.toString());
+        String vnp_SecureHash = PaymentUtil.hmacSHA512(vnPayConfig.getHashSecret(), hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = vnPayConfig.getPayUrl() + "?" + queryUrl;
 
@@ -149,9 +148,9 @@ public class VnPayServiceImpl implements VnPayService {
 
     @Override
     public PaymentStatusResponse handleVNPayReturn(String receivedHash, HttpServletRequest request) {
-        Map<String, String> parameters = VNPayUtil.getParametersFromRequest(request);
+        Map<String, String> parameters = PaymentUtil.getParametersFromRequest(request);
         parameters.remove("vnp_SecureHash");
-        String calculatedHash = VNPayUtil.hmacSHA512(vnPayConfig.getHashSecret(), VNPayUtil.buildHashData(parameters));
+        String calculatedHash = PaymentUtil.hmacSHA512(vnPayConfig.getHashSecret(), PaymentUtil.buildHashData(parameters));
 
         if (!receivedHash.equalsIgnoreCase(calculatedHash)) {
             throw new InvalidException(ErrorMessage.Payment.ERR_INVALID_OR_TAMPERED_DATA);

@@ -54,7 +54,8 @@ public class SecurityConfig {
             "/api/v1/schedule/**",
             "/api/v1/cinema/**",
             "/api/v1/movie/**",
-            "/ws-seat/**"
+            "/ws-seat/**",
+            "/api/v1/ticket/handle-webhook"
     };
 
     //    private String[] USER_LIST={

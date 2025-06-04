@@ -138,6 +138,7 @@ public class TicketServiceImpl implements TicketService {
         }
         ticket.setPriceCombo(priceCombo);
         ticketRepository.save(ticket);
+        deleteDataCache(requestDto.getId());
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -231,9 +232,7 @@ public class TicketServiceImpl implements TicketService {
             throw new BadRequestException(ErrorMessage.ERR_EXCEPTION_GENERAL);
         }
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.CREATE_SUCCESS, null));
-
     }
-
     @Override
     public DataCacheForOrderRequestDto readDataOrder(String vnp_TxnRef) {
         try {
@@ -245,7 +244,6 @@ public class TicketServiceImpl implements TicketService {
             throw new BadRequestException(ErrorMessage.ERR_EXCEPTION_GENERAL);
         }
     }
-
     @Override
     public CommonResponseDto deleteDataCache(String vnp_TxnRef) {
         Boolean existed = redisTemplate.hasKey(vnp_TxnRef);

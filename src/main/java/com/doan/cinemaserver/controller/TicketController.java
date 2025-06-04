@@ -3,14 +3,19 @@ package com.doan.cinemaserver.controller;
 import com.doan.cinemaserver.common.RestApiV1;
 import com.doan.cinemaserver.common.VsResponseUtil;
 import com.doan.cinemaserver.constant.UrlConstant;
+import com.doan.cinemaserver.domain.dto.payos.CreateUrlRequestDto;
 import com.doan.cinemaserver.domain.dto.ticket.DataCacheForOrderRequestDto;
 import com.doan.cinemaserver.domain.dto.ticket.OrderRequestDto;
 import com.doan.cinemaserver.domain.dto.ticket.TicketRequestDto;
+import com.doan.cinemaserver.service.PayOsService;
 import com.doan.cinemaserver.service.TicketService;
 import com.doan.cinemaserver.service.VnPayService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class TicketController {
     private final TicketService ticketService;
     private final VnPayService vnPayService;
+    private final PayOsService payOsService;
 
     @Operation(summary = "API Check Out")
     @PostMapping(UrlConstant.Ticket.CHECKOUT)
@@ -67,6 +73,19 @@ public class TicketController {
     public ResponseEntity<?> getTicketDetail(@PathVariable String id) {
         return VsResponseUtil.success(ticketService.getTicketDetail(id));
     }
+    @Operation(summary = "API Get PayOS Payment Url")
+    @PostMapping(UrlConstant.Ticket.GET_PAYOS_PAYMENTURL)
+    public ResponseEntity<?> getPayOsPaymentUrl(@RequestBody CreateUrlRequestDto requestDto, HttpServletRequest request) {
+        return VsResponseUtil.success(payOsService.createPaymentUrl(requestDto, request));
+    }
 
+    @Operation(summary = "API Get PayOS Payment Url")
+    @PostMapping(UrlConstant.Ticket.HANDLE_WEBHOOK)
+    public ResponseEntity<?> handleWebHook(@RequestBody String rawBody) {
+        payOsService.handleWebhook(rawBody);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        return VsResponseUtil.success(response);
+    }
 
 }

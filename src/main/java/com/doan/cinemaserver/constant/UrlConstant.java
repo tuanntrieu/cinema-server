@@ -130,6 +130,9 @@ public class UrlConstant {
         public static final String DELETE_DATA_TMP = PRE_FIX + "/delete-data-tmp";
         public static final String EXIST_BY_ID = PRE_FIX + "/exist-by-id";
         public static final String GET_TICKET_DETAIL = PRE_FIX + "/{id}";
+        public static final String GET_PAYOS_PAYMENTURL= PRE_FIX + "/get-payos-paymenturl";
+        public static final String HANDLE_WEBHOOK= PRE_FIX + "/handle-webhook";
+
     }
 
     public static class Combo {
