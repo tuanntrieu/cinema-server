@@ -17,6 +17,7 @@ import com.doan.cinemaserver.service.RoomService;
 import com.doan.cinemaserver.util.MessageSourceUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -92,6 +93,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional
+    @Modifying
     public CommonResponseDto deleteRoom(long roomId) {
         Room room = roomRepository.findById(roomId).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(roomId)})
@@ -103,11 +105,24 @@ public class RoomServiceImpl implements RoomService {
                 throw new InvalidException(ErrorMessage.Room.ERR_HAS_SCHEDULE);
             }
         });
-        room.getSchedules().forEach(schedule ->
-                scheduleSeatRepository.deleteAll(schedule.getScheduleSeats()));
+
+        List<Schedule> schedules = room.getSchedules();
+        List<Long> scheduleIds = schedules.stream()
+                .map(Schedule::getId)
+                .collect(Collectors.toList());
+
+
+        scheduleSeatRepository.deleteByScheduleIds(scheduleIds);
+
+        room.getSchedules().forEach(schedule -> {
+            schedule.setRoom(null);
+            scheduleRepository.save(schedule);
+        });
+
         seatRepository.deleteAll(room.getSeats());
 
         roomRepository.delete(room);
+
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.DELETE_SUCCESS, null));
     }
 

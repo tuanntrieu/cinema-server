@@ -40,6 +40,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final SeatRepository seatRepository;
     private final ScheduleSeatRepository scheduleSeatRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final TicketRepository ticketRepository;
 
     @Override
     @Transactional
@@ -118,6 +119,10 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.getMovie().getSchedules().remove(schedule);
         movieRepository.save(schedule.getMovie());
 
+        schedule.getTickets().forEach(ticket -> {
+            ticket.setSchedule(null);
+            ticketRepository.save(ticket);
+        });
         scheduleRepository.delete(schedule);
         return new CommonResponseDto(messageSourceUtil.getMessage(SuccessMessage.DELETE_SUCCESS, null));
     }

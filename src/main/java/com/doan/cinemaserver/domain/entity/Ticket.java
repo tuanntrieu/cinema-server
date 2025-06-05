@@ -35,6 +35,8 @@ public class Ticket extends DateAuditing {
 
     private String movieName;
 
+    private LocalDateTime scheduleTime;
+
     @ManyToOne()
     @JoinColumn(name = "movie_id")
     private Movie movie;

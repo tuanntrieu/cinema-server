@@ -30,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -55,6 +56,7 @@ public class TicketServiceImpl implements TicketService {
     private final TicketComboRepository ticketComboRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final SendMailUtil sendMailUtil;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Override
     @Transactional
@@ -89,6 +91,7 @@ public class TicketServiceImpl implements TicketService {
             if (!seatMap.get(seat.getId()).getSeatStatus().equals(SeatStatus.HOLDING)) {
                 throw new InvalidException(ErrorMessage.Seat.ERR_INVALID_SEAT_STATUS);
             }
+            messagingTemplate.convertAndSend("/topic/seat-expired/" + schedule.getId(), seat.getId());
             seatsStrBui.append(seat.getSeatName()).append(",");
             seatRepository.updateSeatStatus(schedule.getId(), seat.getId(), SeatStatus.SOLD.toString());
             price.updateAndGet(v -> v + (dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY) ? seat.getSeatType().getWeekendPrice() : seat.getSeatType().getWeekdayPrice()) + room.getRoomType().getSurcharge());
@@ -104,6 +107,7 @@ public class TicketServiceImpl implements TicketService {
                 .customerName(requestDto.getCustomerName())
                 .customerEmail(requestDto.getCustomerEmail())
                 .movie(movie)
+                .scheduleTime(schedule.getScheduleTime())
                 .movieName(movie.getName())
                 .roomName(room.getName())
                 .seatsName(seatsStr)
@@ -139,7 +143,7 @@ public class TicketServiceImpl implements TicketService {
         ticket.setPriceCombo(priceCombo);
         ticketRepository.save(ticket);
         deleteDataCache(requestDto.getId());
-
+        messagingTemplate.convertAndSend("/topic/seat-expired/" + schedule.getId(), requestDto.getSeatId());
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -200,8 +204,8 @@ public class TicketServiceImpl implements TicketService {
                             .createdDate(ticket.getCreatedDate())
                             .customerName(ticket.getCustomerName())
                             .customerEmail(ticket.getCustomerEmail())
-                            .date(schedule.getScheduleTime().toLocalDate())
-                            .time(schedule.getScheduleTime().toLocalTime())
+                            .date(ticket.getScheduleTime().toLocalDate())
+                            .time(ticket.getScheduleTime().toLocalTime())
                             .seats(ticket.getSeatsName())
                             .movieName(ticket.getMovie().getName())
                             .roomName(schedule.getRoom().getName())
@@ -271,8 +275,8 @@ public class TicketServiceImpl implements TicketService {
                 .createdDate(ticket.getCreatedDate())
                 .customerName(ticket.getCustomerName())
                 .customerEmail(ticket.getCustomerEmail())
-                .date(schedule.getScheduleTime().toLocalDate())
-                .time(schedule.getScheduleTime().toLocalTime())
+                .date(ticket.getScheduleTime().toLocalDate())
+                .time(ticket.getScheduleTime().toLocalTime())
                 .seats(ticket.getSeatsName())
                 .movieName(ticket.getMovie().getName())
                 .roomName(schedule.getRoom().getName())

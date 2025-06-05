@@ -35,7 +35,7 @@ public class Schedule {
     @OneToMany(mappedBy = "schedule")
     private List<Ticket> tickets = new ArrayList<>();
 
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "schedule")
     @JsonIgnore
     List<ScheduleSeat> scheduleSeats = new ArrayList<>();
 

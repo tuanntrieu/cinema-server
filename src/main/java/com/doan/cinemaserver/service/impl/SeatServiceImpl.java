@@ -298,7 +298,7 @@ public class SeatServiceImpl implements SeatService {
                 () -> new NotFoundException(ErrorMessage.Room.ERR_NOT_FOUND_ROOM, new String[]{String.valueOf(requestDto.getRoomId())})
         );
 
-        if (requestDto.getRow() < 1 || requestDto.getRow() > room.getNumberOfRow() ) {
+        if (requestDto.getRow() < 1 || requestDto.getRow()  > room.getNumberOfRow() ) {
             throw new InvalidException(ErrorMessage.Seat.ERR_SEAT_INVALID_ROW);
         }
         if (requestDto.getRow() < room.getNumberOfRow()-1) {

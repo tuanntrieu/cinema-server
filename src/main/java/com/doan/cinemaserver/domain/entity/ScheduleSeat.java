@@ -22,11 +22,11 @@ public class ScheduleSeat {
 
     private String email;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "schedule_id", nullable = false)
     private Schedule schedule;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
 
