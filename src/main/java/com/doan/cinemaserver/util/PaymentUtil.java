@@ -90,18 +90,31 @@ public class PaymentUtil {
     }
 
     public static String buildHashData(Map<String, String> params) {
+
+        // Remove secure hash params
+        params.remove("vnp_SecureHash");
+        params.remove("vnp_SecureHashType");
+
         List<String> fieldNames = new ArrayList<>(params.keySet());
         Collections.sort(fieldNames);
-        StringBuilder hashData = new StringBuilder();
 
-        for (int i = 0; i < fieldNames.size(); i++) {
-            String key = fieldNames.get(i);
+        StringBuilder hashData = new StringBuilder();
+        int i = 0;
+
+        for (String key : fieldNames) {
             String value = params.get(key);
+
             if (value != null && !value.isEmpty()) {
-                hashData.append(key).append("=").append(URLEncoder.encode(value, StandardCharsets.US_ASCII));
-                if (i < fieldNames.size() - 1) {
+
+                if (i > 0) {
                     hashData.append("&");
                 }
+
+                hashData.append(key)
+                        .append("=")
+                        .append(URLEncoder.encode(value, StandardCharsets.US_ASCII));
+
+                i++;
             }
         }
 

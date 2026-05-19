@@ -19,6 +19,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class VnPayServiceImpl implements VnPayService {
+
     private static final Map<String, String> RESPONSE_CODE_MESSAGES = Map.ofEntries(
             Map.entry("00", "Giao dịch thành công"),
             Map.entry("07", "Trừ tiền thành công. Giao dịch bị nghi ngờ"),
@@ -34,37 +35,45 @@ public class VnPayServiceImpl implements VnPayService {
             Map.entry("79", "Sai mật khẩu thanh toán quá số lần"),
             Map.entry("99", "Lỗi khác")
     );
-    private final VnPayConfig vnPayConfig;
 
+    private final VnPayConfig vnPayConfig;
 
     @Override
     public PaymentResponseDTO createPaymentUrl(Long amount, HttpServletRequest request) {
+
         String vnp_Version = vnPayConfig.getVersion();
         String vnp_Command = vnPayConfig.getCommand();
-        String vnp_OrderInfo = request.getParameter("vnp_OrderInfo");
-        String orderType = request.getParameter("ordertype");
-        String vnp_TxnRef = UUID.randomUUID().toString().replace("-", "");;
-        String vnp_IpAddr = PaymentUtil.getIpAddress(request);
         String vnp_TmnCode = vnPayConfig.getTmnCode();
+
+        String vnp_TxnRef = UUID.randomUUID().toString().replace("-", "");
+        String vnp_IpAddr = PaymentUtil.getIpAddress(request);
+
         Map<String, String> vnp_Params = new HashMap<>();
+
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
         vnp_Params.put("vnp_Amount", String.valueOf(amount * 100));
         vnp_Params.put("vnp_CurrCode", "VND");
-        String bank_code = request.getParameter("bankcode");
-        if (bank_code != null && !bank_code.isEmpty()) {
-            vnp_Params.put("vnp_BankCode", bank_code);
-        }
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+
+        String vnp_OrderInfo = request.getParameter("vnp_OrderInfo");
         if (vnp_OrderInfo == null || vnp_OrderInfo.isEmpty()) {
             vnp_OrderInfo = "Thanh toan don hang: " + vnp_TxnRef;
         }
         vnp_Params.put("vnp_OrderInfo", vnp_OrderInfo);
+
+        String orderType = request.getParameter("ordertype");
         if (orderType == null || orderType.isEmpty()) {
             orderType = vnPayConfig.getOrderType();
         }
         vnp_Params.put("vnp_OrderType", orderType);
+
+        String bank_code = request.getParameter("bankcode");
+        if (bank_code != null && !bank_code.isEmpty()) {
+            vnp_Params.put("vnp_BankCode", bank_code);
+        }
 
         String locate = request.getParameter("language");
         if (locate != null && !locate.isEmpty()) {
@@ -72,11 +81,12 @@ public class VnPayServiceImpl implements VnPayService {
         } else {
             vnp_Params.put("vnp_Locale", "vn");
         }
-        vnp_Params.put("vnp_ReturnUrl", vnPayConfig.getReturnUrl());
-        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
-        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        vnp_Params.put("vnp_ReturnUrl", vnPayConfig.getReturnUrl());
+
+        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+
         String vnp_CreateDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
@@ -84,79 +94,172 @@ public class VnPayServiceImpl implements VnPayService {
         String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
-        //Billing
-        vnp_Params.put("vnp_Bill_Mobile", request.getParameter("txt_billing_mobile"));
-        vnp_Params.put("vnp_Bill_Email", request.getParameter("txt_billing_email"));
-        String fullName = (request.getParameter("txt_billing_fullname"));
+        /* Billing */
+
+        String billMobile = request.getParameter("txt_billing_mobile");
+        if (billMobile != null && !billMobile.isEmpty()) {
+            vnp_Params.put("vnp_Bill_Mobile", billMobile);
+        }
+
+        String billEmail = request.getParameter("txt_billing_email");
+        if (billEmail != null && !billEmail.isEmpty()) {
+            vnp_Params.put("vnp_Bill_Email", billEmail);
+        }
+
+        String fullName = request.getParameter("txt_billing_fullname");
         if (fullName != null && !fullName.isEmpty()) {
             fullName = fullName.trim();
             int idx = fullName.indexOf(' ');
-            String firstName = fullName.substring(0, idx);
-            String lastName = fullName.substring(fullName.lastIndexOf(' ') + 1);
-            vnp_Params.put("vnp_Bill_FirstName", firstName);
-            vnp_Params.put("vnp_Bill_LastName", lastName);
-        }
-
-        vnp_Params.put("vnp_Bill_Address", request.getParameter("txt_inv_addr1"));
-        vnp_Params.put("vnp_Bill_City", request.getParameter("txt_bill_city"));
-        vnp_Params.put("vnp_Bill_Country", request.getParameter("txt_bill_country"));
-        if (request.getParameter("txt_bill_state") != null && !request.getParameter("txt_bill_state").isEmpty()) {
-            vnp_Params.put("vnp_Bill_State", request.getParameter("txt_bill_state"));
-        }
-
-        // Invoice
-        vnp_Params.put("vnp_Inv_Phone", request.getParameter("txt_inv_mobile"));
-        vnp_Params.put("vnp_Inv_Email", request.getParameter("txt_inv_email"));
-        vnp_Params.put("vnp_Inv_Customer", request.getParameter("txt_inv_customer"));
-        vnp_Params.put("vnp_Inv_Address", request.getParameter("txt_inv_addr1"));
-        vnp_Params.put("vnp_Inv_Company", request.getParameter("txt_inv_company"));
-        vnp_Params.put("vnp_Inv_Taxcode", request.getParameter("txt_inv_taxcode"));
-        vnp_Params.put("vnp_Inv_Type", request.getParameter("cbo_inv_type"));
-        List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
-        Collections.sort(fieldNames);
-        StringBuilder hashData = new StringBuilder();
-        StringBuilder query = new StringBuilder();
-        Iterator<String> itr = fieldNames.iterator();
-        while (itr.hasNext()) {
-            String fieldName = itr.next();
-            String fieldValue = vnp_Params.get(fieldName);
-            if ((fieldValue != null) && (!fieldValue.isEmpty())) {                //Build hash data
-                hashData.append(fieldName);
-                hashData.append('=');
-                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
-
-                //Build query
-                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII));
-                query.append('=');
-                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
-                if (itr.hasNext()) {
-                    query.append('&');
-                    hashData.append('&');
-                }
+            if (idx > 0) {
+                String firstName = fullName.substring(0, idx);
+                String lastName = fullName.substring(fullName.lastIndexOf(' ') + 1);
+                vnp_Params.put("vnp_Bill_FirstName", firstName);
+                vnp_Params.put("vnp_Bill_LastName", lastName);
             }
         }
+
+        String address = request.getParameter("txt_inv_addr1");
+        if (address != null && !address.isEmpty()) {
+            vnp_Params.put("vnp_Bill_Address", address);
+        }
+
+        String city = request.getParameter("txt_bill_city");
+        if (city != null && !city.isEmpty()) {
+            vnp_Params.put("vnp_Bill_City", city);
+        }
+
+        String country = request.getParameter("txt_bill_country");
+        if (country != null && !country.isEmpty()) {
+            vnp_Params.put("vnp_Bill_Country", country);
+        }
+
+        String state = request.getParameter("txt_bill_state");
+        if (state != null && !state.isEmpty()) {
+            vnp_Params.put("vnp_Bill_State", state);
+        }
+
+        /* Invoice */
+
+        String invPhone = request.getParameter("txt_inv_mobile");
+        if (invPhone != null && !invPhone.isEmpty()) {
+            vnp_Params.put("vnp_Inv_Phone", invPhone);
+        }
+
+        String invEmail = request.getParameter("txt_inv_email");
+        if (invEmail != null && !invEmail.isEmpty()) {
+            vnp_Params.put("vnp_Inv_Email", invEmail);
+        }
+
+        String invCustomer = request.getParameter("txt_inv_customer");
+        if (invCustomer != null && !invCustomer.isEmpty()) {
+            vnp_Params.put("vnp_Inv_Customer", invCustomer);
+        }
+
+        String invAddress = request.getParameter("txt_inv_addr1");
+        if (invAddress != null && !invAddress.isEmpty()) {
+            vnp_Params.put("vnp_Inv_Address", invAddress);
+        }
+
+        String invCompany = request.getParameter("txt_inv_company");
+        if (invCompany != null && !invCompany.isEmpty()) {
+            vnp_Params.put("vnp_Inv_Company", invCompany);
+        }
+
+        String invTax = request.getParameter("txt_inv_taxcode");
+        if (invTax != null && !invTax.isEmpty()) {
+            vnp_Params.put("vnp_Inv_Taxcode", invTax);
+        }
+
+        String invType = request.getParameter("cbo_inv_type");
+        if (invType != null && !invType.isEmpty()) {
+            vnp_Params.put("vnp_Inv_Type", invType);
+        }
+
+        /* Build hash */
+
+        List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
+        Collections.sort(fieldNames);
+
+        StringBuilder hashData = new StringBuilder();
+        StringBuilder query = new StringBuilder();
+
+        int i = 0;
+
+        for (String fieldName : fieldNames) {
+
+            String fieldValue = vnp_Params.get(fieldName);
+
+            if (fieldValue != null && !fieldValue.isEmpty()) {
+
+                if (i > 0) {
+                    hashData.append("&");
+                    query.append("&");
+                }
+
+                hashData.append(fieldName)
+                        .append("=")
+                        .append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
+
+                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII))
+                        .append("=")
+                        .append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
+
+                i++;
+            }
+        }
+
         String queryUrl = query.toString();
-        String vnp_SecureHash = PaymentUtil.hmacSHA512(vnPayConfig.getHashSecret(), hashData.toString());
+
+        String vnp_SecureHash = PaymentUtil.hmacSHA512(
+                vnPayConfig.getHashSecret(),
+                hashData.toString()
+        );
+
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+
         String paymentUrl = vnPayConfig.getPayUrl() + "?" + queryUrl;
 
         return PaymentResponseDTO.builder()
                 .status("ok")
                 .message("success")
-                .URL(paymentUrl).build();
+                .URL(paymentUrl)
+                .build();
     }
 
     @Override
     public PaymentStatusResponse handleVNPayReturn(String receivedHash, HttpServletRequest request) {
-        Map<String, String> parameters = PaymentUtil.getParametersFromRequest(request);
-        parameters.remove("vnp_SecureHash");
-        String calculatedHash = PaymentUtil.hmacSHA512(vnPayConfig.getHashSecret(), PaymentUtil.buildHashData(parameters));
 
-        if (!receivedHash.equalsIgnoreCase(calculatedHash)) {
+        // Lấy tất cả param từ request
+        Map<String, String> parameters = PaymentUtil.getParametersFromRequest(request);
+
+        // Lấy secure hash VNPay gửi
+        String vnpSecureHash = parameters.remove("vnp_SecureHash");
+
+        // Remove hash type (không được đưa vào hashData)
+        parameters.remove("vnp_SecureHashType");
+
+        // Build lại chuỗi hashData
+        String hashData = PaymentUtil.buildHashData(parameters);
+
+        // Tính lại chữ ký
+        String calculatedHash = PaymentUtil.hmacSHA512(
+                vnPayConfig.getHashSecret(),
+                hashData
+        );
+
+        // So sánh chữ ký
+        if (!vnpSecureHash.equalsIgnoreCase(calculatedHash)) {
             throw new InvalidException(ErrorMessage.Payment.ERR_INVALID_OR_TAMPERED_DATA);
         }
+
+        // Lấy mã phản hồi VNPay
         String vnpResponseCode = parameters.get("vnp_ResponseCode");
-        String message = RESPONSE_CODE_MESSAGES.getOrDefault(vnpResponseCode, "Không xác định mã lỗi");
+
+        String message = RESPONSE_CODE_MESSAGES.getOrDefault(
+                vnpResponseCode,
+                "Không xác định mã lỗi"
+        );
+
         return new PaymentStatusResponse(
                 message,
                 "00".equals(vnpResponseCode)

@@ -123,7 +123,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfiguration corsConfiguration() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOrigin("http://localhost:4200");
+        corsConfiguration.setAllowedOriginPatterns(List.of("*"));
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addExposedHeader("Content-Disposition");
         corsConfiguration.setAllowCredentials(Boolean.TRUE);

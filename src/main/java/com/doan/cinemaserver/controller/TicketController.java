@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class TicketController {
 
     @Operation(summary = "API Get Payment Url")
     @GetMapping(UrlConstant.Ticket.GET_PAYMENT_URL)
-    public ResponseEntity<?> getPaymentUrl(@RequestParam("amount") Long amount, HttpServletRequest request) {
+    public ResponseEntity<?> getPaymentUrl(@RequestParam("amount") Long amount, HttpServletRequest request)  {
         return VsResponseUtil.success(vnPayService.createPaymentUrl(amount, request));
     }
 
